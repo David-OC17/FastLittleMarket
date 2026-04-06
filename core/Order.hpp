@@ -25,7 +25,7 @@ class Order {
 
   Order& operator=(const Order& other);
 
-  bool Order::isValid() const;
+  bool isValid() const;
 
   // Getters
   int getId() const;
@@ -40,6 +40,18 @@ class Order {
   void setVolume(int volume);
   void setClient(std::string client);
   void setSide(BuyOrSell side);
+};
+
+class OrderQueueInterface {
+ public:
+  virtual ~OrderQueueInterface() = default;
+  virtual bool empty() const = 0;
+  virtual std::optional<Order> top() const = 0;
+  virtual void push(const Order& order) = 0;
+  virtual void pop() = 0;
+  virtual bool remove(int order_id) = 0;
+  virtual bool modify(int order_id, const Order& order) = 0;
+  virtual bool isValid() const = 0;
 };
 
 }  // namespace FastLittleMarket

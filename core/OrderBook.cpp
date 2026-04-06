@@ -2,25 +2,15 @@
 
 namespace FastLittleMarket {
 
-bool OrderBook::priceCrosses(const Order& incoming) const {
-  auto& opposite =
-      (incoming.getSide() == BuyOrSell::buy) ? sell_orders_ : buy_orders_;
-  if (opposite.empty()) return false;
+bool OrderBook::canCross(const Order& incoming) const {
+  const OrderQueueInterface* opposite =
+      (incoming.getSide() == BuyOrSell::buy)
+          ? static_cast<const OrderQueueInterface*>(&sell_orders_)
+          : static_cast<const OrderQueueInterface*>(&buy_orders_);
 
-  double opp_price = opposite.top().getPrice();
-  return (incoming.getSide() == BuyOrSell::buy)
-             ? (opp_price <= incoming.getPrice())
-             : (opp_price >= incoming.getPrice());
-}
+  if (opposite->empty() || !opposite->top().has_value()) return false;
 
-void OrderBook::addOrder(const Order& order) {
-  if (priceCrosses(order)) {
-    matchOrder(order);
-  } else {
-    auto& own_queue =
-        (order.getSide() == BuyOrSell::buy) ? buy_orders_ : sell_orders_;
-    own_queue.push(order);
-  }
+  return priceCrosses(incoming, opposite->top().value());
 }
 
 bool OrderBook::priceCrosses(const Order& incoming,
@@ -30,13 +20,25 @@ bool OrderBook::priceCrosses(const Order& incoming,
              : (opposite.getPrice() >= incoming.getPrice());
 }
 
-void OrderBook::matchOrder(Order incoming) {
-  auto& opposite_queue =
-      (incoming.getSide() == BuyOrSell::buy) ? sell_orders_ : buy_orders_;
+void OrderBook::addOrder(const Order& order) {
+  if (canCross(order)) {
+    matchOrder(order);
+  } else {
+    auto* own_queue = (order.getSide() == BuyOrSell::buy)
+                          ? static_cast<OrderQueueInterface*>(&buy_orders_)
+                          : static_cast<OrderQueueInterface*>(&sell_orders_);
+    own_queue->push(order);
+  }
+}
 
-  while (incoming.isValid() && !opposite_queue.empty()) {
-    Order best_opposite = opposite_queue.top();
-    opposite_queue.pop();
+void OrderBook::matchOrder(Order incoming) {
+  auto* opposite_queue = (incoming.getSide() == BuyOrSell::buy)
+                             ? static_cast<OrderQueueInterface*>(&sell_orders_)
+                             : static_cast<OrderQueueInterface*>(&buy_orders_);
+
+  while (incoming.isValid() && !opposite_queue->empty()) {
+    Order best_opposite = opposite_queue->top().value();
+    opposite_queue->pop();
 
     if (!priceCrosses(incoming, best_opposite)) break;
 
@@ -44,36 +46,40 @@ void OrderBook::matchOrder(Order incoming) {
         std::min(incoming.getVolume(), best_opposite.getVolume());
 
     // TODO: Log trade
-    // logTrade(incoming, best_opposite, trade_volume);
 
     incoming.setVolume(incoming.getVolume() - trade_volume);
     best_opposite.setVolume(best_opposite.getVolume() - trade_volume);
 
     if (best_opposite.isValid()) {
-      opposite_queue.push(best_opposite);
+      opposite_queue->push(best_opposite);
     }
   }
 
   if (incoming.isValid()) {
-    auto& own_queue =
-        (incoming.getSide() == BuyOrSell::buy) ? buy_orders_ : sell_orders_;
-    own_queue.push(std::move(incoming));
+    auto* own_queue = (incoming.getSide() == BuyOrSell::buy)
+                          ? static_cast<OrderQueueInterface*>(&buy_orders_)
+                          : static_cast<OrderQueueInterface*>(&sell_orders_);
+    own_queue->push(std::move(incoming));
   }
 }
 
 void OrderBook::cancelOrder(int order_id) {
-  // TODO
-  // Remove order from XXX_orders_ and account for decrease in volume
+  if (orders_.find(order_id) != orders_.end()) {
+    auto order = orders_.at(order_id);
+
+    auto* price_queue = (order.getSide() == BuyOrSell::buy)
+                            ? static_cast<OrderQueueInterface*>(&buy_orders_)
+                            : static_cast<OrderQueueInterface*>(&sell_orders_);
+
+    price_queue->remove(order.getId());
+    volumes_[std::make_pair(order.getPrice(), order.getSide())] -=
+        order.getVolume();
+    orders_.erase(order_id);
+  }
 }
 
-void OrderBook::modifyOrder(int order_id, double new_price, int new_volume) {
-  // TODO
-  // Remove order from XXX_orders_ and account for decrease in volume
-  // If modify is removal, call ->cancelOrder
-}
-
-std::pair<Order, Order> OrderBook::getTopOfBook() const {
-  // TODO return best sell and best buy orders
+TopOfBook OrderBook::getTopOfBook() const {
+  return {buy_orders_.top(), sell_orders_.top()};
 }
 
 }  // namespace FastLittleMarket
