@@ -10,8 +10,8 @@ TEST(OrderBook, AddAndTopOfBook) {
   flm::Order order1(1, flm::OrderSide::Buy, 100.0, 10, "client1");
   flm::Order order2(2, flm::OrderSide::Sell, 101.0, 5, "client2");
 
-  ob.addOrder(order1);
-  ob.addOrder(order2);
+  EXPECT_TRUE(ob.addOrder(order1));
+  EXPECT_TRUE(ob.addOrder(order2));
 
   auto top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
@@ -54,8 +54,8 @@ TEST(OrderBook, MatchOrders) {
   flm::Order bid_order(1, flm::OrderSide::Buy, 100.0, 10, "client1");
   flm::Order ask_order(2, flm::OrderSide::Sell, 99.0, 5, "client2");
 
-  ob.addOrder(bid_order);
-  ob.addOrder(ask_order);
+  EXPECT_TRUE(ob.addOrder(bid_order));
+  EXPECT_TRUE(ob.addOrder(ask_order));
 
   auto top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());

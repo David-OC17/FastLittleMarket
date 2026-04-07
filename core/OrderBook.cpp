@@ -1,4 +1,5 @@
 #include "OrderBook.hpp"
+#include <cassert>
 
 namespace FastLittleMarket {
 
@@ -20,23 +21,36 @@ bool OrderBook::priceCrosses(const Order& incoming,
              : (opposite.getPrice() >= incoming.getPrice());
 }
 
-void OrderBook::addOrder(const Order& order) {
+bool OrderBook::addOrder(const Order& order) {
   if (canCross(order)) {
-    matchOrder(order);
+    if (!matchOrder(order)) {
+      return false;
+    }
   } else {
     auto* own_queue = (order.getSide() == OrderSide::Buy)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)
                           : static_cast<OrderQueueInterface*>(&sell_orders_);
+
+    assert(own_queue->isValid());
+
     own_queue->push(order);
     volumes_[std::make_pair(order.getPrice(), order.getSide())] +=
         order.getVolume();
   }
+
+  return true;
 }
 
-void OrderBook::matchOrder(Order incoming) {
+bool OrderBook::matchOrder(Order incoming) {
+  if (!incoming.isValid()) return false;
+
   auto* opposite_queue = (incoming.getSide() == OrderSide::Buy)
                              ? static_cast<OrderQueueInterface*>(&sell_orders_)
                              : static_cast<OrderQueueInterface*>(&buy_orders_);
+
+  assert(opposite_queue->isValid());
+
+  if (opposite_queue->empty()) return false;
 
   while (incoming.isValid() && !opposite_queue->empty()) {
     Order best_opposite = opposite_queue->top().value();
@@ -46,8 +60,6 @@ void OrderBook::matchOrder(Order incoming) {
 
     const int trade_volume =
         std::min(incoming.getVolume(), best_opposite.getVolume());
-
-    // TODO: Log trade
 
     incoming.setVolume(incoming.getVolume() - trade_volume);
     best_opposite.setVolume(best_opposite.getVolume() - trade_volume);
@@ -61,8 +73,11 @@ void OrderBook::matchOrder(Order incoming) {
     auto* own_queue = (incoming.getSide() == OrderSide::Buy)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)
                           : static_cast<OrderQueueInterface*>(&sell_orders_);
+    assert(own_queue->isValid());
     own_queue->push(std::move(incoming));
   }
+
+  return true;
 }
 
 bool OrderBook::cancelOrder(int order_id) {

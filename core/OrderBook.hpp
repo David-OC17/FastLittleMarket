@@ -129,7 +129,7 @@ struct TopOfBook {
 
 class OrderBook {
  public:
-  void addOrder(const Order& order);
+  bool addOrder(const Order& order);
   bool cancelOrder(int order_id);
   // TODO modifyOrder()
   TopOfBook getTopOfBook() const;
@@ -145,7 +145,7 @@ class OrderBook {
                      PriceSideEqual>
       volumes_;
 
-  void matchOrder(Order incoming);
+  bool matchOrder(Order incoming);
 };
 
 }  // namespace FastLittleMarket
