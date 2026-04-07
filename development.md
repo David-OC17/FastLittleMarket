@@ -1,6 +1,4 @@
 # Development
-* Description of the elements of FastLittleMarket and their current status.
-* Resources for understanding and further development.
 
 Some characteristics of the system are:
 * Scale (real exchange may handle 3 million messages per second, thousands of participants, several million live orders, and 10, 000 symbols)
@@ -11,24 +9,50 @@ Some characteristics of the system are:
 
 ## Major elements
 
+![Exchange diagram](img/exchange_diagram.png)
+
 1. OrderBook (NASDAQ style)
-* [] Basic OrderBook object
-* [] Handle adding orders
-* [] Handle remove orders
-* [] Handle modify orders
-* [] Handle query book (top)
+* [X] Basic OrderBook object
+* [X] Handle adding orders
+* [X] Handle remove orders
+* [ ] Handle modify orders
+* [X] Handle query book (top)
+
+2. Support multiple symbols
+_Core architecture_
+* Each symbol has its own order book (std::unordered_map<std::string, std::unique_ptr<OrderBook>> symbol_books_)
+* Fixed symbols, initially support 100
+* Sharding of symbols (order books), initially 4 shards (25 symbols per shard)
+
+_Concurrency model_
+* Initially support 10 agents
+* Real-time required --> how to give guarantees of latency?
+* [ ] Single-threaded (sim) → std::mutex per book
+* [ ] Multi-threaded → Lock-free queues? Sharding?
+* [ ] Agent-parallel → Per-agent OrderBook copies?
+
+_Order routing_
+* [ ] addOrder(symbol, order) → Find book → Add
+* [ ] removeOrder(symbol, order)
+* [ ] querySymbol(symbol)
+* Handle incoming orders via lock-free queues per symbol (lock needed to write to queue?)
+
+* [ ] registerClient()
+![Sharding diagram](img/sharding_diagram.png)
 
 * Check if cancel/replace is its own operation and implement it if so
 
-2. API for participants
+3. Append only logger
+* [ ] Log events from ME
+* [ ] Log events from port/routing
+* Implement to happen async from each process (no wait) --> write lock required?
+* Ensure consistency (ops are complete and in order up to current)
+
+2. API for participants --> ports with TCP connections
 
 3. "Cancel fairy" (for cancellations in the future)
-* [] Regular cancel
-* [] Cancel reject (in case a cancel cannot go through the ME) (cancel rejects are required because the protocol specifies that any change in state, in either side, has to be acknowledged)
-
-3. Logger
-* [] Log requests to order book
-* [] Log responses from order book
+* [ ] Regular cancel
+* [ ] Cancel reject (in case a cancel cannot go through the ME) (cancel rejects are required because the protocol specifies that any change in state, in either side, has to be acknowledged)
 
 4. Trade reporter flow (logging in this case?)
 
