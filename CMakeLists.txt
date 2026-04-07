@@ -14,7 +14,6 @@ find_package(Boost REQUIRED COMPONENTS system headers)
 find_package(PkgConfig REQUIRED)
 find_package(GTest REQUIRED) # Ubuntu: libgtest-dev
 
-# Core library (OrderBook, Order, etc.)
 add_library(Core STATIC
   core/Order.cpp
   core/OrderBook.cpp
@@ -42,7 +41,9 @@ if(BUILD_TESTS)
   enable_testing()
 
   add_executable(tests
-    tests/unit.cpp
+    test/test_Order.cpp
+    test/test_OrderBook.cpp
+    test/test_OrderQueueInterface.cpp
   )
 
   target_link_libraries(tests

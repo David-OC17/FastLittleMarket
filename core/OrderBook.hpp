@@ -15,7 +15,7 @@ struct BuyOrderComparator {
     if (a.getPrice() == b.getPrice()) {
       return a.getTimestamp() > b.getTimestamp();
     }
-    return a.getPrice() < b.getPrice();
+    return a.getPrice() > b.getPrice();
   }
 };
 
@@ -24,25 +24,37 @@ struct SellOrderComparator {
     if (a.getPrice() == b.getPrice()) {
       return a.getTimestamp() > b.getTimestamp();
     }
-    return a.getPrice() > b.getPrice();
+    return a.getPrice() < b.getPrice();
   }
 };
 
 struct PriceSideHash {
   std::size_t operator()(
-      const std::pair<double, BuyOrSell>& key) const noexcept {
+      const std::pair<double, OrderSide>& key) const noexcept {
     std::size_t h1 = std::hash<double>{}(key.first);
-    std::size_t h2 = std::hash<std::underlying_type_t<BuyOrSell>>{}(
-        static_cast<std::underlying_type_t<BuyOrSell>>(key.second));
+    std::size_t h2 = std::hash<std::underlying_type_t<OrderSide>>{}(
+        static_cast<std::underlying_type_t<OrderSide>>(key.second));
     return h1 ^ (h2 << 1);
   }
 };
 
 struct PriceSideEqual {
-  bool operator()(const std::pair<double, BuyOrSell>& lhs,
-                  const std::pair<double, BuyOrSell>& rhs) const noexcept {
+  bool operator()(const std::pair<double, OrderSide>& lhs,
+                  const std::pair<double, OrderSide>& rhs) const noexcept {
     return lhs.first == rhs.first && lhs.second == rhs.second;
   }
+};
+
+class OrderQueueInterface {
+ public:
+  virtual ~OrderQueueInterface() = default;
+  virtual bool empty() const = 0;
+  virtual std::optional<Order> top() const = 0;
+  virtual bool push(const Order& order) = 0;
+  virtual std::optional<Order> find(int order_id) const = 0;
+  virtual bool pop() = 0;
+  virtual bool remove(int order_id) = 0;
+  virtual bool isValid() const = 0;
 };
 
 template <typename Comparator>
@@ -60,19 +72,29 @@ class PriorityQueueAdapter : public OrderQueueInterface {
     return *price_sorted_.begin();
   }
 
-  void push(const Order& order) override {
-    if (order.isValid()) {
-      auto [it, inserted] = price_sorted_.insert(order);
-      id_to_iter_[order.getId()] = order;
-    }
+  bool push(const Order& order) override {
+    if (!order.isValid()) return false;
+
+    auto it = price_sorted_.insert(order);
+    id_to_iter_[order.getId()] = it;
+    return true;
   }
 
-  void pop() override {
-    if (!empty()) {
-      int id = price_sorted_.begin()->getId();
-      id_to_iter_.erase(id);
-      price_sorted_.erase(price_sorted_.begin());
+  std::optional<Order> find(int order_id) const {
+    auto map_it = id_to_iter_.find(order_id);
+    if (map_it == id_to_iter_.end()) {
+      return std::nullopt;
     }
+    return *(map_it->second);
+  }
+
+  bool pop() override {
+    if (empty()) return false;
+
+    int id = price_sorted_.begin()->getId();
+    id_to_iter_.erase(id);
+    price_sorted_.erase(price_sorted_.begin());
+    return true;
   }
 
   bool remove(int order_id) override {
@@ -81,17 +103,6 @@ class PriorityQueueAdapter : public OrderQueueInterface {
 
     price_sorted_.erase(map_it->second);
     id_to_iter_.erase(map_it);
-
-    return true;
-  }
-
-  bool modify(int order_id, const Order& order) {
-    auto map_it = id_to_iter_.find(order_id);
-    if (map_it == id_to_iter_.end()) return false;
-
-    // TODO modify inplace
-    if (!remove(order_id)) return false;
-    if (!push(order)) return false;
 
     return true;
   }
@@ -119,7 +130,7 @@ struct TopOfBook {
 class OrderBook {
  public:
   void addOrder(const Order& order);
-  void cancelOrder(int order_id);
+  bool cancelOrder(int order_id);
   // TODO modifyOrder()
   TopOfBook getTopOfBook() const;
 
@@ -130,8 +141,7 @@ class OrderBook {
   SellOrderQueue sell_orders_;
   BuyOrderQueue buy_orders_;
 
-  std::unordered_map<int, Order> orders_;
-  std::unordered_map<std::pair<double, BuyOrSell>, int, PriceSideHash,
+  std::unordered_map<std::pair<double, OrderSide>, int, PriceSideHash,
                      PriceSideEqual>
       volumes_;
 
