@@ -17,6 +17,8 @@ find_package(GTest REQUIRED) # Ubuntu: libgtest-dev
 add_library(Core STATIC
   core/Order.cpp
   core/OrderBook.cpp
+  core/Exchange.cpp
+  core/ThreadPool.cpp
 )
 
 target_include_directories(Core PUBLIC
@@ -44,6 +46,8 @@ if(BUILD_TESTS)
     test/test_Order.cpp
     test/test_OrderBook.cpp
     test/test_OrderQueueInterface.cpp
+    test/test_Exchange.cpp
+    test/test_ThreadPool.cpp
   )
 
   target_link_libraries(tests

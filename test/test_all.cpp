@@ -3,6 +3,8 @@
 #include "test_Order.cpp"
 #include "test_OrderBook.cpp"
 #include "test_OrderQueueInterface.cpp"
+#include "test_ThreadPool.cpp"
+#include "test_Exchange.cpp"
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
