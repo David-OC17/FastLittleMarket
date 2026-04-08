@@ -1,3 +1,6 @@
 [submodule "external/concurrentqueue"]
 	path = external/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue
+[submodule "external/quill"]
+	path = external/quill
+	url = https://github.com/odygrd/quill

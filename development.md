@@ -20,25 +20,27 @@ Some characteristics of the system are:
 
 2. Support multiple symbols
 _Core architecture_
-* Each symbol has its own order book (std::unordered_map<std::string, std::unique_ptr<OrderBook>> symbol_books_)
+* Each symbol has its own order book
 * Fixed symbols, initially support 100
 * Sharding of symbols (order books), initially 4 shards (25 symbols per shard)
 
 _Concurrency model_
 * Initially support 10 agents
 * Real-time required --> how to give guarantees of latency?
-* [ ] Single-threaded (sim) → std::mutex per book
-* [ ] Multi-threaded → Lock-free queues? Sharding?
-* [ ] Agent-parallel → Per-agent OrderBook copies?
+* [X] Single-threaded (sim) → mutex free task queue via moodycamel::ConcurrentQueue
+* [X] Multi-threaded → Lock-free queues? Sharding?
+* [X] Agent-parallel → one thread per shard, split symbols/OrderBooks on shards
 
 _Order routing_
-* [ ] addOrder(symbol, order) → Find book → Add
-* [ ] removeOrder(symbol, order)
-* [ ] querySymbol(symbol)
+* [X] addOrder(symbol, order) → Find book → Add
+* [X] removeOrder(symbol, order)
+* [X] querySymbol(symbol)
 * Handle incoming orders via lock-free queues per symbol (lock needed to write to queue?)
 
 * [ ] registerClient()
 ![Sharding diagram](img/sharding_diagram.png)
+* [ ] (Optional) Implement CPU affinity to sharding ME thread
+* [ ] Increase sharding ME thread priority
 
 * Check if cancel/replace is its own operation and implement it if so
 
@@ -46,7 +48,7 @@ _Order routing_
 * [ ] Log events from ME
 * [ ] Log events from port/routing
 * Implement to happen async from each process (no wait) --> write lock required?
-* Ensure consistency (ops are complete and in order up to current)
+* [ ] Ensure consistency (ops are complete and in order up to current) --> operation number
 
 2. API for participants --> ports with TCP connections
 

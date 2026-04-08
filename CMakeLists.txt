@@ -26,7 +26,8 @@ target_include_directories(Core PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/common
   ${CMAKE_CURRENT_SOURCE_DIR}/data
   ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/concurrentqueue/
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/concurrentqueue
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/quill
 )
 
 target_link_libraries(Core
