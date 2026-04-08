@@ -22,11 +22,13 @@ bool OrderBook::priceCrosses(const Order& incoming,
              : (opposite.getPrice() >= incoming.getPrice());
 }
 
+// TODO: change return type to reflect if order was fully matched, partially matched, or added to book
 bool OrderBook::addOrder(const Order& order) {
   if (canCross(order)) {
     if (!matchOrder(order)) {
       return false;
     }
+
   } else {
     auto* own_queue = (order.getSide() == OrderSide::Buy)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)

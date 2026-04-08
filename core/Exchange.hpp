@@ -9,6 +9,7 @@
 
 #include "OrderBook.hpp"
 #include "ThreadPool.hpp"
+#include "GlobalSequencer.hpp"
 
 namespace FastLittleMarket {
 
@@ -37,6 +38,8 @@ class Exchange {
   */
   std::array<std::unordered_map<std::string, OrderBook>, NUM_SHARDS> shards_;
   ThreadPool thread_pool_;
+
+  // std::array<GlobalSequencer, NUM_SHARDS> sequencers_;
 
  public:
   static Exchange& getInstance();

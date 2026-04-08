@@ -3,6 +3,7 @@
 
 namespace FastLittleMarket {
 
+// TODO: Load symbols from a config file or database
 static std::array<std::string, 100> symbols = {
     "AAPL",   "MSFT",     "GOOGL",  "AMZN",   "META",    "TSLA",   "NVDA",
     "BRK.A",  "JPM",      "JNJ",    "V",      "PG",      "UNH",    "HD",

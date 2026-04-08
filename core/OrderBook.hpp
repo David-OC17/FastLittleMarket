@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Order.hpp"
+#include "GlobalSequencer.hpp"
 
 namespace FastLittleMarket {
 

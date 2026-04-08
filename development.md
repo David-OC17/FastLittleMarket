@@ -53,7 +53,6 @@ _Order routing_
 2. API for participants --> ports with TCP connections
 
 3. "Cancel fairy" (for cancellations in the future)
-* [ ] Regular cancel
 * [ ] Cancel reject (in case a cancel cannot go through the ME) (cancel rejects are required because the protocol specifies that any change in state, in either side, has to be acknowledged)
 
 4. Trade reporter flow (logging in this case?)
@@ -64,7 +63,6 @@ _Order routing_
 
 ## Upgrades
 
-* Allow for trading of multiple instruments, i.e., multiple order books --> do we want to parallelize it? (expand to a full fledged "matching engine")
 * Create TCP/IP ports for users to connect through and trade (ports may be the ones to find some ID of an order, in case a cancel or modify is sent, making the rest of the process cheaper for the cancel fairy and ME)
 * Implement communication between internal exchange modules via UDP? is it the fastest
 * Allow for Immediate-Of-Cancel and Good-Till-Cancelled orders
