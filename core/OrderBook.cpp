@@ -1,4 +1,5 @@
 #include "OrderBook.hpp"
+
 #include <cassert>
 
 namespace FastLittleMarket {
@@ -104,6 +105,18 @@ bool OrderBook::cancelOrder(int order_id) {
 
 TopOfBook OrderBook::getTopOfBook() const {
   return {buy_orders_.top(), sell_orders_.top()};
+}
+
+std::optional<Order> OrderBook::getOrder(int order_id) const {
+  if (auto it = buy_orders_.find(order_id); it.has_value()) {
+    return it.value();
+  }
+
+  if (auto it = sell_orders_.find(order_id); it.has_value()) {
+    return it.value();
+  }
+
+  return std::nullopt;
 }
 
 }  // namespace FastLittleMarket

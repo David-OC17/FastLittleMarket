@@ -134,6 +134,8 @@ class OrderBook {
   // TODO modifyOrder()
   TopOfBook getTopOfBook() const;
 
+  std::optional<Order> getOrder(int order_id) const;
+
  private:
   bool canCross(const Order& incoming) const;
   bool priceCrosses(const Order& incoming, const Order& opposite) const;

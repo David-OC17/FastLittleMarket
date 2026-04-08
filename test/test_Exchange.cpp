@@ -1,9 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <chrono>
-#include <condition_variable>
-#include <future>
-#include <mutex>
+#include <thread>
 
 #include "Exchange.hpp"
 
@@ -15,10 +12,6 @@ namespace flm = FastLittleMarket;
 UNIT TESTS
 
 Exchange {
-- constructor works
-- singleton is enforced
-- destructor works
-- getShard() works: verify basic string cases
 Under one ThreadPool worker:
 - addOrder() works: verify (directly on OrderBook) order has been added
 - cancelOrder() works: verify (directly on OrderBook) order has been canceled
@@ -28,54 +21,66 @@ Under multiple ThreadPool workers:
 }
 */
 
-class CountDownLatch {
- private:
-  std::mutex mutex_;
-  std::condition_variable cv_;
-  int count_;
+TEST(ExchangeTest, Singleton) {
+  flm::Exchange& exchange1 = flm::Exchange::getInstance();
+  flm::Exchange& exchange2 = flm::Exchange::getInstance();
+  EXPECT_EQ(&exchange1, &exchange2);
+}
 
- public:
-  explicit CountDownLatch(int count) : count_(count) {}
+TEST(ExchangeTest, GetShard) {
+  flm::Exchange& exchange = flm::Exchange::getInstance();
 
-  void countDown() {
-    std::unique_lock<std::mutex> lock(mutex_);
-    if (--count_ == 0) cv_.notify_all();
-  }
+  EXPECT_EQ(exchange.getShard("AAPL"),
+            std::hash<std::string>{}("AAPL") % flm::NUM_SHARDS);
+  EXPECT_EQ(exchange.getShard("GOOG"),
+            std::hash<std::string>{}("GOOG") % flm::NUM_SHARDS);
+  EXPECT_EQ(exchange.getShard("MSFT"),
+            std::hash<std::string>{}("MSFT") % flm::NUM_SHARDS);
+}
 
-  void await() {
-    std::unique_lock<std::mutex> lock(mutex_);
-    cv_.wait(lock, [this] { return count_ == 0; });
-  }
+TEST(ExchangeTest, AddAndCancelOrderSingleThread) {
+  flm::Exchange& exchange = flm::Exchange::getInstance();
+  std::string symbol = "AAPL";
+  int orderId = 1;
+  flm::Order order{orderId, flm::OrderSide::Buy, 150.0, 100, "ClientA"};
+  flm::Order order_copy = order;
 
-  template <typename Rep, typename Period>
-  bool await(const std::chrono::duration<Rep, Period>& timeout) {
-    std::unique_lock<std::mutex> lock(mutex_);
-    return cv_.wait_for(lock, timeout, [this] { return count_ == 0; });
-  }
-};
+  exchange.addOrder(symbol, order);
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-TEST(ExchangeConcurrency, MultipleAgentsAddOrders) {
+  EXPECT_TRUE(exchange.getOrder(symbol, orderId).has_value());
+  EXPECT_EQ(exchange.getOrder(symbol, orderId).value(), order_copy);
+
+  exchange.cancelOrder(symbol, orderId);
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+  EXPECT_TRUE(!exchange.getOrder(symbol, orderId).has_value());
+}
+
+TEST(ExchangeTest, ParallelSymbolProcessing) {
   auto& exchange = flm::Exchange::getInstance();
 
-  constexpr int NUM_AGENTS = 10;
-  constexpr int ORDERS_PER_AGENT = 100;
-  std::vector<std::future<void>> futures;
+  std::thread t1([&exchange]() {
+    for (int i = 0; i < 1000; ++i)
+      exchange.addOrder(
+          "AAPL", flm::Order(i, flm::OrderSide::Buy, 100 + i * 0.01, 10, "t1"));
+  });
 
-  CountDownLatch latch(NUM_AGENTS * ORDERS_PER_AGENT);
+  std::thread t2([&exchange]() {
+    for (int i = 0; i < 1000; ++i)
+      exchange.addOrder("TSLA", flm::Order(i + 1000, flm::OrderSide::Buy,
+                                           200 + i * 0.01, 10, "t2"));
+  });
 
-  // 10 agents → 1000 orders total
-  for (int agent = 0; agent < NUM_AGENTS; ++agent) {
-    futures.push_back(
-        std::async(std::launch::async, [&exchange, agent, &latch]() {
-          for (int i = 0; i < ORDERS_PER_AGENT; ++i) {
-            exchange.addOrder("AAPL",
-                              flm::Order(agent * 1000 + i, flm::OrderSide::Buy,
-                                         100.0 + i * 0.01, 10, "agent"));
-            latch.countDown();
-          }
-        }));
-  }
+  std::thread t3([&exchange]() {
+    for (int i = 0; i < 1000; ++i) {
+      exchange.addOrder(
+          "GOOG", flm::Order(i, flm::OrderSide::Buy, 100 + i * 0.01, 10, "t1"));
+      exchange.cancelOrder("GOOG", i);
+    }
+  });
 
-  latch.await(std::chrono::seconds(10));  // Fail if not all complete
-  SUCCEED();
+  t1.join();
+  t2.join();
+  t3.join();
 }

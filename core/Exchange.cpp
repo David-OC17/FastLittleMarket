@@ -37,4 +37,16 @@ void Exchange::cancelOrder(const std::string& symbol, int orderId) {
       shard);
 }
 
+std::optional<Order> Exchange::getOrder(const std::string& symbol,
+                                        int orderId) const {
+  size_t shard = getShard(symbol);
+
+  auto it = shards_[shard].find(symbol);
+  if (it != shards_[shard].end()) {
+    return it->second.getOrder(orderId);
+  }
+
+  return std::nullopt;
+}
+
 }  // namespace FastLittleMarket

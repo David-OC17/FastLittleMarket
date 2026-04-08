@@ -26,6 +26,7 @@ target_include_directories(Core PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/common
   ${CMAKE_CURRENT_SOURCE_DIR}/data
   ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/concurrentqueue/
 )
 
 target_link_libraries(Core
@@ -45,7 +46,7 @@ if(BUILD_TESTS)
   add_executable(tests
     test/test_Order.cpp
     test/test_OrderBook.cpp
-    test/test_OrderQueueInterface.cpp
+    test/test_PriorityQueueAdapter.cpp
     test/test_Exchange.cpp
     test/test_ThreadPool.cpp
   )

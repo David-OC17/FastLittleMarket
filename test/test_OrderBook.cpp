@@ -4,7 +4,7 @@
 
 namespace flm = FastLittleMarket;
 
-TEST(OrderBook, AddAndTopOfBook) {
+TEST(OrderBookTest, AddAndTopOfBook) {
   flm::OrderBook ob;
 
   flm::Order order1(1, flm::OrderSide::Buy, 100.0, 10, "client1");
@@ -20,7 +20,7 @@ TEST(OrderBook, AddAndTopOfBook) {
   EXPECT_EQ(top.ask->getId(), order2.getId());
 }
 
-TEST(OrderBook, CancelOrder) {
+TEST(OrderBookTest, CancelOrder) {
   flm::OrderBook ob;
 
   flm::Order order1(1, flm::OrderSide::Buy, 100.0, 10, "client1");
@@ -48,7 +48,7 @@ TEST(OrderBook, CancelOrder) {
   EXPECT_EQ(top.bid->getId(), order3.getId());
 }
 
-TEST(OrderBook, MatchOrders) {
+TEST(OrderBookTest, MatchOrders) {
   flm::OrderBook ob;
 
   flm::Order bid_order(1, flm::OrderSide::Buy, 100.0, 10, "client1");
@@ -62,4 +62,22 @@ TEST(OrderBook, MatchOrders) {
   EXPECT_FALSE(top.hasAsk());
   EXPECT_EQ(top.bid->getVolume(), 5);  // bid order partially filled
   EXPECT_FALSE(top.ask.has_value());   // ask order fully filled
+}
+
+TEST(OrderBookTest, AddAndGetOrder) {
+  flm::OrderBook ob;
+
+  flm::Order order1(1, flm::OrderSide::Buy, 100.0, 10, "client1");
+  flm::Order order2(2, flm::OrderSide::Sell, 101.0, 5, "client2");
+
+  ob.addOrder(order1);
+  ob.addOrder(order2);
+
+  auto retrieved_order1 = ob.getOrder(order1.getId());
+  auto retrieved_order2 = ob.getOrder(order2.getId());
+
+  EXPECT_TRUE(retrieved_order1.has_value());
+  EXPECT_TRUE(retrieved_order2.has_value());
+  EXPECT_EQ(retrieved_order1.value(), order1);
+  EXPECT_EQ(retrieved_order2.value(), order2);
 }

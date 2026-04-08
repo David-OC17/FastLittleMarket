@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "OrderBook.hpp"
+#include "concurrentqueue.h"
 
 namespace FastLittleMarket {
 
@@ -16,9 +17,8 @@ static constexpr size_t NUM_SHARDS = 4;
 class ThreadPool {
  private:
   std::array<std::jthread, NUM_SHARDS> workers_;
-  std::array<std::queue<std::function<void()>>, NUM_SHARDS> tasks_;
-  std::mutex queue_mutex_;
-  std::condition_variable condition_;
+  moodycamel::ConcurrentQueue<std::function<void()>> tasks_[NUM_SHARDS];
+
   std::atomic<bool> stop_{false};
 
   void worker(size_t shard_id);

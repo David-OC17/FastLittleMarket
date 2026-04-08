@@ -24,10 +24,10 @@ class Order {
   Order(const Order& other);
 
   Order& operator=(const Order& other);
+  bool operator==(const Order& rhs) const;
 
   bool isValid() const;
 
-  // Getters
   int getId() const;
   std::chrono::system_clock::time_point getTimestamp() const;
   OrderSide getSide() const;
@@ -35,7 +35,6 @@ class Order {
   int getVolume() const;
   std::string getClient() const;
 
-  // Setters
   void setPrice(double price);
   void setVolume(int volume);
   void setClient(std::string client);

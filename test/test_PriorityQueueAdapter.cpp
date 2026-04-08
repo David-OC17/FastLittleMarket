@@ -4,17 +4,17 @@
 
 namespace flm = FastLittleMarket;
 
-using PQ = flm::PriorityQueueAdapter<flm::BuyOrderComparator>;
-// using SellOrderQueue = flm::PriorityQueueAdapter<flm::SellOrderComparator>;
+using PQ = flm::PriorityQueueAdapter<
+    flm::BuyOrderComparator>;  // Assume SellOrderComparator behaves similarly
 
-TEST(PriorityQueueAdapter, PopReturnsFalseWhenEmpty) {
+TEST(PriorityQueueAdapterTest, PopReturnsFalseWhenEmpty) {
   PQ pq;
 
   EXPECT_FALSE(pq.pop());
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapter, PopReturnsTrueWhenNotEmpty) {
+TEST(PriorityQueueAdapterTest, PopReturnsTrueWhenNotEmpty) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));
@@ -23,7 +23,7 @@ TEST(PriorityQueueAdapter, PopReturnsTrueWhenNotEmpty) {
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapter, MultiplePopsMaintainConsistency) {
+TEST(PriorityQueueAdapterTest, MultiplePopsMaintainConsistency) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));
@@ -38,13 +38,13 @@ TEST(PriorityQueueAdapter, MultiplePopsMaintainConsistency) {
   EXPECT_FALSE(pq.pop());  // now empty
 }
 
-TEST(PriorityQueueAdapter, EmptyInitially) {
+TEST(PriorityQueueAdapterTest, EmptyInitially) {
   PQ pq;
   EXPECT_TRUE(pq.empty());
   EXPECT_FALSE(pq.top().has_value());
 }
 
-TEST(PriorityQueueAdapter, PushAndTop) {
+TEST(PriorityQueueAdapterTest, PushAndTop) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));
@@ -54,14 +54,14 @@ TEST(PriorityQueueAdapter, PushAndTop) {
   EXPECT_EQ(pq.top()->getId(), 2);  // highest price first
 }
 
-TEST(PriorityQueueAdapter, PushInvalidOrderIgnored) {
+TEST(PriorityQueueAdapterTest, PushInvalidOrderIgnored) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, -10, "c1"));  // invalid
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapter, FindExistingAndMissing) {
+TEST(PriorityQueueAdapterTest, FindExistingAndMissing) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));
@@ -73,7 +73,7 @@ TEST(PriorityQueueAdapter, FindExistingAndMissing) {
   EXPECT_FALSE(pq.find(999).has_value());
 }
 
-TEST(PriorityQueueAdapter, PopRemovesTop) {
+TEST(PriorityQueueAdapterTest, PopRemovesTop) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));
@@ -86,14 +86,14 @@ TEST(PriorityQueueAdapter, PopRemovesTop) {
   EXPECT_EQ(pq.top()->getId(), 1);
 }
 
-TEST(PriorityQueueAdapter, PopOnEmptyDoesNothing) {
+TEST(PriorityQueueAdapterTest, PopOnEmptyDoesNothing) {
   PQ pq;
 
   EXPECT_NO_THROW(pq.pop());
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapter, RemoveExistingOrder) {
+TEST(PriorityQueueAdapterTest, RemoveExistingOrder) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));
@@ -102,13 +102,13 @@ TEST(PriorityQueueAdapter, RemoveExistingOrder) {
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapter, RemoveNonExistingOrder) {
+TEST(PriorityQueueAdapterTest, RemoveNonExistingOrder) {
   PQ pq;
 
   EXPECT_FALSE(pq.remove(42));
 }
 
-TEST(PriorityQueueAdapter, RemoveUpdatesTopCorrectly) {
+TEST(PriorityQueueAdapterTest, RemoveUpdatesTopCorrectly) {
   PQ pq;
 
   pq.push(flm::Order(1, flm::OrderSide::Buy, 100.0, 10, "c1"));

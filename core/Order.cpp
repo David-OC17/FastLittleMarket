@@ -31,6 +31,12 @@ Order& Order::operator=(const Order& other) {
   return *this;
 }
 
+bool Order::operator==(const Order& other) const {
+  return getId() == other.getId() && getTimestamp() == other.getTimestamp() &&
+         getSide() == other.getSide() && getPrice() == other.getPrice() &&
+         getVolume() == other.getVolume() && getClient() == other.getClient();
+}
+
 bool Order::isValid() const {
   return order_id_ >= 0 && volume_ > 0 &&
          (side_ == OrderSide::Buy || side_ == OrderSide::Sell) &&

@@ -4,7 +4,7 @@
 
 namespace flm = FastLittleMarket;
 
-TEST(Order, Constructor) {
+TEST(OrderTest, Constructor) {
   flm::Order order(1, flm::OrderSide::Buy, 100.5, 10, "client1");
 
   EXPECT_EQ(order.getId(), 1);
@@ -14,7 +14,7 @@ TEST(Order, Constructor) {
   EXPECT_EQ(order.getClient(), "client1");
 }
 
-TEST(Order, CopyConstructor) {
+TEST(OrderTest, CopyConstructor) {
   flm::Order original(2, flm::OrderSide::Sell, 50.0, 5, "client2");
   flm::Order copy = original;
 
@@ -25,7 +25,7 @@ TEST(Order, CopyConstructor) {
   EXPECT_EQ(copy.getClient(), original.getClient());
 }
 
-TEST(Order, AssignmentOperator) {
+TEST(OrderTest, AssignmentOperator) {
   flm::Order original(3, flm::OrderSide::Buy, 75.0, 20, "client3");
   flm::Order assigned(0, flm::OrderSide::Sell, 0.0, 0, "client4");
 
@@ -38,7 +38,7 @@ TEST(Order, AssignmentOperator) {
   EXPECT_EQ(assigned.getClient(), original.getClient());
 }
 
-TEST(Order, Validity) {
+TEST(OrderTest, Validity) {
   flm::Order valid_order(4, flm::OrderSide::Sell, 25.0, 15, "client5");
   EXPECT_TRUE(valid_order.isValid());
 
@@ -49,7 +49,7 @@ TEST(Order, Validity) {
   EXPECT_FALSE(invalid_client.isValid());
 }
 
-TEST(Order, Setters) {
+TEST(OrderTest, Setters) {
   flm::Order order(8, flm::OrderSide::Sell, 60.0, 25, "client8");
 
   order.setPrice(65.0);
@@ -65,7 +65,7 @@ TEST(Order, Setters) {
   EXPECT_EQ(order.getSide(), flm::OrderSide::Buy);
 }
 
-TEST(Order, InvalidSetters) {
+TEST(OrderTest, InvalidSetters) {
   flm::Order order(9, flm::OrderSide::Buy, 80.0, 40, "client10");
 
   order.setPrice(-5.0);
@@ -78,7 +78,7 @@ TEST(Order, InvalidSetters) {
   EXPECT_EQ(order.getClient(), "");  // Still set, but invalid
 }
 
-TEST(Order, Timestamp) {
+TEST(OrderTest, Timestamp) {
   flm::Order order(10, flm::OrderSide::Sell, 55.0, 10, "client11");
   auto timestamp = order.getTimestamp();
 

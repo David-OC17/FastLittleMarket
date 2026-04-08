@@ -23,6 +23,8 @@ class Exchange {
   size_t getShard(const std::string& symbol) const;
   void addOrder(const std::string& symbol, Order order);
   void cancelOrder(const std::string& symbol, int orderId);
+
+  std::optional<Order> getOrder(const std::string& symbol, int orderId) const;
 };
 
 }  // namespace FastLittleMarket

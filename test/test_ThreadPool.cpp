@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "CountDownLatch.hpp"
 #include "ThreadPool.hpp"
 
 namespace flm = FastLittleMarket;
