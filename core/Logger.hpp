@@ -16,8 +16,8 @@ class ExchangeLogger {
         "v={}",
         seq_id.epoch, (seq_id.timestamp_shard >> 16) & 0xFFFFFFFFFFFFULL,
         seq_id.timestamp_shard >> 48, EventTypeNames[static_cast<size_t>(type)],
-        symbol, order.getId(), order.getSide(), order.getPrice(),
-        order.getVolume());
+        symbol, order.id_ns(), order.getSide(), order.getPrice(),
+        order.volume());
   };
 
   void logError(const std::string& message) {

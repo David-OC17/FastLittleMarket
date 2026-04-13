@@ -25,7 +25,7 @@ void Exchange::addOrder(const std::string& symbol, Order order) {
       shard);
 }
 
-void Exchange::cancelOrder(const std::string& symbol, int orderId) {
+void Exchange::cancelOrder(const std::string& symbol, uint64_t orderId) {
   size_t shard = getShard(symbol);
   thread_pool_.enqueue(
       [this, symbol, orderId, shard] {
@@ -38,7 +38,7 @@ void Exchange::cancelOrder(const std::string& symbol, int orderId) {
 }
 
 std::optional<Order> Exchange::getOrder(const std::string& symbol,
-                                        int orderId) const {
+                                        uint64_t orderId) const {
   size_t shard = getShard(symbol);
 
   auto it = shards_[shard].find(symbol);

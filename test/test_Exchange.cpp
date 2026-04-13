@@ -6,20 +6,9 @@
 
 namespace flm = FastLittleMarket;
 
-/*
-3 pillars: correctness, race detection, performance
-
-UNIT TESTS
-
-Exchange {
-Under one ThreadPool worker:
-- addOrder() works: verify (directly on OrderBook) order has been added
-- cancelOrder() works: verify (directly on OrderBook) order has been canceled
-Under multiple ThreadPool workers:
-- addOrder() works: verify order, verify parallelism (2 tests)
-- cancelOrder() works: verify order, verify parallelism (2 tests)
-}
-*/
+// Constructor: Order(int id, uint32_t price_q4, uint32_t vol, bool is_buy,
+//                   std::string_view client)
+// addOrder / cancelOrder / getOrder all use plain integer order ids, not id_ns.
 
 TEST(ExchangeTest, Singleton) {
   flm::Exchange& exchange1 = flm::Exchange::getInstance();
@@ -42,7 +31,10 @@ TEST(ExchangeTest, AddAndCancelOrderSingleThread) {
   flm::Exchange& exchange = flm::Exchange::getInstance();
   std::string symbol = "AAPL";
   int orderId = 1;
-  flm::Order order{orderId, flm::OrderSide::Buy, 150.0, 100, "ClientA"};
+
+  // Constructor: (id, price_q4, vol, is_buy, client)
+  // $150.00 = 1500000 in price_q4 (× 10000)
+  flm::Order order(orderId, 1500000, 100, flm::BUY_SIDE, "ClientA");
   flm::Order order_copy = order;
 
   exchange.addOrder(symbol, order);
@@ -54,33 +46,41 @@ TEST(ExchangeTest, AddAndCancelOrderSingleThread) {
   exchange.cancelOrder(symbol, orderId);
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-  EXPECT_TRUE(!exchange.getOrder(symbol, orderId).has_value());
+  EXPECT_FALSE(exchange.getOrder(symbol, orderId).has_value());
 }
 
 TEST(ExchangeTest, ParallelSymbolProcessing) {
   auto& exchange = flm::Exchange::getInstance();
 
+  // Constructor: (id, price_q4, vol, is_buy, client)
+  // Symbols AAPL and TSLA are likely on different shards, so these threads
+  // exercise independent shard workers in parallel.
   std::thread t1([&exchange]() {
     for (int i = 0; i < 1000; ++i)
-      exchange.addOrder(
-          "AAPL", flm::Order(i, flm::OrderSide::Buy, 100 + i * 0.01, 10, "t1"));
+      exchange.addOrder("AAPL",
+                        flm::Order(i, 1000000 + i * 10, 10, flm::BUY_SIDE, "t1"));
   });
 
   std::thread t2([&exchange]() {
     for (int i = 0; i < 1000; ++i)
-      exchange.addOrder("TSLA", flm::Order(i + 1000, flm::OrderSide::Buy,
-                                           200 + i * 0.01, 10, "t2"));
+      exchange.addOrder("TSLA",
+                        flm::Order(i + 1000, 2000000 + i * 10, 10, flm::BUY_SIDE, "t2"));
   });
 
+  // GOOG: interleaved add+cancel on the same symbol exercises shard ordering
   std::thread t3([&exchange]() {
     for (int i = 0; i < 1000; ++i) {
-      exchange.addOrder(
-          "GOOG", flm::Order(i, flm::OrderSide::Buy, 100 + i * 0.01, 10, "t1"));
-      exchange.cancelOrder("GOOG", i);
+      exchange.addOrder("GOOG",
+                        flm::Order(i + 2000, 1000000 + i * 10, 10, flm::BUY_SIDE, "t3"));
+      exchange.cancelOrder("GOOG", i + 2000);
     }
   });
 
   t1.join();
   t2.join();
   t3.join();
+
+  // No assertion on final state — this test validates that no crash, deadlock,
+  // or data race occurs under concurrent access. Run under ThreadSanitizer
+  // (TSAN) to catch races that the sleep-based tests would miss.
 }

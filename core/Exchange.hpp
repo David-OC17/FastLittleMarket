@@ -7,9 +7,9 @@
 #include <thread>
 #include <vector>
 
+#include "GlobalSequencer.hpp"
 #include "OrderBook.hpp"
 #include "ThreadPool.hpp"
-#include "GlobalSequencer.hpp"
 
 namespace FastLittleMarket {
 
@@ -46,7 +46,7 @@ class Exchange {
 
   size_t getShard(const std::string& symbol) const;
   void addOrder(const std::string& symbol, Order order);
-  void cancelOrder(const std::string& symbol, int orderId);
+  void cancelOrder(const std::string& symbol, uint64_t orderId);
 
   /*
   TODO: allow for async read of orders, even within same shard, using 'seqlock'
@@ -82,7 +82,8 @@ class Exchange {
 
   Reference: https://youtu.be/8uAW5FQtcvE?si=lTHT9ta6A-PATWBH&t=2058
   */
-  std::optional<Order> getOrder(const std::string& symbol, int orderId) const;
+  std::optional<Order> getOrder(const std::string& symbol,
+                                uint64_t orderId) const;
 };
 
 }  // namespace FastLittleMarket

@@ -13,35 +13,34 @@ namespace FastLittleMarket {
 
 struct BuyOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
-    if (a.getPrice() == b.getPrice()) {
-      return a.getTimestamp() > b.getTimestamp();
+    if (a.price_q4 == b.price_q4) {
+      return a.id_ns > b.id_ns;
     }
-    return a.getPrice() > b.getPrice();
+    return a.price_q4 > b.price_q4;
   }
 };
 
 struct SellOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
-    if (a.getPrice() == b.getPrice()) {
-      return a.getTimestamp() > b.getTimestamp();
+    if (a.price_q4 == b.price_q4) {
+      return a.id_ns > b.id_ns;
     }
-    return a.getPrice() < b.getPrice();
+    return a.price_q4 < b.price_q4;
   }
 };
 
 struct PriceSideHash {
   std::size_t operator()(
-      const std::pair<double, OrderSide>& key) const noexcept {
+      const std::pair<double, uint8_t>& key) const noexcept {
     std::size_t h1 = std::hash<double>{}(key.first);
-    std::size_t h2 = std::hash<std::underlying_type_t<OrderSide>>{}(
-        static_cast<std::underlying_type_t<OrderSide>>(key.second));
+    std::size_t h2 = std::hash<uint8_t>{}(key.second);
     return h1 ^ (h2 << 1);
   }
 };
 
 struct PriceSideEqual {
-  bool operator()(const std::pair<double, OrderSide>& lhs,
-                  const std::pair<double, OrderSide>& rhs) const noexcept {
+  bool operator()(const std::pair<uint32_t, uint8_t>& lhs,
+                  const std::pair<uint32_t, uint8_t>& rhs) const noexcept {
     return lhs.first == rhs.first && lhs.second == rhs.second;
   }
 };
@@ -52,9 +51,9 @@ class OrderQueueInterface {
   virtual bool empty() const = 0;
   virtual std::optional<Order> top() const = 0;
   virtual bool push(const Order& order) = 0;
-  virtual std::optional<Order> find(int order_id) const = 0;
+  virtual std::optional<Order> find(uint64_t order_id) const = 0;
   virtual bool pop() = 0;
-  virtual bool remove(int order_id) = 0;
+  virtual bool remove(uint64_t order_id) = 0;
   virtual bool isValid() const = 0;
 };
 
@@ -62,7 +61,7 @@ template <typename Comparator>
 class PriorityQueueAdapter : public OrderQueueInterface {
  private:
   std::multiset<Order, Comparator> price_sorted_;
-  std::unordered_map<int, typename decltype(price_sorted_)::iterator>
+  std::unordered_map<uint64_t, typename decltype(price_sorted_)::iterator>
       id_to_iter_;
 
  public:
@@ -77,12 +76,12 @@ class PriorityQueueAdapter : public OrderQueueInterface {
     if (!order.isValid()) return false;
 
     auto it = price_sorted_.insert(order);
-    id_to_iter_[order.getId()] = it;
+    id_to_iter_[order.id_ns] = it;
     return true;
   }
 
-  std::optional<Order> find(int order_id) const {
-    auto map_it = id_to_iter_.find(order_id);
+  std::optional<Order> find(uint64_t order_id) const {
+    auto map_it = id_to_iter_.find(order_id << 32);
     if (map_it == id_to_iter_.end()) {
       return std::nullopt;
     }
@@ -92,14 +91,14 @@ class PriorityQueueAdapter : public OrderQueueInterface {
   bool pop() override {
     if (empty()) return false;
 
-    int id = price_sorted_.begin()->getId();
+    int id = price_sorted_.begin()->id_ns;
     id_to_iter_.erase(id);
     price_sorted_.erase(price_sorted_.begin());
     return true;
   }
 
-  bool remove(int order_id) override {
-    auto map_it = id_to_iter_.find(order_id);
+  bool remove(uint64_t order_id) override {
+    auto map_it = id_to_iter_.find(order_id << 32);
     if (map_it == id_to_iter_.end()) return false;
 
     price_sorted_.erase(map_it->second);
@@ -131,11 +130,10 @@ struct TopOfBook {
 class OrderBook {
  public:
   bool addOrder(const Order& order);
-  bool cancelOrder(int order_id);
-  // TODO modifyOrder()
+  bool cancelOrder(uint64_t order_id);
   TopOfBook getTopOfBook() const;
 
-  std::optional<Order> getOrder(int order_id) const;
+  std::optional<Order> getOrder(uint64_t order_id) const;
 
  private:
   bool canCross(const Order& incoming) const;
@@ -144,7 +142,7 @@ class OrderBook {
   SellOrderQueue sell_orders_;
   BuyOrderQueue buy_orders_;
 
-  std::unordered_map<std::pair<double, OrderSide>, int, PriceSideHash,
+  std::unordered_map<std::pair<double, uint8_t>, int, PriceSideHash,
                      PriceSideEqual>
       volumes_;
 

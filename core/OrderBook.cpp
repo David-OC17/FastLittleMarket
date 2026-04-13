@@ -6,7 +6,7 @@ namespace FastLittleMarket {
 
 bool OrderBook::canCross(const Order& incoming) const {
   const OrderQueueInterface* opposite =
-      (incoming.getSide() == OrderSide::Buy)
+      (incoming.side == BUY_SIDE)
           ? static_cast<const OrderQueueInterface*>(&sell_orders_)
           : static_cast<const OrderQueueInterface*>(&buy_orders_);
 
@@ -17,9 +17,9 @@ bool OrderBook::canCross(const Order& incoming) const {
 
 bool OrderBook::priceCrosses(const Order& incoming,
                              const Order& opposite) const {
-  return (incoming.getSide() == OrderSide::Buy)
-             ? (opposite.getPrice() <= incoming.getPrice())
-             : (opposite.getPrice() >= incoming.getPrice());
+  return (incoming.side == BUY_SIDE)
+             ? (opposite.price_q4 <= incoming.price_q4)
+             : (opposite.price_q4 >= incoming.price_q4);
 }
 
 // TODO: change return type to reflect if order was fully matched, partially matched, or added to book
@@ -30,15 +30,15 @@ bool OrderBook::addOrder(const Order& order) {
     }
 
   } else {
-    auto* own_queue = (order.getSide() == OrderSide::Buy)
+    auto* own_queue = (order.side == BUY_SIDE)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)
                           : static_cast<OrderQueueInterface*>(&sell_orders_);
 
     assert(own_queue->isValid());
 
     own_queue->push(order);
-    volumes_[std::make_pair(order.getPrice(), order.getSide())] +=
-        order.getVolume();
+    volumes_[std::make_pair(order.price_q4, order.side)] +=
+        order.volume;
   }
 
   return true;
@@ -47,7 +47,7 @@ bool OrderBook::addOrder(const Order& order) {
 bool OrderBook::matchOrder(Order incoming) {
   if (!incoming.isValid()) return false;
 
-  auto* opposite_queue = (incoming.getSide() == OrderSide::Buy)
+  auto* opposite_queue = (incoming.side == BUY_SIDE)
                              ? static_cast<OrderQueueInterface*>(&sell_orders_)
                              : static_cast<OrderQueueInterface*>(&buy_orders_);
 
@@ -62,10 +62,10 @@ bool OrderBook::matchOrder(Order incoming) {
     opposite_queue->pop();
 
     const int trade_volume =
-        std::min(incoming.getVolume(), best_opposite.getVolume());
+        std::min(incoming.volume, best_opposite.volume);
 
-    incoming.setVolume(incoming.getVolume() - trade_volume);
-    best_opposite.setVolume(best_opposite.getVolume() - trade_volume);
+    incoming.volume -= trade_volume;
+    best_opposite.volume -= trade_volume;
 
     if (best_opposite.isValid()) {
       opposite_queue->push(best_opposite);
@@ -73,7 +73,7 @@ bool OrderBook::matchOrder(Order incoming) {
   }
 
   if (incoming.isValid()) {
-    auto* own_queue = (incoming.getSide() == OrderSide::Buy)
+    auto* own_queue = (incoming.side == BUY_SIDE)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)
                           : static_cast<OrderQueueInterface*>(&sell_orders_);
     assert(own_queue->isValid());
@@ -83,13 +83,13 @@ bool OrderBook::matchOrder(Order incoming) {
   return true;
 }
 
-bool OrderBook::cancelOrder(int order_id) {
+bool OrderBook::cancelOrder(uint64_t order_id) {
   if (auto it = buy_orders_.find(order_id); it.has_value()) {
     auto order = it.value();
 
     if (!buy_orders_.remove(order_id)) return false;
 
-    volumes_[{order.getPrice(), OrderSide::Buy}] -= order.getVolume();
+    volumes_[{order.price_q4, BUY_SIDE}] -= order.volume;
     return true;
   }
 
@@ -98,7 +98,7 @@ bool OrderBook::cancelOrder(int order_id) {
 
     if (!sell_orders_.remove(order_id)) return false;
 
-    volumes_[{order.getPrice(), OrderSide::Sell}] -= order.getVolume();
+    volumes_[{order.price_q4, SELL_SIDE}] -= order.volume;
     return true;
   }
 
@@ -109,7 +109,7 @@ TopOfBook OrderBook::getTopOfBook() const {
   return {buy_orders_.top(), sell_orders_.top()};
 }
 
-std::optional<Order> OrderBook::getOrder(int order_id) const {
+std::optional<Order> OrderBook::getOrder(uint64_t order_id) const {
   if (auto it = buy_orders_.find(order_id); it.has_value()) {
     return it.value();
   }

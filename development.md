@@ -27,7 +27,7 @@ _Core architecture_
 _Concurrency model_
 * Initially support 10 agents
 * Real-time required --> how to give guarantees of latency?
-* [X] Single-threaded (sim) → mutex free task queue via moodycamel::ConcurrentQueue
+* [X] Single-threaded (sim) → mutex free task queue via moodycamel:: ConcurrentQueue
 * [X] Multi-threaded → Lock-free queues? Sharding?
 * [X] Agent-parallel → one thread per shard, split symbols/OrderBooks on shards
 
@@ -38,7 +38,9 @@ _Order routing_
 * Handle incoming orders via lock-free queues per symbol (lock needed to write to queue?)
 
 * [ ] registerClient()
+
 ![Sharding diagram](img/sharding_diagram.png)
+
 * [ ] (Optional) Implement CPU affinity to sharding ME thread
 * [ ] Increase sharding ME thread priority
 
@@ -92,3 +94,14 @@ _Order routing_
 
 * (Design a limit order book - Jordan has no life)[https://www.youtube.com/watch?v=nmYx6tQxtSs]
 * (How to build an exchange - Jane Street)[https://www.youtube.com/watch?v=b1e4t2k2KJY]
+
+## Extra learning notes
+
+| Criteria     | Use struct                  | Use class                 |
+| ------------ | --------------------------- | ------------------------- |
+| Purpose      | Plain data (ID, price, vol) | Behavior (logic, vtables) |
+| sizeof()     | Fixed/predictable           | Variable OK               |
+| Copy         | Frequent (queues)           | Infrequent                |
+| Polymorphism | Never                       | Virtual methods           |
+| Cache        | Hot path                    | Cold path                 |
+| STL          | Value type                  | Policy/functor            |

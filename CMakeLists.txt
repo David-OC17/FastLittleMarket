@@ -15,7 +15,6 @@ find_package(PkgConfig REQUIRED)
 find_package(GTest REQUIRED) # Ubuntu: libgtest-dev
 
 add_library(Core STATIC
-  core/Order.cpp
   core/OrderBook.cpp
   core/Exchange.cpp
   core/ThreadPool.cpp
