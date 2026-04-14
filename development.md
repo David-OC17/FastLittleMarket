@@ -7,6 +7,17 @@ Some characteristics of the system are:
 * Durability
 * Robustness to bad clients
 
+## Curren steps
+
+0. Complete ME (logging --> timestamps)
+1. TCP server with Boost.Asio — get raw bytes flowing
+2. FIX parser — tag splitter, checksum, MsgType dispatch
+3. FIX session state machine — logon, heartbeat, sequence numbers
+4. Gateway inbound — NewOrderSingle and OrderCancelRequest → your types
+5. Gateway outbound — ExecutionReport builder
+6. Risk gate — simple checks before hitting the engine
+7. Market data feed — UDP multicast of top-of-book after each match
+
 ## Major elements
 
 ![Exchange diagram](img/exchange_diagram.png)
@@ -17,6 +28,7 @@ Some characteristics of the system are:
 * [X] Handle remove orders
 * [ ] Handle modify orders
 * [X] Handle query book (top)
+* [X] Migrate to 32 bit packed struct
 
 2. Support multiple symbols
 _Core architecture_

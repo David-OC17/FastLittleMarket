@@ -2,6 +2,7 @@
 
 #include <thread>
 
+#include "GlobalSequencer.hpp"
 #include "Exchange.hpp"
 
 namespace flm = FastLittleMarket;
@@ -10,13 +11,18 @@ namespace flm = FastLittleMarket;
 //                   std::string_view client)
 // addOrder / cancelOrder / getOrder all use plain integer order ids, not id_ns.
 
-TEST(ExchangeTest, Singleton) {
+class ExchangeTest : public ::testing::Test {
+ protected:
+  flm::GlobalSequencer sequencer_;
+};
+
+TEST_F(ExchangeTest, Singleton) {
   flm::Exchange& exchange1 = flm::Exchange::getInstance();
   flm::Exchange& exchange2 = flm::Exchange::getInstance();
   EXPECT_EQ(&exchange1, &exchange2);
 }
 
-TEST(ExchangeTest, GetShard) {
+TEST_F(ExchangeTest, GetShard) {
   flm::Exchange& exchange = flm::Exchange::getInstance();
 
   EXPECT_EQ(exchange.getShard("AAPL"),
@@ -27,15 +33,16 @@ TEST(ExchangeTest, GetShard) {
             std::hash<std::string>{}("MSFT") % flm::NUM_SHARDS);
 }
 
-TEST(ExchangeTest, AddAndCancelOrderSingleThread) {
+TEST_F(ExchangeTest, AddAndCancelOrderSingleThread) {
   flm::Exchange& exchange = flm::Exchange::getInstance();
   std::string symbol = "AAPL";
-  int orderId = 1;
 
   // Constructor: (id, price_q4, vol, is_buy, client)
   // $150.00 = 1500000 in price_q4 (× 10000)
-  flm::Order order(orderId, 1500000, 100, flm::BUY_SIDE, "ClientA");
+  flm::Order order(1, 1500000, 100, flm::BUY_SIDE, "ClientA", sequencer_);
   flm::Order order_copy = order;
+
+  const uint64_t orderId = order.id_ns;
 
   exchange.addOrder(symbol, order);
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -49,29 +56,29 @@ TEST(ExchangeTest, AddAndCancelOrderSingleThread) {
   EXPECT_FALSE(exchange.getOrder(symbol, orderId).has_value());
 }
 
-TEST(ExchangeTest, ParallelSymbolProcessing) {
+TEST_F(ExchangeTest, ParallelSymbolProcessing) {
   auto& exchange = flm::Exchange::getInstance();
 
   // Constructor: (id, price_q4, vol, is_buy, client)
   // Symbols AAPL and TSLA are likely on different shards, so these threads
   // exercise independent shard workers in parallel.
-  std::thread t1([&exchange]() {
+  std::thread t1([&exchange, this]() {
     for (int i = 0; i < 1000; ++i)
       exchange.addOrder("AAPL",
-                        flm::Order(i, 1000000 + i * 10, 10, flm::BUY_SIDE, "t1"));
+                        flm::Order(i, 1000000 + i * 10, 10, flm::BUY_SIDE, "t1", sequencer_));
   });
 
-  std::thread t2([&exchange]() {
+  std::thread t2([&exchange, this]() {
     for (int i = 0; i < 1000; ++i)
       exchange.addOrder("TSLA",
-                        flm::Order(i + 1000, 2000000 + i * 10, 10, flm::BUY_SIDE, "t2"));
+                        flm::Order(i + 1000, 2000000 + i * 10, 10, flm::BUY_SIDE, "t2", sequencer_));
   });
 
   // GOOG: interleaved add+cancel on the same symbol exercises shard ordering
-  std::thread t3([&exchange]() {
+  std::thread t3([&exchange, this]() {
     for (int i = 0; i < 1000; ++i) {
       exchange.addOrder("GOOG",
-                        flm::Order(i + 2000, 1000000 + i * 10, 10, flm::BUY_SIDE, "t3"));
+                        flm::Order(i + 2000, 1000000 + i * 10, 10, flm::BUY_SIDE, "t3", sequencer_));
       exchange.cancelOrder("GOOG", i + 2000);
     }
   });

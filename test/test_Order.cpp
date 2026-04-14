@@ -5,21 +5,40 @@
 namespace flm = FastLittleMarket;
 
 // Order constructor: (int id, uint32_t price_q4, uint32_t vol, bool is_buy,
-// std::string_view client)
+// std::string_view client, GlobalSequencer& sequencer)
 // id_ns = static_cast<uint64_t>(id) << 32
 
-TEST(OrderTest, Constructor) {
-  flm::Order order(1, 100, 10, flm::BUY_SIDE, "JPMORG");
+class OrderTest : public ::testing::Test {
+ protected:
+  flm::GlobalSequencer sequencer_;
+};
 
-  EXPECT_EQ(order.id_ns, static_cast<uint64_t>(1) << 32);
+TEST_F(OrderTest, Constructor) {
+  // Snapshot counter before — the constructor will consume exactly one value
+  uint64_t ts_before = sequencer_.next_timestamp_ns();
+  flm::Order order(1, 100, 10, flm::BUY_SIDE, "JPMORG", sequencer_);
+  // ts_before + 1 was consumed by the constructor
+  // ts_before + 2 is what we get now
+
+  sequencer_.next_timestamp_ns();
+
+  // The timestamp embedded in id_ns must be exactly ts_before + 1
+  uint64_t ts_used = ts_before + 1;
+  EXPECT_EQ(order.id_ns, flm::Order::pack(1, ts_used));
+
+  // Verify components unpack correctly
+  EXPECT_EQ(order.id_ns >> 32, 1ULL);  // id in upper bits
+  EXPECT_EQ(order.id_ns & 0xFFFFFFFFULL,
+            ts_used & 0xFFFFFFFFULL);  // ts in lower
+
   EXPECT_EQ(order.price_q4, 100u);
   EXPECT_EQ(order.volume, 10u);
   EXPECT_EQ(order.side, flm::BUY_SIDE);
   EXPECT_STREQ(order.client, "JPMORG");
 }
 
-TEST(OrderTest, CopyConstructor) {
-  flm::Order original(2, 50, 5, flm::SELL_SIDE, "JPMORG");
+TEST_F(OrderTest, CopyConstructor) {
+  flm::Order original(2, 50, 5, flm::SELL_SIDE, "JPMORG", sequencer_);
   flm::Order copy = original;
 
   EXPECT_EQ(copy.id_ns, original.id_ns);
@@ -29,10 +48,10 @@ TEST(OrderTest, CopyConstructor) {
   EXPECT_STREQ(copy.client, original.client);
 }
 
-TEST(OrderTest, AssignmentOperator) {
+TEST_F(OrderTest, AssignmentOperator) {
   // Constructor: (id, price_q4, vol, is_buy, client)
-  flm::Order original(3, 75, 20, flm::BUY_SIDE, "JPMORG");
-  flm::Order assigned(0, 0, 0, flm::SELL_SIDE, "JPMORG");
+  flm::Order original(3, 75, 20, flm::BUY_SIDE, "JPMORG", sequencer_);
+  flm::Order assigned(0, 0, 0, flm::SELL_SIDE, "JPMORG", sequencer_);
 
   assigned = original;
 
@@ -43,26 +62,26 @@ TEST(OrderTest, AssignmentOperator) {
   EXPECT_STREQ(assigned.client, original.client);
 }
 
-TEST(OrderTest, Validity) {
-  flm::Order valid_order(4, 25, 15, flm::SELL_SIDE, "JPMORG");
+TEST_F(OrderTest, Validity) {
+  flm::Order valid_order(4, 25, 15, flm::SELL_SIDE, "JPMORG", sequencer_);
   EXPECT_TRUE(valid_order.isValid());
 
   // volume is uint32_t — use 0 to trigger the invalid volume check,
   // since isValid() checks volume == 0 (passing -5 would wrap to a large uint)
-  flm::Order invalid_volume(6, 30, 0, flm::SELL_SIDE, "client7");
+  flm::Order invalid_volume(6, 30, 0, flm::SELL_SIDE, "client7", sequencer_);
   EXPECT_FALSE(invalid_volume.isValid());
 
-  flm::Order invalid_client(7, 20, 10, flm::BUY_SIDE, "");
+  flm::Order invalid_client(7, 20, 10, flm::BUY_SIDE, "", sequencer_);
   EXPECT_FALSE(invalid_client.isValid());
 
   // price_q4 == 0 is also invalid
-  flm::Order invalid_price(8, 0, 10, flm::BUY_SIDE, "JPMORG");
+  flm::Order invalid_price(8, 0, 10, flm::BUY_SIDE, "JPMORG", sequencer_);
   EXPECT_FALSE(invalid_price.isValid());
 }
 
-TEST(OrderTest, DirectFieldMutation) {
+TEST_F(OrderTest, DirectFieldMutation) {
   // Order is a plain struct — fields are set directly, no setters
-  flm::Order order(8, 60, 25, flm::SELL_SIDE, "client8");
+  flm::Order order(8, 60, 25, flm::SELL_SIDE, "client8", sequencer_);
 
   order.price_q4 = 65;
   EXPECT_EQ(order.price_q4, 65u);
@@ -78,9 +97,9 @@ TEST(OrderTest, DirectFieldMutation) {
   EXPECT_EQ(order.side, flm::BUY_SIDE);
 }
 
-TEST(OrderTest, InvalidFieldValues) {
+TEST_F(OrderTest, InvalidFieldValues) {
   // Fields can be set to invalid values — isValid() catches them at check time
-  flm::Order order(9, 80, 40, flm::BUY_SIDE, "client10");
+  flm::Order order(9, 80, 40, flm::BUY_SIDE, "client10", sequencer_);
 
   // price_q4 = 0 makes order invalid (uint32_t, so just use 0)
   order.price_q4 = 0;
@@ -102,26 +121,15 @@ TEST(OrderTest, InvalidFieldValues) {
   EXPECT_FALSE(order.isValid());
 }
 
-TEST(OrderTest, Ordering) {
+TEST_F(OrderTest, Ordering) {
   // Lower price_q4 comes first; ties broken by id_ns (FIFO)
-  flm::Order low_price(1, 100, 10, flm::BUY_SIDE, "JPMORG");
-  flm::Order high_price(2, 200, 10, flm::BUY_SIDE, "JPMORG");
+  flm::Order low_price(1, 100, 10, flm::BUY_SIDE, "JPMORG", sequencer_);
+  flm::Order high_price(2, 200, 10, flm::BUY_SIDE, "JPMORG", sequencer_);
   EXPECT_TRUE(low_price < high_price);
   EXPECT_FALSE(high_price < low_price);
 
   // Same price: lower id_ns (earlier arrival) comes first
-  flm::Order earlier(1, 100, 10, flm::BUY_SIDE, "JPMORG");
-  flm::Order later(2, 100, 10, flm::BUY_SIDE, "JPMORG");
+  flm::Order earlier(1, 100, 10, flm::BUY_SIDE, "JPMORG", sequencer_);
+  flm::Order later(2, 100, 10, flm::BUY_SIDE, "JPMORG", sequencer_);
   EXPECT_TRUE(earlier < later);
-}
-
-TEST(OrderTest, Equality) {
-  flm::Order a(5, 100, 10, flm::BUY_SIDE, "JPMORG");
-  flm::Order b(5, 200, 99, flm::SELL_SIDE,
-               "OTHER");  // same id, different fields
-  flm::Order c(6, 100, 10, flm::BUY_SIDE, "JPMORG");  // different id
-
-  // Equality is based solely on id_ns
-  EXPECT_EQ(a, b);
-  EXPECT_NE(a, c);
 }

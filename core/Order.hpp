@@ -4,6 +4,8 @@
 #include <cstring>
 #include <string>
 
+#include "GlobalSequencer.hpp"
+
 namespace FastLittleMarket {
 
 static constexpr uint8_t BUY_SIDE = 1;
@@ -16,6 +18,11 @@ static constexpr uint8_t DAY_TIF = 0;
 static constexpr uint8_t GTC_TIF = 1;
 static constexpr uint8_t IOC_TIF = 2;
 
+struct IdTimestamp {
+  uint32_t id;
+  uint32_t timestamp_ns;
+};
+
 struct Order {        // 32 bytes
   uint64_t id_ns;     // Packed: ID << 32
   uint32_t price_q4;  // Price × 10000
@@ -25,11 +32,20 @@ struct Order {        // 32 bytes
   uint8_t tim : 2;   // Day=0/GTC=1
   char client[8];    // "JPMORG\0"
 
+  static inline uint64_t pack(uint32_t id, uint32_t ts_ns) {
+    return (uint64_t(id) << 32) | ts_ns;
+  }
+
+  static inline IdTimestamp unpack(uint64_t id_ns) {
+    return {static_cast<uint32_t>(id_ns >> 32),
+            static_cast<uint32_t>(id_ns & 0xFFFFFFFFULL)};
+  }
+
   Order() = default;
 
   Order(int id, uint32_t price_q4, uint32_t vol, bool is_buy,
-        std::string_view client)
-      : id_ns(static_cast<uint64_t>(id) << 32),
+        std::string_view client, GlobalSequencer& sequencer)
+      : id_ns(pack(id, sequencer.next_timestamp_ns())),
         price_q4(price_q4),
         volume(vol),
         side(static_cast<uint8_t>(is_buy)) {

@@ -6,15 +6,16 @@
 #include <utility>
 #include <vector>
 
-#include "Order.hpp"
 #include "GlobalSequencer.hpp"
+#include "Order.hpp"
 
 namespace FastLittleMarket {
 
 struct BuyOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
     if (a.price_q4 == b.price_q4) {
-      return a.id_ns > b.id_ns;
+      return Order::unpack(a.id_ns).timestamp_ns >
+             Order::unpack(b.id_ns).timestamp_ns;  // FIFO by timestamp
     }
     return a.price_q4 > b.price_q4;
   }
@@ -23,15 +24,15 @@ struct BuyOrderComparator {
 struct SellOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
     if (a.price_q4 == b.price_q4) {
-      return a.id_ns > b.id_ns;
+      return Order::unpack(a.id_ns).timestamp_ns >
+             Order::unpack(b.id_ns).timestamp_ns;  // FIFO by timestamp
     }
     return a.price_q4 < b.price_q4;
   }
 };
 
 struct PriceSideHash {
-  std::size_t operator()(
-      const std::pair<double, uint8_t>& key) const noexcept {
+  std::size_t operator()(const std::pair<double, uint8_t>& key) const noexcept {
     std::size_t h1 = std::hash<double>{}(key.first);
     std::size_t h2 = std::hash<uint8_t>{}(key.second);
     return h1 ^ (h2 << 1);
@@ -81,7 +82,7 @@ class PriorityQueueAdapter : public OrderQueueInterface {
   }
 
   std::optional<Order> find(uint64_t order_id) const {
-    auto map_it = id_to_iter_.find(order_id << 32);
+    auto map_it = id_to_iter_.find(order_id);
     if (map_it == id_to_iter_.end()) {
       return std::nullopt;
     }
@@ -98,7 +99,7 @@ class PriorityQueueAdapter : public OrderQueueInterface {
   }
 
   bool remove(uint64_t order_id) override {
-    auto map_it = id_to_iter_.find(order_id << 32);
+    auto map_it = id_to_iter_.find(order_id);
     if (map_it == id_to_iter_.end()) return false;
 
     price_sorted_.erase(map_it->second);

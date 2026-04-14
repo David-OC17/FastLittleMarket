@@ -1,38 +1,40 @@
 #pragma once
 
 #include <atomic>
-#include <chrono>
+#include <cstdint>
+
+#ifdef __linux__
+#include <time.h>
+#elif _WIN32
+#include <windows.h>
+#endif
 
 namespace FastLittleMarket {
 
-struct EventId {
-  uint64_t timestamp_shard;
-  uint64_t epoch;
-
-  bool operator<(const EventId& other) const {
-    if (epoch != other.epoch) return epoch < other.epoch;
-    return timestamp_shard < other.timestamp_shard;
-  }
-};
+inline uint64_t os_nano_time() noexcept {
+#ifdef __linux__
+  timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  return ts.tv_sec * 1'000'000'000ULL + ts.tv_nsec;
+#elif _WIN32
+  FILETIME ft;
+  GetSystemTimeAsFileTime(&ft);
+  return (ft.dwHighDateTime * 1'000'000'000ULL + ft.dwLowDateTime * 100 +
+          ft.dwLowDateTime % 100 * 10);
+#endif
+}
 
 class GlobalSequencer {
  private:
-  alignas(64) std::atomic<uint64_t> epoch_counter_{0};
-  alignas(64) uint16_t shard_id_;
-
-  static constexpr uint64_t EPOCH_MASK = (1ULL << 48) - 1;
+  uint64_t epoch_ns;
+  std::atomic<uint64_t> seq_counter{0};
 
  public:
-  explicit GlobalSequencer(uint16_t shard) : shard_id_(shard) {}
+  GlobalSequencer() : epoch_ns(os_nano_time()) {}
 
-  EventId next() {
-    uint64_t epoch = epoch_counter_.fetch_add(1, std::memory_order_relaxed);
-    auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                  std::chrono::steady_clock::now().time_since_epoch())
-                  .count();
-
-    return EventId{(static_cast<uint64_t>(shard_id_) << 48) | (ns & EPOCH_MASK),
-                   epoch};
+  uint64_t next_timestamp_ns() noexcept {
+    uint64_t seq = seq_counter.fetch_add(1, std::memory_order_relaxed);
+    return epoch_ns + seq;
   }
 };
 

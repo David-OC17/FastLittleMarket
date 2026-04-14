@@ -14,12 +14,17 @@ namespace flm = FastLittleMarket;
 // price_q4 is price × 10000 — bid at $100.00 = 1000000, ask at $101.00 =
 // 1010000. A bid/ask cross occurs when bid price_q4 >= ask price_q4.
 
-TEST(OrderBookTest, AddAndTopOfBook) {
+class OrderBookTest : public ::testing::Test {
+ protected:
+  flm::GlobalSequencer sequencer_;
+};
+
+TEST_F(OrderBookTest, AddAndTopOfBook) {
   flm::OrderBook ob;
 
   // bid $100.00, ask $101.00 — no cross, both rest on the book
-  flm::Order order1(1, 1000000, 10, flm::BUY_SIDE, "client1");
-  flm::Order order2(2, 1010000, 5, flm::SELL_SIDE, "client2");
+  flm::Order order1(1, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
+  flm::Order order2(2, 1010000, 5, flm::SELL_SIDE, "client2", sequencer_);
 
   EXPECT_TRUE(ob.addOrder(order1));
   EXPECT_TRUE(ob.addOrder(order2));
@@ -31,21 +36,25 @@ TEST(OrderBookTest, AddAndTopOfBook) {
   EXPECT_EQ(top.ask->id_ns, order2.id_ns);
 }
 
-TEST(OrderBookTest, CancelOrder) {
+TEST_F(OrderBookTest, CancelOrder) {
   flm::OrderBook ob;
 
-  flm::Order order1(1, 1000000, 10, flm::BUY_SIDE, "client1");
-  flm::Order order2(2, 1010000, 5, flm::SELL_SIDE, "client2");
-  flm::Order order3(3, 990000, 15, flm::BUY_SIDE, "client3");
+  flm::Order order1(33, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
+  flm::Order order2(38, 1010000, 5, flm::SELL_SIDE, "client2", sequencer_);
+  flm::Order order3(45, 990000, 15, flm::BUY_SIDE, "client3", sequencer_);
 
   ob.addOrder(order1);
-  ob.addOrder(order2);
+  ob.addOrder(order2); // Expect no match with order1, as $100.00 < $101.00
 
-  EXPECT_TRUE(ob.cancelOrder(1));
+  const uint64_t order1_id_ns = order1.id_ns;
+  const uint64_t order2_id_ns = order2.id_ns;
+  const uint64_t order3_id_ns = order3.id_ns;
+
+  EXPECT_TRUE(ob.cancelOrder(order1_id_ns));
   auto top = ob.getTopOfBook();
   EXPECT_FALSE(top.hasBid());
 
-  EXPECT_TRUE(ob.cancelOrder(2));
+  EXPECT_TRUE(ob.cancelOrder(order2_id_ns));
   EXPECT_FALSE(ob.cancelOrder(999));  // non-existent order
 
   ob.addOrder(order3);
@@ -53,15 +62,15 @@ TEST(OrderBookTest, CancelOrder) {
   top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
   EXPECT_FALSE(top.hasAsk());
-  EXPECT_EQ(top.bid->id_ns, order3.id_ns);
+  EXPECT_EQ(top.bid->id_ns, order3_id_ns);
 }
 
-TEST(OrderBookTest, MatchOrders) {
+TEST_F(OrderBookTest, MatchOrders) {
   flm::OrderBook ob;
 
   // bid at $100.00, ask at $99.00 — prices cross, matching occurs
-  flm::Order bid_order(1, 1000000, 10, flm::BUY_SIDE, "client1");
-  flm::Order ask_order(2, 990000, 5, flm::SELL_SIDE, "client2");
+  flm::Order bid_order(1, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
+  flm::Order ask_order(2, 990000, 5, flm::SELL_SIDE, "client2", sequencer_);
 
   EXPECT_TRUE(ob.addOrder(bid_order));
   EXPECT_TRUE(ob.addOrder(ask_order));
@@ -73,12 +82,12 @@ TEST(OrderBookTest, MatchOrders) {
   EXPECT_EQ(top.bid->volume, 5u);
 }
 
-TEST(OrderBookTest, FullMatchClearsBothSides) {
+TEST_F(OrderBookTest, FullMatchClearsBothSides) {
   flm::OrderBook ob;
 
   // Equal volumes — both sides fully consumed
-  flm::Order bid_order(1, 1000000, 10, flm::BUY_SIDE, "client1");
-  flm::Order ask_order(2, 990000, 10, flm::SELL_SIDE, "client2");
+  flm::Order bid_order(1, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
+  flm::Order ask_order(2, 990000, 10, flm::SELL_SIDE, "client2", sequencer_);
 
   ob.addOrder(bid_order);
   ob.addOrder(ask_order);
@@ -88,19 +97,22 @@ TEST(OrderBookTest, FullMatchClearsBothSides) {
   EXPECT_FALSE(top.hasAsk());
 }
 
-TEST(OrderBookTest, AddAndGetOrder) {
+TEST_F(OrderBookTest, AddAndGetOrder) {
   flm::OrderBook ob;
 
   // No cross: bid $100.00, ask $101.00
-  flm::Order order1(1, 1000000, 10, flm::BUY_SIDE, "client1");
-  flm::Order order2(2, 1010000, 5, flm::SELL_SIDE, "client2");
+  flm::Order order1(1, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
+  flm::Order order2(2, 1010000, 5, flm::SELL_SIDE, "client2", sequencer_);
 
   ob.addOrder(order1);
   ob.addOrder(order2);
 
+  const uint64_t order1_id_ns = order1.id_ns;
+  const uint64_t order2_id_ns = order2.id_ns;
+
   // getOrder takes the plain integer id
-  auto retrieved_order1 = ob.getOrder(1);
-  auto retrieved_order2 = ob.getOrder(2);
+  auto retrieved_order1 = ob.getOrder(order1_id_ns);
+  auto retrieved_order2 = ob.getOrder(order2_id_ns);
 
   EXPECT_TRUE(retrieved_order1.has_value());
   EXPECT_TRUE(retrieved_order2.has_value());
@@ -109,7 +121,7 @@ TEST(OrderBookTest, AddAndGetOrder) {
   EXPECT_EQ(retrieved_order2.value(), order2);
 }
 
-TEST(OrderBookTest, GetNonExistentOrder) {
+TEST_F(OrderBookTest, GetNonExistentOrder) {
   flm::OrderBook ob;
 
   EXPECT_FALSE(ob.getOrder(999).has_value());

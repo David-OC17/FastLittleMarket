@@ -49,6 +49,7 @@ if(BUILD_TESTS)
     test/test_PriorityQueueAdapter.cpp
     test/test_Exchange.cpp
     test/test_ThreadPool.cpp
+    test/test_GlobalSequencer.cpp
   )
 
   target_link_libraries(tests

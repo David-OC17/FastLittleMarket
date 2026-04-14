@@ -12,29 +12,37 @@ namespace flm = FastLittleMarket;
 
 using PQ = flm::PriorityQueueAdapter<flm::BuyOrderComparator>;
 
-TEST(PriorityQueueAdapterTest, PopReturnsFalseWhenEmpty) {
+class PriorityQueuesAdapterTest : public ::testing::Test {
+ protected:
+  flm::GlobalSequencer sequencer_;
+};
+
+TEST_F(PriorityQueuesAdapterTest, PopReturnsFalseWhenEmpty) {
   PQ pq;
 
   EXPECT_FALSE(pq.pop());
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapterTest, PopReturnsTrueWhenNotEmpty) {
+TEST_F(PriorityQueuesAdapterTest, PopReturnsTrueWhenNotEmpty) {
   PQ pq;
 
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));
+  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_));
 
   EXPECT_TRUE(pq.pop());
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapterTest, MultiplePopsMaintainConsistency) {
+TEST_F(PriorityQueuesAdapterTest, MultiplePopsMaintainConsistency) {
   PQ pq;
 
   // BuyOrderComparator: highest price_q4 first; ties broken by lowest id_ns
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));  // $100.00
-  pq.push(flm::Order(2, 1100000, 10, flm::BUY_SIDE, "c2"));  // $110.00 — top
-  pq.push(flm::Order(3, 1050000, 10, flm::BUY_SIDE, "c3"));  // $105.00
+  pq.push(
+      flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_));  // $100.00
+  pq.push(flm::Order(2, 1100000, 10, flm::BUY_SIDE, "c2",
+                     sequencer_));  // $110.00 — top
+  pq.push(
+      flm::Order(3, 1050000, 10, flm::BUY_SIDE, "c3", sequencer_));  // $105.00
 
   EXPECT_TRUE(pq.pop());  // removes id=2 ($110.00)
   EXPECT_TRUE(pq.pop());  // removes id=3 ($105.00)
@@ -44,87 +52,103 @@ TEST(PriorityQueueAdapterTest, MultiplePopsMaintainConsistency) {
   EXPECT_FALSE(pq.pop());  // now empty
 }
 
-TEST(PriorityQueueAdapterTest, EmptyInitially) {
+TEST_F(PriorityQueuesAdapterTest, EmptyInitially) {
   PQ pq;
   EXPECT_TRUE(pq.empty());
   EXPECT_FALSE(pq.top().has_value());
 }
 
-TEST(PriorityQueueAdapterTest, PushAndTop) {
+TEST_F(PriorityQueuesAdapterTest, PushAndTop) {
   PQ pq;
 
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));  // $100.00
-  pq.push(flm::Order(2, 1050000, 10, flm::BUY_SIDE, "c2"));  // $105.00 — higher, goes to top
+  pq.push(
+      flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_));  // $100.00
+  pq.push(flm::Order(2, 1050000, 10, flm::BUY_SIDE, "c2",
+                     sequencer_));  // $105.00 — higher, goes to top
 
   ASSERT_TRUE(pq.top().has_value());
   // BuyOrderComparator puts highest price first; id=2 has the higher price
-  EXPECT_EQ(pq.top()->id_ns, static_cast<uint64_t>(2) << 32);
+  EXPECT_EQ(flm::Order::unpack(pq.top()->id_ns).id, static_cast<uint32_t>(2));
 }
 
-TEST(PriorityQueueAdapterTest, PushInvalidOrderIgnored) {
+TEST_F(PriorityQueuesAdapterTest, PushInvalidOrderIgnored) {
   PQ pq;
 
   // volume=0 makes isValid() return false; push() rejects invalid orders
-  pq.push(flm::Order(1, 1000000, 0, flm::BUY_SIDE, "c1"));
+  pq.push(flm::Order(1, 1000000, 0, flm::BUY_SIDE, "c1", sequencer_));
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapterTest, FindExistingAndMissing) {
+TEST_F(PriorityQueuesAdapterTest, FindExistingAndMissing) {
   PQ pq;
 
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));
+  flm::Order order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_);
+  pq.push(order);
+
+  const uint64_t order_id_ns = order.id_ns;
 
   // find() takes the raw int order_id, not id_ns
-  auto found = pq.find(1);
+  auto found = pq.find(order_id_ns);
   ASSERT_TRUE(found.has_value());
-  EXPECT_EQ(found->id_ns, static_cast<uint64_t>(1) << 32);
+  EXPECT_EQ(flm::Order::unpack(found->id_ns).id, static_cast<uint32_t>(1));
 
   EXPECT_FALSE(pq.find(999).has_value());
 }
 
-TEST(PriorityQueueAdapterTest, PopRemovesTop) {
+TEST_F(PriorityQueuesAdapterTest, PopRemovesTop) {
   PQ pq;
 
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));  // $100.00
-  pq.push(flm::Order(2, 1050000, 10, flm::BUY_SIDE, "c2"));  // $105.00 — top
+  pq.push(
+      flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_));  // $100.00
+  pq.push(flm::Order(2, 1050000, 10, flm::BUY_SIDE, "c2",
+                     sequencer_));  // $105.00 — top
 
-  ASSERT_EQ(pq.top()->id_ns, static_cast<uint64_t>(2) << 32);
+  ASSERT_EQ(flm::Order::unpack(pq.top()->id_ns).id, static_cast<uint32_t>(2));
+
   pq.pop();
 
   ASSERT_TRUE(pq.top().has_value());
-  EXPECT_EQ(pq.top()->id_ns, static_cast<uint64_t>(1) << 32);
+  EXPECT_EQ(flm::Order::unpack(pq.top()->id_ns).id, static_cast<uint32_t>(1));
 }
 
-TEST(PriorityQueueAdapterTest, PopOnEmptyDoesNothing) {
+TEST_F(PriorityQueuesAdapterTest, PopOnEmptyDoesNothing) {
   PQ pq;
 
   EXPECT_NO_THROW(pq.pop());
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapterTest, RemoveExistingOrder) {
+TEST_F(PriorityQueuesAdapterTest, RemoveExistingOrder) {
   PQ pq;
 
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));
+  flm::Order order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_);
+  pq.push(order);
 
-  EXPECT_TRUE(pq.remove(1));
+  const uint64_t order_id_ns = order.id_ns;
+
+  EXPECT_TRUE(pq.remove(order_id_ns));
   EXPECT_TRUE(pq.empty());
 }
 
-TEST(PriorityQueueAdapterTest, RemoveNonExistingOrder) {
+TEST_F(PriorityQueuesAdapterTest, RemoveNonExistingOrder) {
   PQ pq;
 
   EXPECT_FALSE(pq.remove(42));
 }
 
-TEST(PriorityQueueAdapterTest, RemoveUpdatesTopCorrectly) {
+TEST_F(PriorityQueuesAdapterTest, RemoveUpdatesTopCorrectly) {
   PQ pq;
 
-  pq.push(flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1"));  // $100.00
-  pq.push(flm::Order(2, 1100000, 10, flm::BUY_SIDE, "c2"));  // $110.00 — top
+  flm::Order order2(2, 1100000, 10, flm::BUY_SIDE, "c2", sequencer_);
 
-  EXPECT_TRUE(pq.remove(2));
+  pq.push(
+      flm::Order(1, 1000000, 10, flm::BUY_SIDE, "c1", sequencer_));  // $100.00
+  pq.push(order2);  // $110.00 — top
+
+  const uint64_t order2_id_ns = order2.id_ns;
+
+  EXPECT_TRUE(pq.remove(order2_id_ns));
 
   ASSERT_TRUE(pq.top().has_value());
-  EXPECT_EQ(pq.top()->id_ns, static_cast<uint64_t>(1) << 32);
+  EXPECT_EQ(flm::Order::unpack(pq.top()->id_ns).id, static_cast<uint32_t>(1));
 }
