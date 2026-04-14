@@ -24,7 +24,7 @@ struct IdTimestamp {
 };
 
 struct Order {        // 32 bytes
-  uint64_t id_ns;     // Packed: ID << 32
+  uint64_t id_ns;     // Packed: ID << 32 | Timestamp
   uint32_t price_q4;  // Price × 10000
   uint32_t volume;
   uint8_t side : 1;  // Buy=1/Sell=0
