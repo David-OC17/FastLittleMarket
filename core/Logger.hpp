@@ -1,32 +1,68 @@
-#include <atomic>
-#include <chrono>
+#pragma once
 
-#include "EventType.hpp"
-#include "GlobalSequencer.hpp"
-#include "Order.hpp"
+#include "quill/Backend.h"
+#include "quill/Frontend.h"
+#include "quill/sinks/FileSink.h"
+
+#define QUILL_DISABLE_NON_PREFIXED_MACROS
+
+#include "quill/LogMacros.h"
 #include "quill/Logger.h"
-#include "quill/SimpleSetup.h"
 
 namespace FastLittleMarket {
 
-class ExchangeLogger {
- public:
-  void logEvent(EventId seq_id, EventType type, const std::string& symbol,
-                const Order& order) {
-    LOG_INFO(
-        "EVENT|seq={:020}|ts={}|shard={}|type={} sym={} id={} side={} p={} "
-        "v={}",
-        seq_id.epoch, (seq_id.timestamp_shard >> 16) & 0xFFFFFFFFFFFFULL,
-        seq_id.timestamp_shard >> 48, EventTypeNames[static_cast<size_t>(type)],
-        symbol, order.id_ns >> 32, order.side, order.price_q4 / 10000.0,
-        order.volume);
-  };
+static constexpr char* QUILL_LOG_FILE = "exchange.log";
 
-  void logError(const std::string& message) {
-    // TODO: consider adding more context to error logs, such as timestamps,
-    // shard info, etc.
-    LOG_ERROR("ERROR|{}", message);
+// TODO: Create logger for each event type (ADD, CANCEL, MATCH)
+
+#define LOG_INFO(fmt, ...) QUILL_LOG_INFO(infoLogger_, fmt, ##__VA_ARGS__)
+#define LOG_WARNING(fmt, ...) \
+  QUILL_LOG_WARNING(warningLogger_, fmt, ##__VA_ARGS__)
+#define LOG_ERROR(fmt, ...) QUILL_LOG_ERROR(errorLogger_, fmt, ##__VA_ARGS__)
+
+class ExchangeLogger {
+ private:
+  quill::Logger* infoLogger_;
+  quill::Logger* warningLogger_;
+  quill::Logger* errorLogger_;
+
+ public:
+  ExchangeLogger() {
+    quill::Backend::start();
+    auto file_sink = quill::Frontend::create_or_get_sink<quill::FileSink>(
+        QUILL_LOG_FILE,
+        []() {
+          quill::FileSinkConfig cfg;
+          cfg.set_open_mode('w');
+          cfg.set_filename_append_option(
+              quill::FilenameAppendOption::StartDateTime);
+          return cfg;
+        }(),
+        quill::FileEventNotifier{});
+
+    infoLogger_ = quill::Frontend::create_or_get_logger(
+        "root", std::move(file_sink),
+        quill::PatternFormatterOptions{
+            "%(time) [%(thread_id)] %(short_source_location:<28) "
+            "LOG_%(log_level:<9) %(logger:<12) %(message)",
+            "%H:%M:%S.%Qns", quill::Timezone::GmtTime});
+
+    warningLogger_ = quill::Frontend::create_or_get_logger(
+        "root", std::move(file_sink),
+        quill::PatternFormatterOptions{
+            "%(time) [%(thread_id)] %(short_source_location:<28) "
+            "LOG_%(log_level:<9) %(logger:<12) %(message)",
+            "%H:%M:%S.%Qns", quill::Timezone::GmtTime});
+
+    errorLogger_ = quill::Frontend::create_or_get_logger(
+        "root", std::move(file_sink),
+        quill::PatternFormatterOptions{
+            "%(time) [%(thread_id)] %(short_source_location:<28) "
+            "LOG_%(log_level:<9) %(logger:<12) %(message)",
+            "%H:%M:%S.%Qns", quill::Timezone::GmtTime});
   }
-}
+
+  ~ExchangeLogger() = default;
+};
 
 }  // namespace FastLittleMarket
