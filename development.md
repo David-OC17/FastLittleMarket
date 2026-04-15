@@ -26,7 +26,7 @@ Some characteristics of the system are:
 * [X] Basic OrderBook object
 * [X] Handle adding orders
 * [X] Handle remove orders
-* [ ] Handle modify orders
+* [X] Handle modify orders
 * [X] Handle query book (top)
 * [X] Migrate to 32 bit packed struct
 
@@ -74,6 +74,14 @@ _Order routing_
 5. Market data flow
 
 6. Basic client
+
+7. Advanced reporting
+  + Private stream (per client)
+    - Full order lifecycle
+    - Includes rejects
+  + Public market data
+    - Trades
+    - Book updates (aggregated)
 
 ## Upgrades
 

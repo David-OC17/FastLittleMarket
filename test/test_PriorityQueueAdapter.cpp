@@ -4,12 +4,6 @@
 
 namespace flm = FastLittleMarket;
 
-// Constructor: Order(int id, uint32_t price_q4, uint32_t vol, bool is_buy,
-//                   std::string_view client)
-// id_ns = static_cast<uint64_t>(id) << 32
-// price_q4 is uint32_t — pass integer prices (e.g. 1000000 = $100.00 at ×10000)
-// volume is uint32_t — passing 0 triggers isValid() == false, not negatives
-
 using PQ = flm::PriorityQueueAdapter<flm::BuyOrderComparator>;
 
 class PriorityQueuesAdapterTest : public ::testing::Test {

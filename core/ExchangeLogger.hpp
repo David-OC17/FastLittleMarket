@@ -9,7 +9,8 @@
 
 namespace FastLittleMarket {
 
-static constexpr char QUILL_LOG_FILE[] = "./log/exchange.log";
+static constexpr char QUILL_LOG_FILE[] =
+    "/home/david/Documents/FastLittleMarket/log/exchange.log";
 
 class ExchangeLogger {
  private:
@@ -33,8 +34,10 @@ class ExchangeLogger {
         []() {
           quill::FileSinkConfig cfg;
           cfg.set_open_mode('w');
+#ifndef TEST_LOGGING
           cfg.set_filename_append_option(
               quill::FilenameAppendOption::StartDateTime);
+#endif
           return cfg;
         }(),
         quill::FileEventNotifier{});

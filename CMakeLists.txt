@@ -18,6 +18,7 @@ add_library(Core STATIC
   core/OrderBook.cpp
   core/Exchange.cpp
   core/ThreadPool.cpp
+  core/ExchangeLogger.cpp
 )
 
 target_include_directories(Core PUBLIC
@@ -27,6 +28,7 @@ target_include_directories(Core PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
   ${CMAKE_CURRENT_SOURCE_DIR}/external/concurrentqueue
   ${CMAKE_CURRENT_SOURCE_DIR}/external/quill
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/quill/include
 )
 
 target_link_libraries(Core
@@ -43,6 +45,13 @@ option(BUILD_TESTS "Build unit tests" ON)
 if(BUILD_TESTS)
   enable_testing()
 
+  # set(CMAKE_BUILD_TYPE Debug)
+
+  # if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  #     add_compile_options(-fprofile-arcs -ftest-coverage -O0 -g)
+  #     add_link_options(-fprofile-arcs -ftest-coverage -lgcov)
+  # endif()
+
   add_executable(tests
     test/test_Order.cpp
     test/test_OrderBook.cpp
@@ -50,6 +59,7 @@ if(BUILD_TESTS)
     test/test_Exchange.cpp
     test/test_ThreadPool.cpp
     test/test_GlobalSequencer.cpp
+    test/test_ExchangeLogger.cpp
   )
 
   target_link_libraries(tests
@@ -66,6 +76,8 @@ if(BUILD_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/data
     ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
   )
+
+  target_compile_definitions(Core PRIVATE TEST_LOGGING)
 
   include(GoogleTest)
   gtest_discover_tests(tests)

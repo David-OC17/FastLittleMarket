@@ -7,10 +7,6 @@
 
 namespace flm = FastLittleMarket;
 
-// Constructor: Order(int id, uint32_t price_q4, uint32_t vol, bool is_buy,
-//                   std::string_view client)
-// newOrder / cancelOrder / getOrder all use plain integer order ids, not id_ns.
-
 class ExchangeTest : public ::testing::Test {
  protected:
   flm::GlobalSequencer sequencer_;
