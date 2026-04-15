@@ -98,7 +98,6 @@ TEST_F(OrderTest, DirectFieldMutation) {
 }
 
 TEST_F(OrderTest, InvalidFieldValues) {
-  // Fields can be set to invalid values — isValid() catches them at check time
   flm::Order order(9, 80, 40, flm::BUY_SIDE, "client10", sequencer_);
 
   // price_q4 = 0 makes order invalid (uint32_t, so just use 0)
@@ -119,6 +118,10 @@ TEST_F(OrderTest, InvalidFieldValues) {
   order.client[0] = '\0';
   EXPECT_STREQ(order.client, "");
   EXPECT_FALSE(order.isValid());
+}
+
+TEST_F(OrderTest, InvalidNewOrdersFail) {
+
 }
 
 TEST_F(OrderTest, Ordering) {

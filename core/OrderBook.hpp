@@ -128,10 +128,53 @@ struct TopOfBook {
   bool valid() const { return hasBid() && hasAsk(); }
 };
 
+enum class ExecFlags : uint8_t {
+  None            = 0,
+  Accepted        = uint8_t(1) << 0,
+  PartiallyFilled = uint8_t(1) << 1,
+  FullyFilled     = uint8_t(1) << 2,
+  Cancelled       = uint8_t(1) << 3,
+  Rejected        = uint8_t(1) << 4
+};
+
+inline ExecFlags operator|(ExecFlags a, ExecFlags b) {
+  return static_cast<ExecFlags>(
+    static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+}
+
+inline ExecFlags operator&(ExecFlags a, ExecFlags b) {
+  return static_cast<ExecFlags>(
+    static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+}
+
+inline ExecFlags& operator|=(ExecFlags& a, ExecFlags b) {
+  a = a | b;
+  return a;
+}
+
+inline bool hasFlag(ExecFlags flags, ExecFlags f) {
+  return (flags & f) != ExecFlags::None;
+}
+
+inline bool isValid(ExecFlags f) {
+  // Rejected is exclusive
+  if (hasFlag(f, ExecFlags::Rejected))
+    return f == ExecFlags::Rejected;
+  // Can't be both partially and fully filled
+  if (hasFlag(f, ExecFlags::PartiallyFilled) && hasFlag(f, ExecFlags::FullyFilled))
+    return false;
+  // Cancelled and Accepted together is suspect
+  if (hasFlag(f, ExecFlags::Cancelled) && hasFlag(f, ExecFlags::Accepted))
+    return false;
+  return true;
+}
+
 class OrderBook {
  public:
-  bool addOrder(const Order& order);
-  bool cancelOrder(uint64_t order_id);
+  ExecFlags newOrder(const Order& order);
+  ExecFlags cancelOrder(uint64_t order_id);
+  ExecFlags modifyOrder(uint64_t order_id, uint32_t new_price_q4,
+                        uint32_t new_volume, GlobalSequencer& sequencer);
   TopOfBook getTopOfBook() const;
 
   std::optional<Order> getOrder(uint64_t order_id) const;
@@ -147,7 +190,7 @@ class OrderBook {
                      PriceSideEqual>
       volumes_;
 
-  bool matchOrder(Order incoming);
+  ExecFlags matchOrder(Order incoming);
 };
 
 }  // namespace FastLittleMarket

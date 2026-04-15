@@ -44,7 +44,7 @@ _Concurrency model_
 * [X] Agent-parallel → one thread per shard, split symbols/OrderBooks on shards
 
 _Order routing_
-* [X] addOrder(symbol, order) → Find book → Add
+* [X] newOrder(symbol, order) → Find book → Add
 * [X] removeOrder(symbol, order)
 * [X] querySymbol(symbol)
 * Handle incoming orders via lock-free queues per symbol (lock needed to write to queue?)

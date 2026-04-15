@@ -45,7 +45,7 @@ class Exchange {
   static Exchange& getInstance();
 
   size_t getShard(const std::string& symbol) const;
-  void addOrder(const std::string& symbol, Order order);
+  void newOrder(const std::string& symbol, Order order);
   void cancelOrder(const std::string& symbol, uint64_t orderId);
 
   /*

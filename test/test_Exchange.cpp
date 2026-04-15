@@ -9,7 +9,7 @@ namespace flm = FastLittleMarket;
 
 // Constructor: Order(int id, uint32_t price_q4, uint32_t vol, bool is_buy,
 //                   std::string_view client)
-// addOrder / cancelOrder / getOrder all use plain integer order ids, not id_ns.
+// newOrder / cancelOrder / getOrder all use plain integer order ids, not id_ns.
 
 class ExchangeTest : public ::testing::Test {
  protected:
@@ -44,7 +44,7 @@ TEST_F(ExchangeTest, AddAndCancelOrderSingleThread) {
 
   const uint64_t orderId = order.id_ns;
 
-  exchange.addOrder(symbol, order);
+  exchange.newOrder(symbol, order);
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   EXPECT_TRUE(exchange.getOrder(symbol, orderId).has_value());
@@ -64,20 +64,20 @@ TEST_F(ExchangeTest, ParallelSymbolProcessing) {
   // exercise independent shard workers in parallel.
   std::thread t1([&exchange, this]() {
     for (int i = 0; i < 1000; ++i)
-      exchange.addOrder("AAPL",
+      exchange.newOrder("AAPL",
                         flm::Order(i, 1000000 + i * 10, 10, flm::BUY_SIDE, "t1", sequencer_));
   });
 
   std::thread t2([&exchange, this]() {
     for (int i = 0; i < 1000; ++i)
-      exchange.addOrder("TSLA",
+      exchange.newOrder("TSLA",
                         flm::Order(i + 1000, 2000000 + i * 10, 10, flm::BUY_SIDE, "t2", sequencer_));
   });
 
   // GOOG: interleaved add+cancel on the same symbol exercises shard ordering
   std::thread t3([&exchange, this]() {
     for (int i = 0; i < 1000; ++i) {
-      exchange.addOrder("GOOG",
+      exchange.newOrder("GOOG",
                         flm::Order(i + 2000, 1000000 + i * 10, 10, flm::BUY_SIDE, "t3", sequencer_));
       exchange.cancelOrder("GOOG", i + 2000);
     }

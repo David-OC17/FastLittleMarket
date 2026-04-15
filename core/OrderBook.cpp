@@ -17,18 +17,19 @@ bool OrderBook::canCross(const Order& incoming) const {
 
 bool OrderBook::priceCrosses(const Order& incoming,
                              const Order& opposite) const {
-  return (incoming.side == BUY_SIDE)
-             ? (opposite.price_q4 <= incoming.price_q4)
-             : (opposite.price_q4 >= incoming.price_q4);
+  return (incoming.side == BUY_SIDE) ? (opposite.price_q4 <= incoming.price_q4)
+                                     : (opposite.price_q4 >= incoming.price_q4);
 }
 
-// TODO: change return type to reflect if order was fully matched, partially matched, or added to book
-bool OrderBook::addOrder(const Order& order) {
-  if (canCross(order)) {
-    if (!matchOrder(order)) {
-      return false;
-    }
+ExecFlags OrderBook::newOrder(const Order& order) {
+  if (!order.isValid()) return ExecFlags::Rejected;
 
+  auto flags = ExecFlags::None;
+  if (canCross(order)) {
+    flags = matchOrder(order);
+    if (hasFlag(flags, ExecFlags::Rejected)) {
+      return ExecFlags::Rejected;
+    }
   } else {
     auto* own_queue = (order.side == BUY_SIDE)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)
@@ -37,15 +38,14 @@ bool OrderBook::addOrder(const Order& order) {
     assert(own_queue->isValid());
 
     own_queue->push(order);
-    volumes_[std::make_pair(order.price_q4, order.side)] +=
-        order.volume;
+    volumes_[std::make_pair(order.price_q4, order.side)] += order.volume;
   }
 
-  return true;
+  return flags | ExecFlags::Accepted;
 }
 
-bool OrderBook::matchOrder(Order incoming) {
-  if (!incoming.isValid()) return false;
+ExecFlags OrderBook::matchOrder(Order incoming) {
+  if (!incoming.isValid()) return ExecFlags::Rejected;
 
   auto* opposite_queue = (incoming.side == BUY_SIDE)
                              ? static_cast<OrderQueueInterface*>(&sell_orders_)
@@ -53,16 +53,13 @@ bool OrderBook::matchOrder(Order incoming) {
 
   assert(opposite_queue->isValid());
 
-  if (opposite_queue->empty()) return false;
-
   while (incoming.isValid() && !opposite_queue->empty()) {
     Order best_opposite = opposite_queue->top().value();
 
     if (!priceCrosses(incoming, best_opposite)) break;
     opposite_queue->pop();
 
-    const int trade_volume =
-        std::min(incoming.volume, best_opposite.volume);
+    const int trade_volume = std::min(incoming.volume, best_opposite.volume);
 
     incoming.volume -= trade_volume;
     best_opposite.volume -= trade_volume;
@@ -72,37 +69,56 @@ bool OrderBook::matchOrder(Order incoming) {
     }
   }
 
-  if (incoming.isValid()) {
-    auto* own_queue = (incoming.side == BUY_SIDE)
-                          ? static_cast<OrderQueueInterface*>(&buy_orders_)
-                          : static_cast<OrderQueueInterface*>(&sell_orders_);
-    assert(own_queue->isValid());
-    own_queue->push(std::move(incoming));
+  if (incoming.volume <= 0) {
+    return ExecFlags::FullyFilled;
   }
 
-  return true;
+  auto* own_queue = (incoming.side == BUY_SIDE)
+                        ? static_cast<OrderQueueInterface*>(&buy_orders_)
+                        : static_cast<OrderQueueInterface*>(&sell_orders_);
+  assert(own_queue->isValid());
+  own_queue->push(std::move(incoming));
+
+  return ExecFlags::PartiallyFilled;
 }
 
-bool OrderBook::cancelOrder(uint64_t order_id) {
+ExecFlags OrderBook::cancelOrder(uint64_t order_id) {
   if (auto it = buy_orders_.find(order_id); it.has_value()) {
     auto order = it.value();
 
-    if (!buy_orders_.remove(order_id)) return false;
+    if (!buy_orders_.remove(order_id)) return ExecFlags::Rejected;
 
     volumes_[{order.price_q4, BUY_SIDE}] -= order.volume;
-    return true;
+    return ExecFlags::Cancelled;
   }
 
   else if (auto it = sell_orders_.find(order_id); it.has_value()) {
     auto order = it.value();
 
-    if (!sell_orders_.remove(order_id)) return false;
+    if (!sell_orders_.remove(order_id)) return ExecFlags::Rejected;
 
     volumes_[{order.price_q4, SELL_SIDE}] -= order.volume;
-    return true;
+    return ExecFlags::Cancelled;
   }
 
-  return false;
+  return ExecFlags::Rejected;
+}
+
+ExecFlags OrderBook::modifyOrder(uint64_t order_id, uint32_t new_price_q4,
+                                 uint32_t new_volume,
+                                 GlobalSequencer& sequencer) {
+  auto it = buy_orders_.find(order_id);
+  if (!it.has_value()) return ExecFlags::Rejected;
+
+  auto order = it.value();
+
+  auto flags = cancelOrder(order_id);
+  if (hasFlag(flags, ExecFlags::Rejected)) return flags;
+
+  Order new_order(Order::unpack(order.id_ns).id, new_price_q4, new_volume,
+                  order.side == BUY_SIDE, order.client, sequencer);
+
+  return flags | newOrder(new_order);
 }
 
 TopOfBook OrderBook::getTopOfBook() const {
