@@ -6,7 +6,7 @@
 namespace FastLittleMarket {
 
 Exchange& Exchange::getInstance() {
-  thread_local Exchange inst;
+  static Exchange inst;
 
   return inst;
 }
