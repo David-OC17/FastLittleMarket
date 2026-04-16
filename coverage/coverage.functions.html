@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>GCC Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="coverage.css"/>
+  </head>
+
+  <body>
+    <header>
+      <h1>GCC Code Coverage Report</h1>
+
+      <hr/>
+
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>core/</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2026-04-15 20:13:52</td>
+    </tr>
+  </table>
+</div>
+
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>225</td>
+      <td>241</td>
+      <td class="coverage-high">93.4%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>58</td>
+      <td>60</td>
+      <td class="coverage-high">96.7%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>171</td>
+      <td>324</td>
+      <td class="coverage-low">52.8%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+
+      <hr/>
+    </header>
+
+    <nav>
+    </nav>
+
+    <main>
+<table class="listOfFunctions">
+  <tr>
+    <th>Function (File:Line)</th>
+    <th>Call count</th>
+    <th>Block coverage</th>
+  </tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l15">FastLittleMarket::BuyOrderComparator::operator()(FastLittleMarket::Order const&amp;, FastLittleMarket::Order const&amp;) const (core/OrderBook.hpp:15)</a></td><td>called 55205 times, returned 55205 times</td><td>50.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l28">FastLittleMarket::Exchange::cancelOrder(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, unsigned long) (core/Exchange.cpp:28)</a></td><td>called 2002 times, returned 2002 times</td><td>50.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l31">FastLittleMarket::Exchange::cancelOrder(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, unsigned long)::{lambda()#1}::operator()() const (core/Exchange.cpp:31)</a></td><td>called 1176 times, returned 1176 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l8">FastLittleMarket::Exchange::getInstance() (core/Exchange.cpp:8)</a></td><td>called 10 times, returned 10 times</td><td>82.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l40">FastLittleMarket::Exchange::getOrder(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, unsigned long) const (core/Exchange.cpp:40)</a></td><td>called 6 times, returned 6 times</td><td>93.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l14">FastLittleMarket::Exchange::getShard(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) const (core/Exchange.cpp:14)</a></td><td>called 7582 times, returned 7657 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l18">FastLittleMarket::Exchange::newOrder(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, FastLittleMarket::Order) (core/Exchange.cpp:18)</a></td><td>called 5722 times, returned 5664 times</td><td>50.0%</td></tr>
+  <tr><td><a href="coverage.Exchange.cpp.a1550fe4e2155197ccd6c47e378db1f0.html#l21">FastLittleMarket::Exchange::newOrder(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, FastLittleMarket::Order)::{lambda()#1}::operator()() const (core/Exchange.cpp:21)</a></td><td>called 3740 times, returned 3740 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.ExchangeLogger.hpp.834573f0b23b0d883fe117b35d045a5d.html#l29">FastLittleMarket::ExchangeLogger::ExchangeLogger() (core/ExchangeLogger.hpp:29)</a></td><td>called 57 times, returned 57 times</td><td>48.0%</td></tr>
+  <tr><td><a href="coverage.ExchangeLogger.hpp.834573f0b23b0d883fe117b35d045a5d.html#l34">FastLittleMarket::ExchangeLogger::ExchangeLogger()::{lambda()#1}::operator()() const (core/ExchangeLogger.hpp:34)</a></td><td>called 57 times, returned 57 times</td><td>83.0%</td></tr>
+  <tr><td><a href="coverage.ExchangeLogger.cpp.569db340050bc49e126b10ed2c26c2b8.html#l10">FastLittleMarket::ExchangeLogger::getGlobalLogger() const (core/ExchangeLogger.cpp:10)</a></td><td>called 57 times, returned 57 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.ExchangeLogger.cpp.569db340050bc49e126b10ed2c26c2b8.html#l5">FastLittleMarket::ExchangeLogger::getInstance() (core/ExchangeLogger.cpp:5)</a></td><td>called 57 times, returned 57 times</td><td>82.0%</td></tr>
+  <tr><td><a href="coverage.ExchangeLogger.hpp.834573f0b23b0d883fe117b35d045a5d.html#l19">FastLittleMarket::ExchangeLogger::make_logger(char const*, std::shared_ptr&lt;quill::v11::Sink&gt;) (core/ExchangeLogger.hpp:19)</a></td><td>called 57 times, returned 57 times</td><td>52.0%</td></tr>
+  <tr><td><a href="coverage.ExchangeLogger.hpp.834573f0b23b0d883fe117b35d045a5d.html#l53">FastLittleMarket::ExchangeLogger::~ExchangeLogger() (core/ExchangeLogger.hpp:53)</a></td><td>called 57 times, returned 57 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.GlobalSequencer.hpp.54245bd3feff6956ad4252df5878a8d2.html#l33">FastLittleMarket::GlobalSequencer::GlobalSequencer() (core/GlobalSequencer.hpp:33)</a></td><td>called 106 times, returned 106 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.GlobalSequencer.hpp.54245bd3feff6956ad4252df5878a8d2.html#l35">FastLittleMarket::GlobalSequencer::next_timestamp_ns() (core/GlobalSequencer.hpp:35)</a></td><td>called 2151706 times, returned 2151706 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l46">FastLittleMarket::Order::Order(int, unsigned int, unsigned int, bool, std::basic_string_view&lt;char, std::char_traits&lt;char&gt; &gt;, FastLittleMarket::GlobalSequencer&amp;) (core/Order.hpp:46)</a></td><td>called 5711 times, returned 6053 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l94">FastLittleMarket::Order::isValid() const (core/Order.hpp:94)</a></td><td>called 1512337 times, returned 1512337 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l89">FastLittleMarket::Order::operator&lt;(FastLittleMarket::Order const&amp;) const (core/Order.hpp:89)</a></td><td>called 6 times, returned 6 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l59">FastLittleMarket::Order::operator=(FastLittleMarket::Order const&amp;) (core/Order.hpp:59)</a></td><td>called 2 times, returned 2 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l72">FastLittleMarket::Order::operator=(FastLittleMarket::Order&amp;&amp;) (core/Order.hpp:72)</a></td><td>called 8 times, returned 8 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l83">FastLittleMarket::Order::operator==(FastLittleMarket::Order const&amp;) const (core/Order.hpp:83)</a></td><td>called 6 times, returned 6 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l35">FastLittleMarket::Order::pack(unsigned int, unsigned int) (core/Order.hpp:35)</a></td><td>called 6068 times, returned 6068 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.Order.hpp.71386d274fc02955fe10f93a736f999f.html#l39">FastLittleMarket::Order::unpack(unsigned long) (core/Order.hpp:39)</a></td><td>called 16 times, returned 16 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l7">FastLittleMarket::OrderBook::canCross(FastLittleMarket::Order const&amp;) const (core/OrderBook.cpp:7)</a></td><td>called 3777 times, returned 3777 times</td><td>95.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l85">FastLittleMarket::OrderBook::cancelOrder(unsigned long) (core/OrderBook.cpp:85)</a></td><td>called 1190 times, returned 1190 times</td><td>78.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l128">FastLittleMarket::OrderBook::getOrder(unsigned long) const (core/OrderBook.cpp:128)</a></td><td>called 12 times, returned 12 times</td><td>94.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l124">FastLittleMarket::OrderBook::getTopOfBook() const (core/OrderBook.cpp:124)</a></td><td>called 16 times, returned 16 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l47">FastLittleMarket::OrderBook::matchOrder(FastLittleMarket::Order) (core/OrderBook.cpp:47)</a></td><td>called 4 times, returned 4 times</td><td>67.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l107">FastLittleMarket::OrderBook::modifyOrder(unsigned long, unsigned int, unsigned int, FastLittleMarket::GlobalSequencer&amp;) (core/OrderBook.cpp:107)</a></td><td>called 12 times, returned 12 times</td><td>94.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l24">FastLittleMarket::OrderBook::newOrder(FastLittleMarket::Order const&amp;) (core/OrderBook.cpp:24)</a></td><td>called 3778 times, returned 3815 times</td><td>84.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.cpp.2c6d580f25385d8838fd71f4d1726673.html#l18">FastLittleMarket::OrderBook::priceCrosses(FastLittleMarket::Order const&amp;, FastLittleMarket::Order const&amp;) const (core/OrderBook.cpp:18)</a></td><td>called 24 times, returned 24 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l51">FastLittleMarket::OrderQueueInterface::~OrderQueueInterface() (core/OrderBook.hpp:51)</a></td><td>called 78 times, returned 78 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l43">FastLittleMarket::PriceSideEqual::operator()(std::pair&lt;unsigned int, unsigned char&gt; const&amp;, std::pair&lt;unsigned int, unsigned char&gt; const&amp;) const (core/OrderBook.hpp:43)</a></td><td>called 2584 times, returned 2584 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l35">FastLittleMarket::PriceSideHash::operator()(std::pair&lt;double, unsigned char&gt; const&amp;) const (core/OrderBook.hpp:35)</a></td><td>called 12283 times, returned 12283 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l69">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::empty() const (core/OrderBook.hpp:69)</a></td><td>called 116 times, returned 116 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l84">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::find(unsigned long) const (core/OrderBook.hpp:84)</a></td><td>called 1218 times, returned 1218 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l111">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::isValid() const (core/OrderBook.hpp:111)</a></td><td>called 3767 times, returned 3804 times</td><td>83.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l92">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::pop() (core/OrderBook.hpp:92)</a></td><td>called 20 times, returned 20 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l76">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::push(FastLittleMarket::Order const&amp;) (core/OrderBook.hpp:76)</a></td><td>called 3812 times, returned 3812 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l101">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::remove(unsigned long) (core/OrderBook.hpp:101)</a></td><td>called 18 times, returned 18 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l71">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::BuyOrderComparator&gt;::top() const (core/OrderBook.hpp:71)</a></td><td>called 64 times, returned 64 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l69">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::empty() const (core/OrderBook.hpp:69)</a></td><td>called 3792 times, returned 3792 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l84">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::find(unsigned long) const (core/OrderBook.hpp:84)</a></td><td>called 1184 times, returned 1184 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l111">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::isValid() const (core/OrderBook.hpp:111)</a></td><td>called 10 times, returned 10 times</td><td>50.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l92">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::pop() (core/OrderBook.hpp:92)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l76">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::push(FastLittleMarket::Order const&amp;) (core/OrderBook.hpp:76)</a></td><td>called 10 times, returned 10 times</td><td>89.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l101">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::remove(unsigned long) (core/OrderBook.hpp:101)</a></td><td>called 2 times, returned 2 times</td><td>92.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l71">FastLittleMarket::PriorityQueueAdapter&lt;FastLittleMarket::SellOrderComparator&gt;::top() const (core/OrderBook.hpp:71)</a></td><td>called 28 times, returned 28 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l25">FastLittleMarket::SellOrderComparator::operator()(FastLittleMarket::Order const&amp;, FastLittleMarket::Order const&amp;) const (core/OrderBook.hpp:25)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.ThreadPool.cpp.a6dab3334a97f6a9c0d9a21720369d9b.html#l17">FastLittleMarket::ThreadPool::ThreadPool() (core/ThreadPool.cpp:17)</a></td><td>called 15 times, returned 15 times</td><td>48.0%</td></tr>
+  <tr><td><a href="coverage.ThreadPool.cpp.a6dab3334a97f6a9c0d9a21720369d9b.html#l25">FastLittleMarket::ThreadPool::enqueue(std::function&lt;void ()&gt;, unsigned long) (core/ThreadPool.cpp:25)</a></td><td>called 7675 times, returned 7828 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.ThreadPool.cpp.a6dab3334a97f6a9c0d9a21720369d9b.html#l7">FastLittleMarket::ThreadPool::worker(unsigned long) (core/ThreadPool.cpp:7)</a></td><td>called 60 times, returned -15096 time</td><td>90.0%</td></tr>
+  <tr><td><a href="coverage.ThreadPool.cpp.a6dab3334a97f6a9c0d9a21720369d9b.html#l23">FastLittleMarket::ThreadPool::~ThreadPool() (core/ThreadPool.cpp:23)</a></td><td>called 15 times, returned 15 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l127">FastLittleMarket::TopOfBook::hasAsk() const (core/OrderBook.hpp:127)</a></td><td>called 8 times, returned 8 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l126">FastLittleMarket::TopOfBook::hasBid() const (core/OrderBook.hpp:126)</a></td><td>called 16 times, returned 16 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l155">FastLittleMarket::hasFlag(FastLittleMarket::ExecFlags, FastLittleMarket::ExecFlags) (core/OrderBook.hpp:155)</a></td><td>called 12 times, returned 12 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l145">FastLittleMarket::operator&amp;(FastLittleMarket::ExecFlags, FastLittleMarket::ExecFlags) (core/OrderBook.hpp:145)</a></td><td>called 12 times, returned 12 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.OrderBook.hpp.9c587d852aaa158287a0663bdf2ebe2c.html#l140">FastLittleMarket::operator|(FastLittleMarket::ExecFlags, FastLittleMarket::ExecFlags) (core/OrderBook.hpp:140)</a></td><td>called 3809 times, returned 3809 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.GlobalSequencer.hpp.54245bd3feff6956ad4252df5878a8d2.html#l14">FastLittleMarket::os_nano_time() (core/GlobalSequencer.hpp:14)</a></td><td>called 106 times, returned 106 times</td><td>100.0%</td></tr>
+</table>
+
+      <hr/>
+    </main>
+
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/7.2">GCOVR (Version 7.2)</a>
+    </footer>
+  </body>
+</html>

@@ -7,7 +7,31 @@ Some characteristics of the system are:
 * Durability
 * Robustness to bad clients
 
-## Curren steps
+## Compilation
+```bash
+rm -rf build
+
+cmake -B build -S . \
+  -DCMAKE_C_COMPILER=gcc-13 \
+  -DCMAKE_CXX_COMPILER=g++-13
+
+cmake --build build
+```
+
+```bash
+cd build
+
+gcovr -r .. \
+  --gcov-executable gcov-13 \
+  --filter ../core \
+  --exclude ../test \
+  --exclude '/usr/include/.*' \
+  --exclude '.*external.*' \
+  --gcov-ignore-parse-errors=negative_hits.warn \
+  --html --html-details -o ../coverage/coverage.html
+```
+
+## Current steps
 
 0. Complete ME (logging --> timestamps)
 1. TCP server with Boost.Asio — get raw bytes flowing

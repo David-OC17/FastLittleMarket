@@ -81,7 +81,7 @@ class PriorityQueueAdapter : public OrderQueueInterface {
     return true;
   }
 
-  std::optional<Order> find(uint64_t order_id) const {
+  std::optional<Order> find(uint64_t order_id) const override {
     auto map_it = id_to_iter_.find(order_id);
     if (map_it == id_to_iter_.end()) {
       return std::nullopt;
