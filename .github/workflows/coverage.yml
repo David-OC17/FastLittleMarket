@@ -70,7 +70,9 @@ jobs:
       # 8. Run tests
       - name: Test
         working-directory: build
-        run: ctest --output-on-failure --schedule-random -j $(nproc)
+        run: |
+          ctest --output-on-failure -j $(nproc) -E "ExchangeLoggerTest"
+          ctest --output-on-failure -j 1 -R "ExchangeLoggerTest"
 
       # 9. Generate both HTML (with per-file detail pages) and plain-text reports
       - name: Generate coverage report

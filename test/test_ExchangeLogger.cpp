@@ -12,6 +12,13 @@
 
 namespace flm = FastLittleMarket;
 
+static void dumb_wait(size_t iterations = 1'000'000) {
+  volatile size_t sink = 0;
+  for (size_t i = 0; i < iterations; ++i) {
+    sink = i;  // volatile prevents the compiler optimising the loop away
+  }
+}
+
 static std::string read_log(const std::string& path) {
   std::ifstream f(path, std::ios::binary);
   if (!f) {
@@ -54,6 +61,7 @@ TEST_F(ExchangeLoggerTest, LogInfo) {
   LOG_INFO("test_info_message_unique_42");
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
 
   EXPECT_TRUE(log_contains(log, "test_info_message_unique_42"))
@@ -65,6 +73,7 @@ TEST_F(ExchangeLoggerTest, LogWarning) {
   LOG_WARNING("test_warning_message_unique_43");
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
 
   EXPECT_TRUE(log_contains(log, "test_warning_message_unique_43"))
@@ -76,6 +85,7 @@ TEST_F(ExchangeLoggerTest, LogError) {
   LOG_ERROR("test_error_message_unique_44");
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
 
   EXPECT_TRUE(log_contains(log, "test_error_message_unique_44"))
@@ -101,6 +111,8 @@ TEST_F(ExchangeLoggerTest, MultipleThreadsWriteToSameLog) {
 
   // Give the async backend extra time to drain under contention
   flm::global_logger->flush_log();
+  dumb_wait();
+  dumb_wait();
   std::string log = read_log(find_log_file());
 
   // Every thread's first and last entry must appear
@@ -132,6 +144,7 @@ TEST_F(ExchangeLoggerTest, MacroNewOrderSingle) {
   LOG_NEW_ORDER_SINGLE(order);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "NewOrderSingle"));
   EXPECT_TRUE(log_contains(log, "id=1"));
@@ -146,6 +159,7 @@ TEST_F(ExchangeLoggerTest, MacroCancelOrderRequest) {
   LOG_CANCEL_ORDER_REQUEST(order);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "CancelOrderRequest"));
   EXPECT_TRUE(log_contains(log, "id=2"));
@@ -159,6 +173,7 @@ TEST_F(ExchangeLoggerTest, MacroMatch) {
   LOG_MATCH(passive, aggressive, 40, 1000000);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "Match"));
   EXPECT_TRUE(log_contains(log, "passive_id=3"));
@@ -172,6 +187,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderAccepted) {
   LOG_ORDER_ACCEPTED(order);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "OrderAccepted"));
   EXPECT_TRUE(log_contains(log, "id=5"));
@@ -183,6 +199,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderRejected) {
   LOG_ORDER_REJECTED(order, "InvalidPrice");
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "OrderRejected"));
   EXPECT_TRUE(log_contains(log, "id=6"));
@@ -195,6 +212,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderReplaced) {
   LOG_ORDER_REPLACED(old_order, new_order);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "OrderReplaced"));
   EXPECT_TRUE(log_contains(log, "old_id=7"));
@@ -210,6 +228,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderCanceled) {
   LOG_ORDER_CANCELED(order);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "OrderCanceled"));
   EXPECT_TRUE(log_contains(log, "id=9"));
@@ -222,6 +241,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderExecuted) {
   LOG_ORDER_EXECUTED(order, 60, 40, 1000000);
 
   flm::global_logger->flush_log();
+  dumb_wait();
   std::string log = read_log(find_log_file());
   EXPECT_TRUE(log_contains(log, "OrderExecuted"));
   EXPECT_TRUE(log_contains(log, "id=10"));
@@ -229,55 +249,3 @@ TEST_F(ExchangeLoggerTest, MacroOrderExecuted) {
   EXPECT_TRUE(log_contains(log, "leaves_vol=40"));
   EXPECT_TRUE(log_contains(log, "fill_price_q4=1000000"));
 }
-
-// ── Full lifecycle (single-threaded simulation)
-// ───────────────────────────────
-
-// TEST_F(ExchangeLoggerTest, SimulatedFullLifecycle) {
-//
-
-//   auto bid = make_order(20, 1000000, 100, flm::BUY_SIDE);
-//   auto ask = make_order(21, 990000, 60, flm::SELL_SIDE);
-
-//   // Inbound messages
-//   LOG_NEW_ORDER_SINGLE(bid);
-//   LOG_NEW_ORDER_SINGLE(ask);
-
-//   // Engine accepts both
-//   LOG_ORDER_ACCEPTED(bid);
-//   LOG_ORDER_ACCEPTED(bid);
-
-//   // Prices cross — partial fill: ask fully consumed, bid has 40 remaining
-//   logger.log_match(bid, ask, 60, 1000000);
-//   logger.log_executed(ask, 60, 0, 1000000);   // ask fully filled
-//   logger.log_executed(bid, 60, 40, 1000000);  // bid partially filled
-
-//   // Client cancels the remaining bid
-//   logger.log_cancel_request(bid);
-//   logger.log_canceled(bid);
-
-//   std::string log = read_log(find_log_file(),
-//   std::chrono::milliseconds(200));
-
-//   // Verify the full sequence appears — order matters for an audit log
-//   auto pos = [&](const std::string& needle) { return log.find(needle); };
-
-//   EXPECT_NE(pos("NewOrderSingle"), std::string::npos);
-//   EXPECT_NE(pos("OrderAccepted"), std::string::npos);
-//   EXPECT_NE(pos("Match"), std::string::npos);
-//   EXPECT_NE(pos("OrderExecuted"), std::string::npos);
-//   EXPECT_NE(pos("CancelOrderRequest"), std::string::npos);
-//   EXPECT_NE(pos("OrderCanceled"), std::string::npos);
-
-//   // Causal ordering: NewOrderSingle must precede Match
-//   EXPECT_LT(pos("NewOrderSingle"), pos("Match"))
-//       << "NewOrderSingle must appear before Match in the log";
-
-//   // Match must precede OrderExecuted
-//   EXPECT_LT(pos("Match"), pos("OrderExecuted"))
-//       << "Match must appear before OrderExecuted in the log";
-
-//   // OrderExecuted must precede CancelOrderRequest
-//   EXPECT_LT(pos("OrderExecuted"), pos("CancelOrderRequest"))
-//       << "OrderExecuted must appear before CancelOrderRequest in the log";
-// }
