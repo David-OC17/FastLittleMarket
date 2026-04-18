@@ -1,16 +1,22 @@
 cmake_minimum_required(VERSION 3.20)
-
 project(FastLittleMarket VERSION 0.1)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;MinSizeRel;Coverage")
+set(CMAKE_CXX_FLAGS_COVERAGE    "-O0 -g --coverage" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_COVERAGE      "-O0 -g --coverage" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_COVERAGE    "--coverage"  CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "--coverage"  CACHE STRING "" FORCE)
+
 set(WARNINGS -Wall -Wextra -Wpedantic)
 
-find_package(Boost REQUIRED COMPONENTS system headers)
-find_package(PkgConfig REQUIRED)
-find_package(GTest REQUIRED) # Ubuntu: libgtest-dev
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(GTest REQUIRED)
+
+find_program(GCOV_EXECUTABLE NAMES gcov-13 gcov REQUIRED)
 
 add_library(Core STATIC
   core/OrderBook.cpp
@@ -36,10 +42,14 @@ target_link_libraries(Core
   Boost::headers
 )
 
+
+target_compile_definitions(Core PUBLIC 
+  FLM_LOG_DIR="${CMAKE_SOURCE_DIR}/log"
+)
+
 # add_executable(FastLittleMarket ...)
 # target_link_libraries(FastLittleMarket PRIVATE Core)
 
-# Tests
 option(BUILD_TESTS "Build unit tests" ON)
 if(BUILD_TESTS)
   enable_testing()
@@ -71,37 +81,30 @@ if(BUILD_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
   )
 
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set(COVERAGE_FLAGS --coverage -O0 -g)
-
-    target_compile_options(Core PRIVATE ${COVERAGE_FLAGS})
-    target_link_options(Core PRIVATE --coverage)
-
-    target_compile_options(tests PRIVATE ${COVERAGE_FLAGS})
-    target_link_options(tests PRIVATE --coverage)
-  endif()
-
-  target_compile_definitions(Core PRIVATE TEST_LOGGING)
+  target_compile_definitions(Core PRIVATE FLM_TESTING)
+  target_compile_definitions(tests PRIVATE FLM_TESTING)
 
   include(GoogleTest)
-  gtest_discover_tests(tests)
-
-  add_test(NAME FastLittleMarketTests COMMAND tests)
+  gtest_discover_tests(tests
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    DISCOVERY_MODE PRE_TEST
+  )
 
   add_custom_target(coverage
-    COMMAND ${CMAKE_CTEST_COMMAND}
-
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/coverage
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
     COMMAND gcovr
-    -r ..
-    --gcov-executable gcov-13
-    --filter ../core
-    --exclude ../test
-    --exclude '/usr/include/.*'
-    --exclude '.*external.*'
-    --gcov-ignore-parse-errors=negative_hits.warn
-    --html --html-details
-    -o ../coverage/coverage.html
-
+      -r ${CMAKE_SOURCE_DIR}
+      --gcov-executable ${GCOV_EXECUTABLE}
+      --filter ${CMAKE_SOURCE_DIR}/core
+      --exclude ${CMAKE_SOURCE_DIR}/test
+      --exclude "/usr/include/.*"
+      --exclude ".*external.*"
+      --gcov-ignore-parse-errors=negative_hits.warn
+      --txt -o ${CMAKE_SOURCE_DIR}/coverage/coverage.txt
+      --html --html-details
+      -o ${CMAKE_SOURCE_DIR}/coverage/coverage.html
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Running tests and generating coverage report"
   )
 endif()

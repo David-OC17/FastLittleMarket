@@ -13,9 +13,10 @@ rm -rf build
 
 cmake -B build -S . \
   -DCMAKE_C_COMPILER=gcc-13 \
-  -DCMAKE_CXX_COMPILER=g++-13
+  -DCMAKE_CXX_COMPILER=g++-13 \
+  -G Ninja
 
-cmake --build build
+cmake --build build --parallel
 ```
 
 ```bash
