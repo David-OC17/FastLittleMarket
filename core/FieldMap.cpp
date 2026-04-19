@@ -4,64 +4,57 @@ namespace fast_little_market {
 
 namespace fix {
 
-// TODO: upgrade to expected<FieldMap&, ERROR> and pass err reason
-std::optional<FieldMap&> FieldMap::addGroup(MsgType tag) {
-  auto itr = map.find(tag);
-  if (itr == nullptr) return std::nullopt;
-
-  if (!itr->isGroup()) {
-    auto alloc_res = buffer.allocate(sizeof(FieldMap));
-    if (!alloc_res) return std::nullopt;  // AllocError::out_of_memory;
-
-    FieldMap* obj = (FieldMap*)alloc_res.value();
-    auto fm = new (obj) FieldMap(buffer, msgBytes);
-    itr->groups_ = fm;
-    return *const_cast<FieldMap*>(itr->groups_);
+FieldMap* FieldMap::addGroup(MsgType tag) {
+  void* mem = nullptr;
+  try {
+    mem = buffer.allocate(sizeof(FieldMap));
+  } catch (const std::bad_alloc&) {
+    return nullptr;
   }
+  if (!mem) return nullptr;
 
+  FieldMap* fm = new (mem) FieldMap(buffer, msgBytes);
+  Field* itr = map.find(tag);
+  if (itr == nullptr) {
+    Field f(tag, 0, 0, fm);
+    map.put(f);
+    return fm;
+  }
+  if (!itr->isGroup()) {
+    itr->groups_ = fm;
+    return fm;
+  }
   FieldMap* tail = itr->groups_;
   while (tail->next != nullptr) tail = tail->next;
-
-  auto alloc_res = buffer.allocate(sizeof(FieldMap));
-  if (!alloc_res) return std::nullopt;  // AllocError::out_of_memory;
-
-  FieldMap* obj = (FieldMap*)alloc_res.value();
-  tail->next = new (obj) FieldMap(buffer, msgBytes);
-  return *tail->next;
+  tail->next = fm;
+  return fm;
 }
 
-void FieldMap::set(MsgType tag, const Field& field) { map.put(field); }
+void FieldMap::set(const Field& field) { map.put(field); }
 
-const Field& FieldMap::get(MsgType tag) const {
-  auto itr = map.find(tag);
-  if (itr != nullptr) {
-    return *itr;
-  } else {
-    return Field();
-  }
-}
+// Returns nullptr if not found — callers must null-check
+Field* FieldMap::get(MsgType tag) const { return map.find(tag); }
 
-std::optional<const FieldMap&> FieldMap::getGroup(MsgType tag,
-                                                  size_t index) const {
-  auto itr = map.find(tag);
-  if (itr == nullptr || !itr->isGroup()) {
-    return std::nullopt;
-  }
-
-  return *itr->group(index);
+// Returns nullptr if tag not found, not a group, or index out of range
+FieldMap* FieldMap::getGroup(MsgType tag, size_t index) const {
+  Field* itr = map.find(tag);
+  if (itr == nullptr || !itr->isGroup()) return nullptr;
+  FieldMap* group = itr->group(index);
+  return group;
 }
 
 FieldMap* Field::group(size_t n) const {
-  auto ptr = groups_;
+  FieldMap* ptr = groups_;
   while (n-- > 0) {
+    if (ptr == nullptr) return nullptr;  // index out of range
     ptr = ptr->next;
   }
   return ptr;
 }
 
 size_t Field::groupCount() const {
-  auto ptr = groups_;
-  int count = 0;
+  FieldMap* ptr = groups_;
+  size_t count = 0;
   while (ptr != nullptr) {
     count++;
     ptr = ptr->next;

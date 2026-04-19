@@ -4,9 +4,9 @@
 #include <optional>
 #include <vector>
 
-#include "FixMsg.hpp"
 #include "Field.hpp"
 #include "FieldList.hpp"
+#include "FixMsg.hpp"
 
 namespace fast_little_market {
 
@@ -42,7 +42,6 @@ static inline long parseLong(const char* start, const char* endExclusive) {
   return negate ? value * -1 : value;
 }
 
-
 class FieldMap {
   friend struct Field;
   friend class FieldAccessor;
@@ -56,43 +55,37 @@ class FieldMap {
   FieldMap(Buffer& buffer, const char* msgBytes)
       : buffer(buffer), msgBytes(msgBytes), map(buffer) {}
 
-  /**
-   * @brief add a group to the FieldMap
-   *
-   * @param tag
-   * @return a mutable FieldMap to which fields and groups can be added
-   */
-  std::optional<FieldMap&> addGroup(MsgType tag);
+  FieldMap* addGroup(MsgType tag);
 
-  void set(MsgType tag, const Field& field);
+  void set(const Field& field);
 
-  const Field& get(MsgType tag) const;
+  Field* get(MsgType tag) const;
 
-  std::optional<const FieldMap&> getGroup(MsgType tag, size_t index) const;
+  FieldMap* getGroup(MsgType tag, size_t index) const;
 
   std::vector<MsgType> getTags() const { return map.tags(); }
 
   std::optional<int> getInt(MsgType tag) const {
     auto field = get(tag);
-    if (field.isEmpty()) return std::nullopt;
-    int value = parseInt(msgBytes + field.offset_,
-                         msgBytes + field.offset_ + field.length_);
+    if (field == nullptr) return std::nullopt;
+    int value = parseInt(msgBytes + field->offset_,
+                         msgBytes + field->offset_ + field->length_);
     return value;
   }
 
   std::optional<char> getChar(MsgType tag) const {
     auto field = get(tag);
-    if (field.isEmpty()) return std::nullopt;
+    if (field == nullptr) return std::nullopt;
 
-    return *(msgBytes + field.offset_);
+    return *(msgBytes + field->offset_);
   }
 
   std::optional<long> getLong(MsgType tag) const {
     auto field = get(tag);
-    if (field.isEmpty()) return std::nullopt;
+    if (field == nullptr) return std::nullopt;
 
-    int value = parseLong(msgBytes + field.offset_,
-                          msgBytes + field.offset_ + field.length_);
+    long value = parseLong(msgBytes + field->offset_,
+                           msgBytes + field->offset_ + field->length_);
     return value;
   }
 
@@ -136,62 +129,52 @@ class FieldAccessor {
     return map->getLong(tag);
   }
 
-  inline std::string_view getString(MsgType tag) const {
+  inline std::optional<std::string_view> getString(MsgType tag) const {
     auto field = map->get(tag);
-    if (field.isEmpty()) return "";
-    auto start = msgBytes + field.offset_;
-    return std::string_view(start, field.length_);
+    if (field == nullptr) return std::nullopt;
+
+    auto start = msgBytes + field->offset_;
+    return std::string_view(start, field->length_);
   }
 
   std::vector<MsgType> tags() const { return map->getTags(); }
 
-  // TODO: upgrade to expected<...>
   inline std::optional<int> getInt(MsgType groupTag, size_t index,
                                    MsgType tag) const {
-    auto group_opt = map->getGroup(groupTag, index);
-    if (!group_opt.has_value()) return std::nullopt;
+    FieldMap* grp = map->getGroup(groupTag, index);
+    if (grp == nullptr) return std::nullopt;
 
-    auto& grp = group_opt.value();
-    auto field = grp.get(tag);
-    if (field.isEmpty()) return std::nullopt;
+    Field* field = grp->get(tag);
+    if (field == nullptr) return std::nullopt;
 
-    int value = parseInt(msgBytes + field.offset_,
-                         msgBytes + field.offset_ + field.length_);
-    return value;
+    return parseInt(msgBytes + field->offset_,
+                    msgBytes + field->offset_ + field->length_);
   }
 
-  // TODO: upgrade to expected<...>
   inline std::optional<std::string_view> getString(MsgType groupTag,
                                                    size_t index,
                                                    MsgType tag) const {
-    auto group_opt = map->getGroup(groupTag, index);
-    if (!group_opt.has_value()) return std::nullopt;
+    FieldMap* grp = map->getGroup(groupTag, index);
+    if (grp == nullptr) return std::nullopt;
 
-    auto& grp = group_opt.value();
-    auto field = grp.get(tag);
-    if (field.isEmpty()) return std::nullopt;
+    Field* field = grp->get(tag);
+    if (field == nullptr) return std::nullopt;
 
-    auto start = msgBytes + field.offset_;
-    return std::string_view(start, field.length_);
+    return std::string_view(msgBytes + field->offset_, field->length_);
   }
 
-  // TODO: upgrade to expected<...>
-  inline const std::optional<FieldAccessor> getGroup(MsgType groupTag,
-                                                     size_t index) {
-    auto group_opt = map->getGroup(groupTag, index);
-    if (!group_opt.has_value()) return std::nullopt;
+  inline std::optional<FieldAccessor> getGroup(MsgType groupTag, size_t index) {
+    FieldMap* grp = map->getGroup(groupTag, index);
+    if (grp == nullptr) return std::nullopt;
 
-    auto& grp = group_opt.value();
-    return FieldAccessor(&grp);
+    return FieldAccessor(grp);
   }
 
-  // TODO: upgrade to expected<...>
   std::optional<std::vector<MsgType>> tags(MsgType groupTag, int index) const {
-    auto group_opt = map->getGroup(groupTag, index);
-    if (!group_opt.has_value()) return std::nullopt;
+    FieldMap* grp = map->getGroup(groupTag, index);
+    if (grp == nullptr) return std::nullopt;
 
-    auto& grp = group_opt.value();
-    return grp.getTags();
+    return grp->getTags();
   }
 };
 

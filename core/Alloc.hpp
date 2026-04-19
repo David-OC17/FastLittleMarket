@@ -3,7 +3,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
-#include <expected>
 
 #include "FixMsg.hpp"
 
@@ -44,9 +43,8 @@ class Buffer {
     other.offset_ = nullptr;
   }
 
-  std::expected<void*, AllocError> allocate(size_t n) {
-    if (offset_ + n > buffer_ + capacity_)
-      return std::unexpected(AllocError::out_of_memory);
+  void* allocate(size_t n) {
+    if (offset_ + n > buffer_ + capacity_) throw std::bad_alloc{};
 
     void* addr = offset_;
     offset_ += n;
@@ -54,11 +52,10 @@ class Buffer {
     return addr;
   }
 
-  std::expected<void, AllocError> deallocate(size_t n) {
-    if (n > bytes_allocated_) return std::unexpected(AllocError::underflow);
+  void deallocate(size_t n) noexcept {
+    if (n > bytes_allocated_) return;
     bytes_allocated_ -= n;
     offset_ -= n;
-    return {};
   }
 
   void reset() noexcept {
@@ -77,23 +74,20 @@ class Allocator {
 
  public:
   using value_type = T;
-
   explicit Allocator(Buffer& buffer) : buffer_(buffer) {}
-  Allocator(const Allocator<T>& other) : buffer_(other.buffer_) {} // TODO: rather delete?
+
+  Allocator(const Allocator<T>& other) : buffer_(other.buffer_) {}
+
   ~Allocator() = default;
 
   Buffer& buffer() const { return buffer_; }
 
-  std::expected<T*, AllocError> allocate(size_t n) {
-    auto res = buffer_.allocate(n * sizeof(T));
-    if (!res) return std::unexpected(res.error());
-    return static_cast<T*>(res.value());
+  T* allocate(size_t n) {
+    return static_cast<T*>(buffer_.allocate(n * sizeof(T)));
   }
 
-  std::expected<void, AllocError> deallocate(T* p, size_t n) {
-    auto res = buffer_.deallocate(n * sizeof(T));
-    if (!res) return std::unexpected(res.error());
-    return {};
+  void deallocate(T* /*p*/, size_t n) noexcept {
+    buffer_.deallocate(n * sizeof(T));
   }
 };
 

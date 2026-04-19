@@ -14,6 +14,8 @@ namespace fast_little_market {
 
 namespace fix {
 
+constexpr size_t FIX_MSG_MAX_FIELD_COUNT = 64;
+
 class FieldList {
  private:
   using VecAllocatorType = Allocator<Field>;
@@ -22,7 +24,7 @@ class FieldList {
 
  public:
   FieldList(Buffer& buffer) : list(VecAllocatorType(buffer)) {
-    list.reserve(16);
+    list.reserve(FIX_MSG_MAX_FIELD_COUNT);
   }
 
   Field& put(const Field& fg) {
@@ -36,13 +38,13 @@ class FieldList {
     return list.back();
   }
 
-  std::optional<Field&> get(const MsgType tag) {
+  Field* get(const MsgType tag) {
     for (auto itr = list.begin(); itr != list.end(); itr++) {
       if (itr->tag_ == tag) {
-        return *itr;
+        return &(*itr);
       }
     }
-    return std::nullopt;
+    return nullptr; 
   }
 
   bool contains(const MsgType tag) const {
@@ -64,7 +66,7 @@ class FieldList {
   }
 
   std::vector<MsgType> tags() const {
-    std::vector<MsgType> tags;
+    std::vector<MsgType> tags{};
     tags.reserve(list.size());
     for (auto field : list) {
       tags.push_back(field.tag_);

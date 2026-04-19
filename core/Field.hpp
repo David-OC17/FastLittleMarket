@@ -12,10 +12,10 @@ class FieldMap;
 
 class Field {
  public:
+  MsgType tag_;                 // 16-bit
   size_t offset_;               // at least 16-bit
   size_t length_;               // at least 16-bit
-  MsgType tag_;                 // 16-bit
-  FieldMap* groups_ = nullptr;  // (assume) 8-bit
+  FieldMap* groups_;  // (assume) 8-bit
 
   inline bool isEmpty() const { return tag_ == MsgType::INVALID; }
 
