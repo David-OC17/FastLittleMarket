@@ -17,6 +17,7 @@ static void dumb_wait(size_t iterations = 1'000'000) {
   for (size_t i = 0; i < iterations; ++i) {
     sink = i;  // volatile prevents the compiler optimising the loop away
   }
+  (void) sink;
 }
 
 static std::string read_log(const std::string& path) {
@@ -34,11 +35,11 @@ static std::string read_log(const std::string& path) {
   return content;
 }
 
-static void dump_log(const std::string& log, const std::string& test_name) {
-  std::cout << "\n=== [" << test_name << "] log contents ===\n"
-            << (log.empty() ? "<EMPTY>" : log) << "\n=== end ===\n";
-  std::cout.flush();
-}
+// static void dump_log(const std::string& log, const std::string& test_name) {
+//   std::cout << "\n=== [" << test_name << "] log contents ===\n"
+//             << (log.empty() ? "<EMPTY>" : log) << "\n=== end ===\n";
+//   std::cout.flush();
+// }
 
 static bool log_contains(const std::string& log, const std::string& needle) {
   return log.find(needle) != std::string::npos;

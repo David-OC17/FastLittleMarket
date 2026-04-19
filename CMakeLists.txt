@@ -43,7 +43,6 @@ target_link_libraries(Core
   Boost::headers
 )
 
-
 target_compile_definitions(Core PUBLIC
   FLM_LOG_DIR="${CMAKE_SOURCE_DIR}/log"
 )
@@ -92,20 +91,26 @@ if(BUILD_TESTS)
     DISCOVERY_MODE PRE_TEST
   )
 
+  file(WRITE ${CMAKE_BINARY_DIR}/run_coverage.sh
+    "#!/bin/sh
+  gcovr \\
+  -r ${CMAKE_SOURCE_DIR} \\
+  --object-directory ${CMAKE_BINARY_DIR} \\
+  --gcov-executable ${GCOV_EXECUTABLE} \\
+  --filter '.*core/.*' \\
+  --exclude '.*test/.*' \\
+  --exclude '/usr/include/.*' \\
+  --exclude '.*external.*' \\
+  --gcov-ignore-parse-errors=negative_hits.warn \\
+  --print-summary \\
+  --txt -o ${CMAKE_SOURCE_DIR}/coverage/coverage.txt \\
+  --html --html-details -o ${CMAKE_SOURCE_DIR}/coverage/coverage.html
+")
+
   add_custom_target(coverage
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/coverage
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-    COMMAND gcovr
-    -r ${CMAKE_SOURCE_DIR}
-    --gcov-executable ${GCOV_EXECUTABLE}
-    --filter ${CMAKE_SOURCE_DIR}/core
-    --exclude ${CMAKE_SOURCE_DIR}/test
-    --exclude "/usr/include/.*"
-    --exclude ".*external.*"
-    --gcov-ignore-parse-errors=negative_hits.warn
-    --txt -o ${CMAKE_SOURCE_DIR}/coverage/coverage.txt
-    --html --html-details
-    -o ${CMAKE_SOURCE_DIR}/coverage/coverage.html
+    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_BINARY_DIR} --output-on-failure
+    COMMAND sh ${CMAKE_BINARY_DIR}/run_coverage.sh
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Running tests and generating coverage report"
   )

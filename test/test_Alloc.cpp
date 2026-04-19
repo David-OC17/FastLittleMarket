@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "FixAlloc.hpp"
+#include "Alloc.hpp"
 
 namespace flm = fast_little_market;
 
@@ -29,9 +29,7 @@ TEST(BufferTest, CopyAssignmentIsDeleted) {
 TEST(BufferTest, MoveConstructorTransfersOwnership) {
   flm::fix::Buffer a(128);
   a.allocate(32);
-
   flm::fix::Buffer b(std::move(a));
-
   EXPECT_EQ(b.capacity_, 128);
   EXPECT_EQ(b.allocated(), 32);
   EXPECT_EQ(b.remaining(), 96);
@@ -39,9 +37,8 @@ TEST(BufferTest, MoveConstructorTransfersOwnership) {
 
 TEST(BufferTest, AllocateReturnsValidPointer) {
   flm::fix::Buffer buf(128);
-  auto res = buf.allocate(64);
-  ASSERT_TRUE(res.has_value());
-  EXPECT_NE(*res, nullptr);
+  void* res = buf.allocate(64);
+  EXPECT_NE(res, nullptr);
 }
 
 TEST(BufferTest, AllocateUpdatesCounters) {
@@ -53,40 +50,35 @@ TEST(BufferTest, AllocateUpdatesCounters) {
 
 TEST(BufferTest, AllocateReturnedPointersAreContiguous) {
   flm::fix::Buffer buf(128);
-  auto r1 = buf.allocate(32);
-  auto r2 = buf.allocate(32);
-  ASSERT_TRUE(r1 && r2);
-  // second allocation must start exactly 32 bytes after the first
-  EXPECT_EQ(static_cast<std::byte*>(*r2), static_cast<std::byte*>(*r1) + 32);
+  void* r1 = buf.allocate(32);
+  void* r2 = buf.allocate(32);
+  ASSERT_NE(r1, nullptr);
+  ASSERT_NE(r2, nullptr);
+  EXPECT_EQ(static_cast<std::byte*>(r2), static_cast<std::byte*>(r1) + 32);
 }
 
-TEST(BufferTest, AllocateFailsWhenFull) {
+TEST(BufferTest, AllocateThrowsWhenFull) {
   flm::fix::Buffer buf(64);
   buf.allocate(64);
-  auto res = buf.allocate(1);
-  ASSERT_FALSE(res.has_value());
-  EXPECT_EQ(res.error(), flm::fix::AllocError::out_of_memory);
+  EXPECT_THROW(buf.allocate(1), std::bad_alloc);
 }
 
-TEST(BufferTest, AllocateFailsOnOverflow) {
+TEST(BufferTest, AllocateThrowsOnOverflow) {
   flm::fix::Buffer buf(64);
-  auto res = buf.allocate(65);
-  ASSERT_FALSE(res.has_value());
-  EXPECT_EQ(res.error(), flm::fix::AllocError::out_of_memory);
+  EXPECT_THROW(buf.allocate(65), std::bad_alloc);
 }
 
 TEST(BufferTest, AllocateEntireCapacitySucceeds) {
   flm::fix::Buffer buf(64);
-  auto res = buf.allocate(64);
-  EXPECT_TRUE(res.has_value());
+  void* res = buf.allocate(64);
+  EXPECT_NE(res, nullptr);
   EXPECT_EQ(buf.remaining(), 0);
 }
 
 TEST(BufferTest, DeallocateUpdatesCounters) {
   flm::fix::Buffer buf(128);
   buf.allocate(64);
-  auto res = buf.deallocate(32);
-  ASSERT_TRUE(res.has_value());
+  buf.deallocate(32);
   EXPECT_EQ(buf.allocated(), 32);
   EXPECT_EQ(buf.remaining(), 96);
 }
@@ -95,23 +87,21 @@ TEST(BufferTest, DeallocateAllowsReuse) {
   flm::fix::Buffer buf(64);
   buf.allocate(64);
   buf.deallocate(64);
-  auto res = buf.allocate(64);
-  EXPECT_TRUE(res.has_value());
+  void* res = buf.allocate(64);
+  EXPECT_NE(res, nullptr);
 }
 
-TEST(BufferTest, DeallocateUnderflowReturnsError) {
+TEST(BufferTest, DeallocateUnderflowIsNoOp) {
   flm::fix::Buffer buf(128);
   buf.allocate(32);
-  auto res = buf.deallocate(64);  // more than allocated
-  ASSERT_FALSE(res.has_value());
-  EXPECT_EQ(res.error(), flm::fix::AllocError::underflow);
+  buf.deallocate(64);  // more than allocated — silently ignored
+  EXPECT_EQ(buf.allocated(), 32);
 }
 
-TEST(BufferTest, DeallocateOnEmptyBufferReturnsError) {
+TEST(BufferTest, DeallocateOnEmptyBufferIsNoOp) {
   flm::fix::Buffer buf(128);
-  auto res = buf.deallocate(1);
-  ASSERT_FALSE(res.has_value());
-  EXPECT_EQ(res.error(), flm::fix::AllocError::underflow);
+  buf.deallocate(1);  // nothing allocated — silently ignored
+  EXPECT_EQ(buf.allocated(), 0);
 }
 
 TEST(BufferTest, ResetRestoresFullCapacity) {
@@ -126,8 +116,8 @@ TEST(BufferTest, ResetAllowsFullReallocation) {
   flm::fix::Buffer buf(64);
   buf.allocate(64);
   buf.reset();
-  auto res = buf.allocate(64);
-  EXPECT_TRUE(res.has_value());
+  void* res = buf.allocate(64);
+  EXPECT_NE(res, nullptr);
 }
 
 TEST(BufferTest, RemainingAndAllocatedSumToCapacity) {
@@ -139,33 +129,29 @@ TEST(BufferTest, RemainingAndAllocatedSumToCapacity) {
 TEST(AllocatorTest, AllocateReturnsTypedPointer) {
   flm::fix::Buffer buf(256);
   flm::fix::Allocator<int> alloc(buf);
-  auto res = alloc.allocate(4);
-  ASSERT_TRUE(res.has_value());
-  EXPECT_NE(*res, nullptr);
+  int* res = alloc.allocate(4);
+  EXPECT_NE(res, nullptr);
 }
 
 TEST(AllocatorTest, AllocateSizesAreScaledByType) {
   flm::fix::Buffer buf(256);
-  flm::fix::Allocator<int32_t> alloc(buf);  // sizeof(int32_t) == 4
-  alloc.allocate(8);                        // should consume 32 bytes
+  flm::fix::Allocator<int32_t> alloc(buf);
+  alloc.allocate(8);  // should consume 32 bytes
   EXPECT_EQ(buf.allocated(), 32);
 }
 
-TEST(AllocatorTest, AllocateFailsWhenBufferFull) {
+TEST(AllocatorTest, AllocateThrowsWhenBufferFull) {
   flm::fix::Buffer buf(16);
   flm::fix::Allocator<int32_t> alloc(buf);
-  alloc.allocate(4);             // consumes 16 bytes
-  auto res = alloc.allocate(1);  // no room for even 1 int
-  ASSERT_FALSE(res.has_value());
-  EXPECT_EQ(res.error(), flm::fix::AllocError::out_of_memory);
+  alloc.allocate(4);  // consumes 16 bytes
+  EXPECT_THROW(alloc.allocate(1), std::bad_alloc);
 }
 
 TEST(AllocatorTest, AllocatedMemoryIsWritable) {
   flm::fix::Buffer buf(256);
   flm::fix::Allocator<int> alloc(buf);
-  auto res = alloc.allocate(4);
-  ASSERT_TRUE(res.has_value());
-  int* ptr = *res;
+  int* ptr = alloc.allocate(4);
+  ASSERT_NE(ptr, nullptr);
   for (int i = 0; i < 4; ++i) ptr[i] = i * 10;
   for (int i = 0; i < 4; ++i) EXPECT_EQ(ptr[i], i * 10);
 }
@@ -173,21 +159,19 @@ TEST(AllocatorTest, AllocatedMemoryIsWritable) {
 TEST(AllocatorTest, DeallocateScalesByType) {
   flm::fix::Buffer buf(256);
   flm::fix::Allocator<int32_t> alloc(buf);
-  auto res = alloc.allocate(4);  // 16 bytes
-  ASSERT_TRUE(res.has_value());
-  auto dealloc = alloc.deallocate(*res, 4);
-  ASSERT_TRUE(dealloc.has_value());
+  int32_t* ptr = alloc.allocate(4);  // 16 bytes
+  ASSERT_NE(ptr, nullptr);
+  alloc.deallocate(ptr, 4);
   EXPECT_EQ(buf.allocated(), 0);
 }
 
-TEST(AllocatorTest, DeallocateUnderflowReturnsError) {
+TEST(AllocatorTest, DeallocateUnderflowIsNoOp) {
   flm::fix::Buffer buf(256);
   flm::fix::Allocator<int32_t> alloc(buf);
-  auto res = alloc.allocate(2);  // 8 bytes
-  ASSERT_TRUE(res.has_value());
-  auto dealloc = alloc.deallocate(*res, 4);  // tries to free 16 bytes
-  ASSERT_FALSE(dealloc.has_value());
-  EXPECT_EQ(dealloc.error(), flm::fix::AllocError::underflow);
+  int32_t* ptr = alloc.allocate(2);  // 8 bytes
+  ASSERT_NE(ptr, nullptr);
+  alloc.deallocate(ptr, 4);  // tries to free 16 bytes — silently ignored
+  EXPECT_EQ(buf.allocated(), 8);
 }
 
 TEST(AllocatorTest, BufferGetterReturnsSameBuffer) {
@@ -201,7 +185,6 @@ TEST(AllocatorTest, CopySharesBuffer) {
   flm::fix::Allocator<int> a1(buf);
   flm::fix::Allocator<int> a2(a1);
   a1.allocate(4);
-  // both allocators draw from the same buffer
   EXPECT_EQ(&a1.buffer(), &a2.buffer());
   EXPECT_EQ(buf.allocated(), 4 * sizeof(int));
 }
