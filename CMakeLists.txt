@@ -6,10 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;MinSizeRel;Coverage")
-set(CMAKE_CXX_FLAGS_COVERAGE    "-O0 -g --coverage" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS_COVERAGE      "-O0 -g --coverage" CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_COVERAGE    "--coverage"  CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "--coverage"  CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_COVERAGE "-O0 -g --coverage" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_COVERAGE "-O0 -g --coverage" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_COVERAGE "--coverage" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "--coverage" CACHE STRING "" FORCE)
 
 set(WARNINGS -Wall -Wextra -Wpedantic)
 
@@ -19,10 +19,11 @@ find_package(GTest REQUIRED)
 find_program(GCOV_EXECUTABLE NAMES gcov-13 gcov REQUIRED)
 
 add_library(Core STATIC
-  core/OrderBook.cpp
   core/Exchange.cpp
-  core/ThreadPool.cpp
   core/ExchangeLogger.cpp
+  core/FieldMap.cpp
+  core/OrderBook.cpp
+  core/ThreadPool.cpp
 )
 
 target_compile_options(Core PRIVATE ${WARNINGS})
@@ -43,7 +44,7 @@ target_link_libraries(Core
 )
 
 
-target_compile_definitions(Core PUBLIC 
+target_compile_definitions(Core PUBLIC
   FLM_LOG_DIR="${CMAKE_SOURCE_DIR}/log"
 )
 
@@ -95,16 +96,16 @@ if(BUILD_TESTS)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/coverage
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
     COMMAND gcovr
-      -r ${CMAKE_SOURCE_DIR}
-      --gcov-executable ${GCOV_EXECUTABLE}
-      --filter ${CMAKE_SOURCE_DIR}/core
-      --exclude ${CMAKE_SOURCE_DIR}/test
-      --exclude "/usr/include/.*"
-      --exclude ".*external.*"
-      --gcov-ignore-parse-errors=negative_hits.warn
-      --txt -o ${CMAKE_SOURCE_DIR}/coverage/coverage.txt
-      --html --html-details
-      -o ${CMAKE_SOURCE_DIR}/coverage/coverage.html
+    -r ${CMAKE_SOURCE_DIR}
+    --gcov-executable ${GCOV_EXECUTABLE}
+    --filter ${CMAKE_SOURCE_DIR}/core
+    --exclude ${CMAKE_SOURCE_DIR}/test
+    --exclude "/usr/include/.*"
+    --exclude ".*external.*"
+    --gcov-ignore-parse-errors=negative_hits.warn
+    --txt -o ${CMAKE_SOURCE_DIR}/coverage/coverage.txt
+    --html --html-details
+    -o ${CMAKE_SOURCE_DIR}/coverage/coverage.html
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Running tests and generating coverage report"
   )

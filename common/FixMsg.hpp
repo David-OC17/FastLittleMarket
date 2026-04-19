@@ -3,6 +3,7 @@
 #include <array>
 #include <optional>
 #include <string_view>
+#include <cstdint>
 
 namespace fast_little_market {
 namespace fix {
@@ -108,7 +109,8 @@ namespace fix {
   X(SecurityList, "y")                             \
   X(MarketDataRequestReject, "Y")                  \
   X(DerivativeSecurityListRequest, "z")            \
-  X(QuoteCancel, "Z")
+  X(QuoteCancel, "Z")                              \
+  X(INVALID, "\0")
 
 enum class MsgType : uint16_t {
 #define X(name, val) name,
@@ -152,7 +154,7 @@ static_assert(msgtype_to_fix.size() == msgtype_to_name.size());
 
 namespace {
 
-constexpr uint64_t MSGTYPE_LIST_HASH = 26629920070445379ULL;
+constexpr uint64_t MSGTYPE_LIST_HASH = 5468955649952501974ULL;
 
 constexpr uint64_t fnv1a(const std::string_view str,
                          uint64_t hash = 1469598103934665603ULL) {
@@ -182,5 +184,5 @@ static_assert(compute_msgtype_hash() == MSGTYPE_LIST_HASH,
 
 }  // namespace
 
-}  // namespace FIX
+}  // namespace fix
 }  // namespace fast_little_market
