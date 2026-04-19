@@ -8,6 +8,7 @@ Some characteristics of the system are:
 * Robustness to bad clients
 
 ## Compilation
+
 ```bash
 rm -rf build
 
@@ -82,6 +83,9 @@ _Order routing_
 * [ ] Increase sharding ME thread priority
 
 * Check if cancel/replace is its own operation and implement it if so
+
+3. FIX encoder - decoder
+* Inspired by [cpp_fix_codec](https://github.com/robaho/cpp_fixed)
 
 3. Append only logger
 * [ ] Log events from ME
