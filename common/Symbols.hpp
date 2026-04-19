@@ -3,7 +3,7 @@
 #include <array>
 #include <string>
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 // TODO: Load symbols from a config file or database
 static std::array<std::string, 100> symbols = {
@@ -23,4 +23,4 @@ static std::array<std::string, 100> symbols = {
     "XAGUSD", "CL",       "NG",     "GC",     "SI",      "HG",     "PL",
     "PA",     "ZC"};
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

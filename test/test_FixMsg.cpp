@@ -4,7 +4,7 @@
 
 #include "FixMsg.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 struct Case {
   flm::FIX::MsgType t;

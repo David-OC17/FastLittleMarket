@@ -9,7 +9,7 @@
 #include "GlobalSequencer.hpp"
 #include "Order.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 struct BuyOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
@@ -193,4 +193,4 @@ class OrderBook {
   ExecFlags matchOrder(Order incoming);
 };
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

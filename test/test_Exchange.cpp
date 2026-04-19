@@ -5,7 +5,7 @@
 #include "GlobalSequencer.hpp"
 #include "Exchange.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 class ExchangeTest : public ::testing::Test {
  protected:

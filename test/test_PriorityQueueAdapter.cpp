@@ -2,7 +2,7 @@
 
 #include "OrderBook.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 using PQ = flm::PriorityQueueAdapter<flm::BuyOrderComparator>;
 

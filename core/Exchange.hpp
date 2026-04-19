@@ -11,7 +11,7 @@
 #include "OrderBook.hpp"
 #include "ThreadPool.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 class Exchange {
  private:
@@ -86,4 +86,4 @@ class Exchange {
                                 uint64_t orderId) const;
 };
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

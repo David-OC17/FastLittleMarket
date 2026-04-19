@@ -1,6 +1,6 @@
 #include "ExchangeLogger.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 ExchangeLogger& ExchangeLogger::getInstance() {
   static ExchangeLogger instance;
@@ -13,4 +13,4 @@ quill::Logger* ExchangeLogger::getGlobalLogger() const {
 
 quill::Logger* global_logger = ExchangeLogger::getInstance().getGlobalLogger();
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 bool OrderBook::canCross(const Order& incoming) const {
   const OrderQueueInterface* opposite =
@@ -137,4 +137,4 @@ std::optional<Order> OrderBook::getOrder(uint64_t order_id) const {
   return std::nullopt;
 }
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

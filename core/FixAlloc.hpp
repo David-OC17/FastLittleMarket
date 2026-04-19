@@ -7,9 +7,9 @@
 
 #include "FixMsg.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
-namespace FIX {
+namespace fix {
 
 enum class AllocError { out_of_memory, underflow };
 
@@ -97,6 +97,6 @@ class Allocator {
   }
 };
 
-}  // namespace FIX
+}  // namespace fix
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

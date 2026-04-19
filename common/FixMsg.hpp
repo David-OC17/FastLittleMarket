@@ -4,8 +4,8 @@
 #include <optional>
 #include <string_view>
 
-namespace FastLittleMarket {
-namespace FIX {
+namespace fast_little_market {
+namespace fix {
 
 #define MSGTYPE_LIST(X)                            \
   X(Heartbeat, "0")                                \
@@ -183,4 +183,4 @@ static_assert(compute_msgtype_hash() == MSGTYPE_LIST_HASH,
 }  // namespace
 
 }  // namespace FIX
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

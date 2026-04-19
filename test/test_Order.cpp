@@ -2,7 +2,7 @@
 
 #include "Order.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 // Order constructor: (int id, uint32_t price_q4, uint32_t vol, bool is_buy,
 // std::string_view client, GlobalSequencer& sequencer)

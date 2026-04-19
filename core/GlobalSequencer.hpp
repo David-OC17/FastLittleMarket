@@ -9,7 +9,7 @@
 #include <windows.h>
 #endif
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 inline uint64_t os_nano_time() noexcept {
 #ifdef __linux__
@@ -38,4 +38,4 @@ class GlobalSequencer {
   }
 };
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

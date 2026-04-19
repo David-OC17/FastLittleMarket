@@ -10,7 +10,7 @@
 #include "OrderBook.hpp"
 #include "concurrentqueue.h"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 static constexpr size_t NUM_SHARDS = 4;
 
@@ -28,4 +28,4 @@ class ThreadPool {
   void enqueue(std::function<void()> task, size_t shard_id);
 };
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

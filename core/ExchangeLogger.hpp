@@ -7,7 +7,7 @@
 #include "Order.hpp"
 #include "quill/Logger.h"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 #ifndef FLM_LOG_DIR
 #define FLM_LOG_DIR "."
@@ -58,4 +58,4 @@ class ExchangeLogger {
 
 extern quill::Logger* global_logger;
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

@@ -6,7 +6,7 @@
 
 #include "GlobalSequencer.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 static constexpr uint8_t BUY_SIDE = 1;
 static constexpr uint8_t SELL_SIDE = 0;
@@ -100,4 +100,4 @@ struct Order {        // 32 bytes
   }
 };
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

@@ -3,7 +3,7 @@
 
 #include "Symbols.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 Exchange& Exchange::getInstance() {
   static Exchange inst;
@@ -49,4 +49,4 @@ std::optional<Order> Exchange::getOrder(const std::string& symbol,
   return std::nullopt;
 }
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

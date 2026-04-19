@@ -10,7 +10,7 @@
 #include "ExchangeLoggerMacros.hpp"
 #include "Order.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 static void dumb_wait(size_t iterations = 1'000'000) {
   volatile size_t sink = 0;

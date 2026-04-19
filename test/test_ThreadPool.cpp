@@ -2,7 +2,7 @@
 
 #include "ThreadPool.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 class ThreadPoolTest : public ::testing::Test {
  protected:

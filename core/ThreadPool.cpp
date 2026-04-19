@@ -2,7 +2,7 @@
 
 #include "Symbols.hpp"
 
-namespace FastLittleMarket {
+namespace fast_little_market {
 
 ThreadPool::ThreadPool() {
   for (size_t i = 0; i < NUM_SHARDS; ++i) {
@@ -23,4 +23,4 @@ void ThreadPool::enqueue(std::function<void()> task, size_t shard_id) {
   tasks_[shard_id].enqueue(std::move(task));
 }
 
-}  // namespace FastLittleMarket
+}  // namespace fast_little_market

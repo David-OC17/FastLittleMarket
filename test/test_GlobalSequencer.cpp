@@ -7,7 +7,7 @@
 
 #include "GlobalSequencer.hpp"
 
-namespace flm = FastLittleMarket;
+namespace flm = fast_little_market;
 
 class GlobalSequencerTest : public ::testing::Test {
  protected:
