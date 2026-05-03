@@ -1,9 +1,11 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <optional>
 #include <string_view>
-#include <cstdint>
+
+#include "CommonTools.hpp"
 
 namespace fast_little_market {
 namespace fix {
@@ -155,14 +157,6 @@ static_assert(msgtype_to_fix.size() == msgtype_to_name.size());
 namespace {
 
 constexpr uint64_t MSGTYPE_LIST_HASH = 5468955649952501974ULL;
-
-constexpr uint64_t fnv1a(const std::string_view str,
-                         uint64_t hash = 1469598103934665603ULL) {
-  return str.empty() ? hash
-                     : fnv1a(str.substr(1),
-                             (hash ^ static_cast<uint64_t>(str.front())) *
-                                 1099511628211ULL);
-}
 
 constexpr uint64_t compute_msgtype_hash() {
   uint64_t h = 1469598103934665603ULL;

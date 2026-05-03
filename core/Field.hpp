@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "FixMsg.hpp"
+#include "FieldTag.hpp"
 
 namespace fast_little_market {
 
@@ -12,38 +12,40 @@ class FieldMap;
 
 class Field {
  public:
-  MsgType tag_;                 // 16-bit
-  size_t offset_;               // at least 16-bit
-  size_t length_;               // at least 16-bit
-  FieldMap* groups_;  // (assume) 8-bit
+  FieldMap* groups_;
+  FieldMap* tail_ = nullptr;
+  uint16_t offset_;
+  uint16_t length_;
+  FieldTag tag_;  // 16-bit
 
-  inline bool isEmpty() const { return tag_ == MsgType::INVALID; }
+  constexpr Field()
+      : groups_(nullptr),
+        tail_(nullptr),
+        offset_(0),
+        length_(0),
+        tag_(FieldTag::INVALID) {}
+
+  Field(FieldTag tag, uint16_t offset, uint16_t length, FieldMap* groups)
+      : groups_(groups),
+        tail_(groups),
+        offset_(offset),
+        length_(length),
+        tag_(tag) {}
+
+  Field(FieldTag tag, uint16_t offset, uint16_t length)
+      : groups_(nullptr),
+        tail_(nullptr),
+        offset_(offset),
+        length_(length),
+        tag_(tag) {}
+
+  inline bool isEmpty() const { return tag_ == FieldTag::INVALID; }
 
   inline bool isGroup() const { return groups_ != nullptr; }
 
-  constexpr Field()
-      : tag_(MsgType::INVALID), offset_(0), length_(0), groups_(nullptr) {}
+  Field(const Field& f) = default;
 
-  Field(MsgType tag, size_t offset, size_t length, FieldMap* groups)
-      : tag_(tag), offset_(offset), length_(length), groups_(groups) {}
-
-  Field(MsgType tag, size_t offset, size_t length)
-      : tag_(tag), offset_(offset), length_(length), groups_(nullptr) {}
-
-  Field(const Field& f) {
-    tag_ = f.tag_;
-    offset_ = f.offset_;
-    length_ = f.length_;
-    groups_ = f.groups_;
-  }
-
-  Field& operator=(const Field& f) {
-    tag_ = f.tag_;
-    offset_ = f.offset_;
-    length_ = f.length_;
-    groups_ = f.groups_;
-    return *this;
-  }
+  Field& operator=(const Field& f) = default;
 
   FieldMap* group(size_t n) const;
 

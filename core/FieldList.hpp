@@ -4,11 +4,13 @@
 #include <expected>
 // #include <map> // TODO implement FieldList with std::map
 #include <optional>
+#include <span>
 #include <vector>
+#include <cassert>
 
 #include "Alloc.hpp"
 #include "Field.hpp"
-#include "FixMsg.hpp"
+#include "FieldTag.hpp"
 
 namespace fast_little_market {
 
@@ -18,37 +20,48 @@ constexpr size_t FIX_MSG_MAX_FIELD_COUNT = 64;
 
 class FieldList {
  private:
-  using VecAllocatorType = Allocator<Field>;
-
-  std::vector<Field, VecAllocatorType> list;
+  std::vector<Field, Allocator<Field>> list_;
 
  public:
-  FieldList(Buffer& buffer) : list(VecAllocatorType(buffer)) {
-    list.reserve(FIX_MSG_MAX_FIELD_COUNT);
+  FieldList(Buffer& buffer) : list_(Allocator<Field>(buffer)) {
+    list_.reserve(FIX_MSG_MAX_FIELD_COUNT);
   }
 
+  ~FieldList() = default;
+
   Field& put(const Field& fg) {
-    for (auto itr = list.begin(); itr != list.end(); itr++) {
+    for (auto itr = list_.begin(); itr != list_.end(); itr++) {
       if (itr->tag_ == fg.tag_) {
+        FieldMap* savedGroups = itr->groups_;
+        FieldMap* savedTail = itr->tail_;
         *itr = fg;
+        if (savedGroups && !fg.isGroup()) {
+          itr->groups_ = savedGroups;
+          itr->tail_ = savedTail;
+        }
         return *itr;
       }
     }
-    list.push_back(fg);
-    return list.back();
+
+    if (list_.size() >= FIX_MSG_MAX_FIELD_COUNT) {
+      assert(false && "FieldList capacity exceeded");
+      return list_.back();  // unreachable, satisfies return type
+    }
+    list_.push_back(fg);
+    return list_.back();
   }
 
-  Field* get(const MsgType tag) {
-    for (auto itr = list.begin(); itr != list.end(); itr++) {
+  Field* get(const FieldTag tag) {
+    for (auto itr = list_.begin(); itr != list_.end(); itr++) {
       if (itr->tag_ == tag) {
         return &(*itr);
       }
     }
-    return nullptr; 
+    return nullptr;
   }
 
-  bool contains(const MsgType tag) const {
-    for (auto itr = list.begin(); itr != list.end(); itr++) {
+  bool contains(const FieldTag tag) const {
+    for (auto itr = list_.begin(); itr != list_.end(); itr++) {
       if (itr->tag_ == tag) {
         return true;
       }
@@ -56,23 +69,19 @@ class FieldList {
     return false;
   }
 
-  Field* find(const MsgType tag) const {
-    for (auto itr = list.begin(); itr != list.end(); itr++) {
-      if (itr->tag_ == tag) {
-        return const_cast<Field*>(&(*itr));
-      }
-    }
+  Field* find(FieldTag tag) {
+    for (auto& f : list_)
+      if (f.tag_ == tag) return &f;
     return nullptr;
   }
 
-  std::vector<MsgType> tags() const {
-    std::vector<MsgType> tags{};
-    tags.reserve(list.size());
-    for (auto field : list) {
-      tags.push_back(field.tag_);
-    }
-    return tags;
+  const Field* find(FieldTag tag) const {
+    for (const auto& f : list_)
+      if (f.tag_ == tag) return &f;
+    return nullptr;
   }
+
+  std::span<const Field> fields() const { return std::span<const Field>(list_); }
 };
 
 }  // namespace fix
