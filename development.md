@@ -9,6 +9,7 @@ Some characteristics of the system are:
 
 ## Compilation
 
+### Regular build
 ```bash
 rm -rf build
 
@@ -20,6 +21,22 @@ cmake -B build -S . \
 cmake --build build --parallel
 ```
 
+### ASAN build
+```bash
+rm -rf build
+
+cmake -B build \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_C_COMPILER=gcc-13 \
+  -DCMAKE_CXX_COMPILER=g++-13 \
+  -DBUILD_TESTS=ON \
+  -DENABLE_ASAN=ON \
+  -G Ninja
+
+cmake --build build --parallel
+```
+
+### Coverage build
 ```bash
 rm -rf build
 

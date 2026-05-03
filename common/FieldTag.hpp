@@ -10,6 +10,8 @@
 namespace fast_little_market {
 namespace fix {
 
+#define SOH "\x01"
+
 // FIX 5.0 field tags (tag number as string, name as enum label).
 #define FIELDTAG_LIST(X)                 \
   X(Account, "1")                        \

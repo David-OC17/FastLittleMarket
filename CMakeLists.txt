@@ -67,6 +67,7 @@ if(BUILD_TESTS)
     test/test_FieldList.cpp
     test/test_FieldMap.cpp
     test/test_Parser.cpp
+    test/test_Builder.cpp
   )
 
   target_compile_options(tests PRIVATE ${WARNINGS})
@@ -94,6 +95,13 @@ if(BUILD_TESTS)
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     DISCOVERY_MODE PRE_TEST
   )
+
+  option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
+
+  if(ENABLE_ASAN)
+    target_compile_options(tests PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+    target_link_options(tests PRIVATE -fsanitize=address)
+  endif()
 
   file(WRITE ${CMAKE_BINARY_DIR}/run_coverage.sh
     "#!/bin/sh

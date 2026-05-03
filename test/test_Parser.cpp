@@ -10,9 +10,6 @@ namespace flm = fast_little_market;
 // Helpers
 // ---------------------------------------------------------------------------
 
-// SOH delimiter as a string literal character.
-#define SOH "\x01"
-
 // Compute BodyLength (number of bytes from tag 9's SOH up to but not including
 // the CheckSum field delimiter) for a given set of body fields.
 static std::string bodyLen(std::initializer_list<std::string> bodyFields) {
