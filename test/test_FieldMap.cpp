@@ -307,7 +307,7 @@ TEST(FieldMapTest, AddGroupReturnsNullptrWhenBufferExhausted) {
 // ---------------------------------------------------------------------------
 
 TEST(FieldMapTest, GroupCountReflectsNumberOfAddGroupCalls) {
-  flm::fix::Buffer buf(DEFAULT_BUF);
+  flm::fix::Buffer buf(DEFAULT_BUF * 100);
   flm::fix::FieldMap fm(buf, "");
 
   fm.addGroup(flm::fix::FieldTag::NoLegs);

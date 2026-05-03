@@ -63,6 +63,7 @@ if(BUILD_TESTS)
     test/test_GlobalSequencer.cpp
     test/test_ExchangeLogger.cpp
     test/test_Alloc.cpp
+    test/test_FieldList.cpp
     test/test_FieldMap.cpp
   )
 
