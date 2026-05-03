@@ -68,6 +68,7 @@ if(BUILD_TESTS)
     test/test_FieldMap.cpp
     test/test_Parser.cpp
     test/test_Builder.cpp
+    test/test_Parser_Builder.cpp
   )
 
   target_compile_options(tests PRIVATE ${WARNINGS})

@@ -3,21 +3,13 @@
 namespace fast_little_market {
 namespace fix {
 
-// void FixMessage::parse(const char* in, FixMessage& msg, const GroupDefs& defs) {
-//   // Wrap in a lightweight string_view-based stream to avoid istrstream
-//   // (deprecated) while keeping a single implementation path.
-//   // We still delegate to the istream overload via a simple wrapper.
-//   struct CharStream : std::istream {
-//     struct Buf : std::streambuf {
-//       Buf(const char* s) {
-//         auto p = const_cast<char*>(s);
-//         setg(p, p, p + __builtin_strlen(s));
-//       }
-//     } buf_;
-//     explicit CharStream(const char* s) : std::istream(&buf_), buf_(s) {}
-//   } stream(in);
-//   parse(stream, msg, defs);
-// }
+// NOTE: avoid in prod, creates extra string copy
+void FixMessage::parse(std::string_view in, FixMessage& msg,
+                       const GroupDefs& defs) {
+  std::string owned{in};
+  std::istringstream stream{std::move(owned)};
+  parse(stream, msg, defs);
+}
 
 void FixMessage::parse(std::istream& in, FixMessage& msg,
                        const GroupDefs& defs) {
@@ -45,10 +37,9 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
     return readOne();
   };
 
-  // Read the mandatory minimum (8=FIX.x.y\x01 9=nn\x01 ... 10=x\x01 = 37
-  // bytes).
-  if (!in.read(end, 37)) return;
-  end += 37;
+  // Read mandatory minimum (8=FIX.x.y\x01 9=nn\x01 ... 10=x\x01 = 37 bytes).
+  // if (!in.read(end, 37)) return;
+  // end += 37;
 
   while (true) {
     // Scan to '='  →  tag number
@@ -59,9 +50,8 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
     }
 
     const FieldTag tag = [&]() -> FieldTag {
-      // Convert the ASCII integer directly to a FieldTag via stoft.
-      // stoft expects the tag number as a string_view.
-      auto result = stoft(std::string_view(start, cp - start));
+      auto sv = std::string_view(start, cp - start);
+      auto result = stoft(sv);
       return result.value_or(FieldTag::INVALID);
     }();
 

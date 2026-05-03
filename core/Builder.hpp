@@ -1,17 +1,20 @@
 #pragma once
 
+#include <sys/time.h>
+
 #include <charconv>
 #include <cstring>
 #include <ctime>
 #include <stdexcept>
 #include <string_view>
-#include <sys/time.h>
 
 #include "Alloc.hpp"
 #include "FieldTag.hpp"
 
 namespace fast_little_market {
 namespace fix {
+
+static constexpr std::string_view k_begin_string = "8=FIX.5.0\x01";
 
 class Builder {
  public:
@@ -46,20 +49,6 @@ class Builder {
     write(value);
     writeSOH();
     accountBody();
-    return *this;
-  }
-
-  // Reserves space for BodyLength (tag 9). Must be called before body fields.
-  // Space is back-filled in build().
-  Builder& reserveBodyLength() {
-    writeTag(FieldTag::BodyLength);
-    body_len_dst_ = cp_;
-    // Reserve 6 digits — enough for any realistic message size.
-    std::memset(cp_, '0', k_body_len_width);
-    cp_ += k_body_len_width;
-    writeSOH();
-    // BodyLength field itself is not counted in body length.
-    body_start_ = cp_;
     return *this;
   }
 
@@ -101,9 +90,20 @@ class Builder {
     buf_.reset();
     message_ = static_cast<char*>(buf_.allocate(max_message_size_));
     cp_ = message_;
-    body_start_ = nullptr;
     body_len_dst_ = nullptr;
     body_length_ = 0;
+
+    // k_begin_string not counted in body_length_
+    write(k_begin_string);
+
+    // Reserve space for body_length_ field, backfilled during build()
+    write(std::string_view("9="));
+    body_len_dst_ = cp_;
+    std::memset(cp_, '0', k_body_len_width);
+    cp_ += k_body_len_width;
+    writeSOH();
+
+    body_start_ = cp_;
   }
 
  private:
@@ -152,13 +152,12 @@ class Builder {
   void writeSOH() { write(SOH); }
 
   void accountBody() {
-    // Only count bytes after reserveBodyLength() has been called.
-    if (body_start_) body_length_ += (cp_ - body_start_) - body_length_;
+    if (body_start_) body_length_ = static_cast<size_t>(cp_ - body_start_);
   }
 
   void writeTime(const timeval& tv) {
     char buf[21];
-    struct tm gmt{};
+    struct tm gmt {};
     const time_t secs = tv.tv_sec;
     gmtime_r(&secs, &gmt);
 
@@ -209,8 +208,10 @@ class Builder {
     sum %= 256;
 
     char tmp[k_checksum_width] = {'1', '0', '=', '0', '0', '0', '\x01'};
-    tmp[6] = '0' + sum % 10; sum /= 10;
-    tmp[5] = '0' + sum % 10; sum /= 10;
+    tmp[6] = '0' + sum % 10;
+    sum /= 10;
+    tmp[5] = '0' + sum % 10;
+    sum /= 10;
     tmp[4] = '0' + sum % 10;
     checkCapacity(k_checksum_width);
     std::memcpy(cp_, tmp, k_checksum_width);

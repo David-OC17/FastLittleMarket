@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <cstring>
 #include <istream>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -47,8 +49,10 @@ class FixMessage final : public FieldAccessor {
 
   void reset() {
     buf_.reset();
+    void* mapMem = buf_.allocate(sizeof(FieldMap));
     msgBytes_ = static_cast<char*>(buf_.allocate(maxMessageSize_));
-    map_ = new (buf_.allocate(sizeof(FieldMap))) FieldMap(buf_, msgBytes_);
+    std::memset(msgBytes_, 0, maxMessageSize_);
+    map_ = new (mapMem) FieldMap(buf_, msgBytes_);
     FieldAccessor::reset(map_);
   }
 
@@ -59,16 +63,17 @@ class FixMessage final : public FieldAccessor {
   FixMessage() : FixMessage(2048) {}
 
   explicit FixMessage(int maxMessageSize)
-      : maxMessageSize_(maxMessageSize),
-        buf_(maxMessageSize * 4),
-        msgBytes_(static_cast<char*>(buf_.allocate(maxMessageSize))) {
-    void* mem = buf_.allocate(sizeof(FieldMap));
-    map_ = new (mem) FieldMap(buf_, msgBytes_);
+      : maxMessageSize_(maxMessageSize), buf_(maxMessageSize * 4) {
+    void* mapMem = buf_.allocate(sizeof(FieldMap));
+    msgBytes_ = static_cast<char*>(buf_.allocate(maxMessageSize));
+    std::memset(msgBytes_, 0, maxMessageSize);
+    map_ = new (mapMem) FieldMap(buf_, msgBytes_);
     FieldAccessor::reset(map_);
   }
-
   static void parse(std::istream& in, FixMessage& msg, const GroupDefs& defs);
-  // static void parse(const char* in, FixMessage& msg, const GroupDefs& defs);
+
+  static void parse(std::string_view in, FixMessage& msg,
+                    const GroupDefs& defs);
 };
 
 }  // namespace fix

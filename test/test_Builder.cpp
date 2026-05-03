@@ -110,48 +110,6 @@ TEST(BuilderTest, AddFieldCharWritesSingleChar) {
 }
 
 // ---------------------------------------------------------------------------
-// reserveBodyLength
-// ---------------------------------------------------------------------------
-
-TEST(BuilderTest, ReserveBodyLengthWritesTag9) {
-  flm::fix::Builder b;
-  b.reserveBodyLength();
-  b.addField(flm::fix::FieldTag::ClOrdID, "X");
-  auto msg = build(b);
-  EXPECT_TRUE(contains(msg, "9="));
-}
-
-TEST(BuilderTest, BodyLengthIsCorrect) {
-  flm::fix::Builder b;
-  b.reserveBodyLength();
-  // body = "11=ABC\x01" = 7 bytes
-  b.addField(flm::fix::FieldTag::ClOrdID, "ABC");
-  auto msg = build(b);
-  // find the body length value
-  auto pos = msg.find("9=");
-  ASSERT_NE(pos, std::string_view::npos);
-  pos += 2;
-  auto end = msg.find(SOH, pos);
-  ASSERT_NE(end, std::string_view::npos);
-  int bodyLen = std::stoi(std::string(msg.substr(pos, end - pos)));
-  EXPECT_EQ(bodyLen, 7);
-}
-
-TEST(BuilderTest, BodyLengthDoesNotCountTag9Itself) {
-  flm::fix::Builder b;
-  b.reserveBodyLength();
-  b.addField(flm::fix::FieldTag::ClOrdID, "X");
-  auto msg = build(b);
-  auto pos = msg.find("9=");
-  ASSERT_NE(pos, std::string_view::npos);
-  pos += 2;
-  auto end = msg.find(SOH, pos);
-  int bodyLen = std::stoi(std::string(msg.substr(pos, end - pos)));
-  // "11=X\x01" = 5 bytes, checksum not counted
-  EXPECT_EQ(bodyLen, 5);
-}
-
-// ---------------------------------------------------------------------------
 // checksum
 // ---------------------------------------------------------------------------
 
@@ -168,21 +126,22 @@ TEST(BuilderTest, ChecksumIsCorrect) {
   b.addField(flm::fix::FieldTag::ClOrdID, "A");
   auto msg = build(b);
 
-  std::string csTag = std::string(flm::fix::ftof(flm::fix::FieldTag::CheckSum)) + "=";
+  std::string csTag =
+      std::string(flm::fix::ftof(flm::fix::FieldTag::CheckSum)) + "=";
   auto csPos = msg.rfind(csTag);
   ASSERT_NE(csPos, std::string_view::npos);
 
   // compute expected sum over everything before the checksum field
   unsigned int sum = 0;
-  for (size_t i = 0; i < csPos; i++)
-    sum += static_cast<unsigned char>(msg[i]);
+  for (size_t i = 0; i < csPos; i++) sum += static_cast<unsigned char>(msg[i]);
   sum %= 256;
 
   // extract actual checksum value from message (read until end or \x01)
   auto valueStart = csPos + csTag.size();
   auto valueEnd = msg.find('\x01', valueStart);
   if (valueEnd == std::string_view::npos) valueEnd = msg.size();
-  int actual = std::stoi(std::string(msg.substr(valueStart, valueEnd - valueStart)));
+  int actual =
+      std::stoi(std::string(msg.substr(valueStart, valueEnd - valueStart)));
 
   EXPECT_EQ(actual, (int)sum);
 }
@@ -206,22 +165,6 @@ TEST(BuilderTest, ResetAllowsRebuild) {
   b.addField(flm::fix::FieldTag::ClOrdID, "SECOND");
   auto msg = build(b);
   EXPECT_TRUE(contains(msg, "11=SECOND\x01"));
-}
-
-TEST(BuilderTest, ResetClearsBodyLength) {
-  flm::fix::Builder b;
-  b.reserveBodyLength();
-  b.addField(flm::fix::FieldTag::ClOrdID, "X");
-  b.reset();
-  b.reserveBodyLength();
-  b.addField(flm::fix::FieldTag::ClOrdID, "Y");
-  auto msg = build(b);
-  auto pos = msg.find("9=");
-  ASSERT_NE(pos, std::string_view::npos);
-  pos += 2;
-  auto end = msg.find(SOH, pos);
-  int bodyLen = std::stoi(std::string(msg.substr(pos, end - pos)));
-  EXPECT_EQ(bodyLen, 5);  // "11=Y\x01"
 }
 
 // ---------------------------------------------------------------------------
@@ -258,21 +201,6 @@ TEST(BuilderTest, AppendResetsSrc) {
   dst.append(src);
   auto srcMsg = build(src);
   EXPECT_FALSE(contains(srcMsg, "11=X"));
-}
-
-TEST(BuilderTest, AppendAccountsForBodyLength) {
-  flm::fix::Builder dst;
-  dst.reserveBodyLength();
-  flm::fix::Builder src;
-  src.addField(flm::fix::FieldTag::ClOrdID, "AB");
-  dst.append(src);
-  auto msg = build(dst);
-  auto pos = msg.find("9=");
-  ASSERT_NE(pos, std::string_view::npos);
-  pos += 2;
-  auto end = msg.find(SOH, pos);
-  int bodyLen = std::stoi(std::string(msg.substr(pos, end - pos)));
-  EXPECT_EQ(bodyLen, 6);  // "11=AB\x01"
 }
 
 // ---------------------------------------------------------------------------
