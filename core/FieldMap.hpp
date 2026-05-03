@@ -4,6 +4,7 @@
 #include <optional>
 #include <vector>
 
+#include "Alloc.hpp"
 #include "Field.hpp"
 #include "FieldList.hpp"
 #include "FieldTag.hpp"
@@ -57,7 +58,7 @@ class FieldMap {
 
  public:
   FieldMap(Buffer& buffer, const char* msgBytes)
-      : buffer_(buffer), msgBytes_(msgBytes), map_(buffer) {}
+      : buffer_(buffer), msgBytes_(msgBytes), map_() {}
 
   FieldMap* addGroup(FieldTag tag);
 
