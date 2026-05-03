@@ -21,6 +21,17 @@ cmake --build build --parallel
 ```
 
 ```bash
+rm -rf build
+
+cmake -B build \
+  -DCMAKE_BUILD_TYPE=Coverage \
+  -DCMAKE_C_COMPILER=gcc-13 \
+  -DCMAKE_CXX_COMPILER=g++-13 \
+  -DBUILD_TESTS=ON \
+  -G Ninja
+
+cmake --build build --parallel
+
 cd build
 
 gcovr -r .. \
@@ -121,6 +132,8 @@ _Order routing_
 * Implement security for connection to the "outside"
 * Implement robust logging to allow for state-machine-replication (of the entire system) --> can later allow for incredible reliability, as we can bring up full blocks/servers if they fail via replication of their deduced state at some point in time
 * Implement a passive ME (watches ME output) to replicate the primary ME and take over if ME fails
+
+* Check FieldMap size! currently too big --> migrate to template meta programming in the future
 
 ## Development notes
 

@@ -24,6 +24,7 @@ add_library(Core STATIC
   core/FieldMap.cpp
   core/OrderBook.cpp
   core/ThreadPool.cpp
+  core/Parser.cpp
 )
 
 target_compile_options(Core PRIVATE ${WARNINGS})
@@ -65,6 +66,7 @@ if(BUILD_TESTS)
     test/test_Alloc.cpp
     test/test_FieldList.cpp
     test/test_FieldMap.cpp
+    test/test_Parser.cpp
   )
 
   target_compile_options(tests PRIVATE ${WARNINGS})

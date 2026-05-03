@@ -114,7 +114,7 @@ class FieldAccessor {
 
   FieldAccessor(const FieldMap* map) : map_(map), msgBytes_(map->msgBytes_) {}
 
-  FieldAccessor() = delete;
+  FieldAccessor() : map_(nullptr), msgBytes_(nullptr) {}
 
   void reset(const FieldMap* map) {
     map_ = map;
