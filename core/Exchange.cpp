@@ -1,4 +1,5 @@
-#include <Exchange.hpp>
+#include "Exchange.hpp"
+
 #include <cassert>
 
 #include "Symbols.hpp"
@@ -25,25 +26,25 @@ void Exchange::newOrder(const std::string& symbol, Order order) {
       shard);
 }
 
-void Exchange::cancelOrder(const std::string& symbol, uint64_t orderId) {
+void Exchange::cancelOrder(const std::string& symbol, uint64_t order_id) {
   size_t shard = getShard(symbol);
   thread_pool_.enqueue(
-      [this, symbol, orderId, shard] {
+      [this, symbol, order_id, shard] {
         auto it = shards_[shard].find(symbol);
         if (it != shards_[shard].end()) {
-          it->second.cancelOrder(orderId);
+          it->second.cancelOrder(order_id);
         }
       },
       shard);
 }
 
 std::optional<Order> Exchange::getOrder(const std::string& symbol,
-                                        uint64_t orderId) const {
+                                        uint64_t order_id) const {
   size_t shard = getShard(symbol);
 
   auto it = shards_[shard].find(symbol);
   if (it != shards_[shard].end()) {
-    return it->second.getOrder(orderId);
+    return it->second.getOrder(order_id);
   }
 
   return std::nullopt;

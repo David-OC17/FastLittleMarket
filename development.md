@@ -9,19 +9,8 @@ Some characteristics of the system are:
 
 ## Compilation
 
-### Regular build
-```bash
-rm -rf build
+### All checks (test, ASAN)
 
-cmake -B build -S . \
-  -DCMAKE_C_COMPILER=gcc-13 \
-  -DCMAKE_CXX_COMPILER=g++-13 \
-  -G Ninja
-
-cmake --build build --parallel
-```
-
-### ASAN build
 ```bash
 rm -rf build
 
@@ -37,6 +26,7 @@ cmake --build build --parallel
 ```
 
 ### Coverage build
+
 ```bash
 rm -rf build
 
@@ -59,6 +49,20 @@ gcovr -r .. \
   --exclude '.*external.*' \
   --gcov-ignore-parse-errors=negative_hits.warn \
   --html --html-details -o ../coverage/coverage.html
+```
+
+###
+
+```bash
+script -q -c "clang-tidy --checks='-*,readability-identifier-naming' \
+  --header-filter='(core|test|common)/.*' \
+  core/*.cpp core/*.hpp test/*.cpp common/*.hpp \                        
+  -- -std=c++20 \
+  -I./external/quill/include \
+  -I./external/quill/include/quill/ \
+  -I./external/concurrentqueue \
+  -I./common \
+  -I./core 2>&1" output.txt
 ```
 
 ## Current steps

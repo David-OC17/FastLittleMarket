@@ -25,12 +25,12 @@ class FieldList {
   Field& put(const Field& fg) {
     for (size_t i = 0; i < size_; i++) {
       if (list_[i].tag_ == fg.tag_) {
-        FieldMap* savedGroups = list_[i].groups_;
-        FieldMap* savedTail = list_[i].tail_;
+        FieldMap* saved_groups = list_[i].groups_;
+        FieldMap* saved_tail = list_[i].tail_;
         list_[i] = fg;
-        if (savedGroups && !fg.isGroup()) {
-          list_[i].groups_ = savedGroups;
-          list_[i].tail_ = savedTail;
+        if (saved_groups && !fg.isGroup()) {
+          list_[i].groups_ = saved_groups;
+          list_[i].tail_ = saved_tail;
         }
         return list_[i];
       }

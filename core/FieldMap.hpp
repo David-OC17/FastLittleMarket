@@ -15,14 +15,14 @@ namespace fix {
 
 namespace {
 
-static inline int parseInt(const char* start, const char* endExclusive) {
+static inline int parseInt(const char* start, const char* end_exclusive) {
   int value = 0;
   bool negate = false;
   if (*start == '-') {
     negate = true;
     start++;
   }
-  while (start != endExclusive) {
+  while (start != end_exclusive) {
     value *= 10;
     value += *start - '0';
     start++;
@@ -30,14 +30,14 @@ static inline int parseInt(const char* start, const char* endExclusive) {
   return negate ? value * -1 : value;
 }
 
-static inline long parseLong(const char* start, const char* endExclusive) {
+static inline long parseLong(const char* start, const char* end_exclusive) {
   long value = 0;
   bool negate = false;
   if (*start == '-') {
     negate = true;
     start++;
   }
-  while (start != endExclusive) {
+  while (start != end_exclusive) {
     value *= 10;
     value += *start - '0';
     start++;
@@ -52,13 +52,13 @@ class FieldMap {
   friend class FieldAccessor;
 
   Buffer& buffer_;
-  const char* msgBytes_;
+  const char* msg_bytes_;
   FieldMap* next_ = nullptr;  // linked list for group
   FieldList map_;
 
  public:
-  FieldMap(Buffer& buffer, const char* msgBytes)
-      : buffer_(buffer), msgBytes_(msgBytes), map_() {}
+  FieldMap(Buffer& buffer, const char* msg_bytes)
+      : buffer_(buffer), msg_bytes_(msg_bytes), map_() {}
 
   FieldMap* addGroup(FieldTag tag);
 
@@ -73,8 +73,8 @@ class FieldMap {
   std::optional<int> getInt(FieldTag tag) const {
     auto field = get(tag);
     if (field == nullptr) return std::nullopt;
-    int value = parseInt(msgBytes_ + field->offset_,
-                         msgBytes_ + field->offset_ + field->length_);
+    int value = parseInt(msg_bytes_ + field->offset_,
+                         msg_bytes_ + field->offset_ + field->length_);
     return value;
   }
 
@@ -82,23 +82,23 @@ class FieldMap {
     auto field = get(tag);
     if (field == nullptr) return std::nullopt;
 
-    return *(msgBytes_ + field->offset_);
+    return *(msg_bytes_ + field->offset_);
   }
 
   std::optional<long> getLong(FieldTag tag) const {
     auto field = get(tag);
     if (field == nullptr) return std::nullopt;
 
-    long value = parseLong(msgBytes_ + field->offset_,
-                           msgBytes_ + field->offset_ + field->length_);
+    long value = parseLong(msg_bytes_ + field->offset_,
+                           msg_bytes_ + field->offset_ + field->length_);
     return value;
   }
 
   std::optional<int> getInt(const Field& field) const {
     if (field.isEmpty()) return std::nullopt;
 
-    int value = parseInt(msgBytes_ + field.offset_,
-                         msgBytes_ + field.offset_ + field.length_);
+    int value = parseInt(msg_bytes_ + field.offset_,
+                         msg_bytes_ + field.offset_ + field.length_);
     return value;
   }
 };
@@ -110,15 +110,15 @@ class FieldAccessor {
 
  private:
   const FieldMap* map_;
-  const char* msgBytes_;
+  const char* msg_bytes_;
 
-  FieldAccessor(const FieldMap* map) : map_(map), msgBytes_(map->msgBytes_) {}
+  FieldAccessor(const FieldMap* map) : map_(map), msg_bytes_(map->msg_bytes_) {}
 
-  FieldAccessor() : map_(nullptr), msgBytes_(nullptr) {}
+  FieldAccessor() : map_(nullptr), msg_bytes_(nullptr) {}
 
   void reset(const FieldMap* map) {
     map_ = map;
-    msgBytes_ = map->msgBytes_;
+    msg_bytes_ = map->msg_bytes_;
   }
 
  public:
@@ -138,47 +138,47 @@ class FieldAccessor {
     auto field = map_->get(tag);
     if (field == nullptr) return std::nullopt;
 
-    auto start = msgBytes_ + field->offset_;
+    auto start = msg_bytes_ + field->offset_;
     return std::string_view(start, field->length_);
   }
 
   std::span<const Field> tags() const { return map_->getFields(); }
 
-  inline std::optional<int> getInt(FieldTag groupTag, size_t index,
+  inline std::optional<int> getInt(FieldTag group_tag, size_t index,
                                    FieldTag tag) const {
-    FieldMap* grp = map_->getGroup(groupTag, index);
+    FieldMap* grp = map_->getGroup(group_tag, index);
     if (grp == nullptr) return std::nullopt;
 
     const Field* field = grp->get(tag);
     if (field == nullptr) return std::nullopt;
 
-    return parseInt(grp->msgBytes_ + field->offset_,
-                    grp->msgBytes_ + field->offset_ + field->length_);
+    return parseInt(grp->msg_bytes_ + field->offset_,
+                    grp->msg_bytes_ + field->offset_ + field->length_);
   }
 
-  inline std::optional<std::string_view> getString(FieldTag groupTag,
+  inline std::optional<std::string_view> getString(FieldTag group_tag,
                                                    size_t index,
                                                    FieldTag tag) const {
-    FieldMap* grp = map_->getGroup(groupTag, index);
+    FieldMap* grp = map_->getGroup(group_tag, index);
     if (grp == nullptr) return std::nullopt;
 
     const Field* field = grp->get(tag);
     if (field == nullptr) return std::nullopt;
 
-    return std::string_view(grp->msgBytes_ + field->offset_, field->length_);
+    return std::string_view(grp->msg_bytes_ + field->offset_, field->length_);
   }
 
-  inline std::optional<FieldAccessor> getGroup(FieldTag groupTag,
+  inline std::optional<FieldAccessor> getGroup(FieldTag group_tag,
                                                size_t index) {
-    FieldMap* grp = map_->getGroup(groupTag, index);
+    FieldMap* grp = map_->getGroup(group_tag, index);
     if (grp == nullptr) return std::nullopt;
 
     return FieldAccessor(grp);
   }
 
-  std::optional<std::span<const Field>> tags(FieldTag groupTag,
+  std::optional<std::span<const Field>> tags(FieldTag group_tag,
                                              size_t index) const {
-    FieldMap* grp = map_->getGroup(groupTag, index);
+    FieldMap* grp = map_->getGroup(group_tag, index);
     if (grp == nullptr) return std::nullopt;
 
     return grp->getFields();

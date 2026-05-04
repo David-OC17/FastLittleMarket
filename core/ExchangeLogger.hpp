@@ -19,8 +19,8 @@ class ExchangeLogger {
  private:
   quill::Logger* global_logger_;
 
-  static quill::Logger* make_logger(const char* name,
-                                    std::shared_ptr<quill::Sink> sink) {
+  static quill::Logger* makeLogger(const char* name,
+                                   std::shared_ptr<quill::Sink> sink) {
     return quill::Frontend::create_or_get_logger(
         name, std::move(sink),
         quill::PatternFormatterOptions{
@@ -45,7 +45,7 @@ class ExchangeLogger {
         }(),
         quill::FileEventNotifier{});
 
-    global_logger_ = make_logger("global", file_sink);
+    global_logger_ = makeLogger("global", file_sink);
   }
 
  public:

@@ -6,7 +6,7 @@ namespace fast_little_market {
 
 bool OrderBook::canCross(const Order& incoming) const {
   const OrderQueueInterface* opposite =
-      (incoming.side == BUY_SIDE)
+      (incoming.side_ == BUY_SIDE)
           ? static_cast<const OrderQueueInterface*>(&sell_orders_)
           : static_cast<const OrderQueueInterface*>(&buy_orders_);
 
@@ -17,8 +17,9 @@ bool OrderBook::canCross(const Order& incoming) const {
 
 bool OrderBook::priceCrosses(const Order& incoming,
                              const Order& opposite) const {
-  return (incoming.side == BUY_SIDE) ? (opposite.price_q4 <= incoming.price_q4)
-                                     : (opposite.price_q4 >= incoming.price_q4);
+  return (incoming.side_ == BUY_SIDE)
+             ? (opposite.price_q4_ <= incoming.price_q4_)
+             : (opposite.price_q4_ >= incoming.price_q4_);
 }
 
 ExecFlags OrderBook::newOrder(const Order& order) {
@@ -31,14 +32,14 @@ ExecFlags OrderBook::newOrder(const Order& order) {
       return ExecFlags::Rejected;
     }
   } else {
-    auto* own_queue = (order.side == BUY_SIDE)
+    auto* own_queue = (order.side_ == BUY_SIDE)
                           ? static_cast<OrderQueueInterface*>(&buy_orders_)
                           : static_cast<OrderQueueInterface*>(&sell_orders_);
 
     assert(own_queue->isValid());
 
     own_queue->push(order);
-    volumes_[std::make_pair(order.price_q4, order.side)] += order.volume;
+    volumes_[std::make_pair(order.price_q4_, order.side_)] += order.volume_;
   }
 
   return flags | ExecFlags::Accepted;
@@ -47,7 +48,7 @@ ExecFlags OrderBook::newOrder(const Order& order) {
 ExecFlags OrderBook::matchOrder(Order incoming) {
   if (!incoming.isValid()) return ExecFlags::Rejected;
 
-  auto* opposite_queue = (incoming.side == BUY_SIDE)
+  auto* opposite_queue = (incoming.side_ == BUY_SIDE)
                              ? static_cast<OrderQueueInterface*>(&sell_orders_)
                              : static_cast<OrderQueueInterface*>(&buy_orders_);
 
@@ -59,21 +60,21 @@ ExecFlags OrderBook::matchOrder(Order incoming) {
     if (!priceCrosses(incoming, best_opposite)) break;
     opposite_queue->pop();
 
-    const int trade_volume = std::min(incoming.volume, best_opposite.volume);
+    const int trade_volume = std::min(incoming.volume_, best_opposite.volume_);
 
-    incoming.volume -= trade_volume;
-    best_opposite.volume -= trade_volume;
+    incoming.volume_ -= trade_volume;
+    best_opposite.volume_ -= trade_volume;
 
     if (best_opposite.isValid()) {
       opposite_queue->push(best_opposite);
     }
   }
 
-  if (incoming.volume <= 0) {
+  if (incoming.volume_ <= 0) {
     return ExecFlags::FullyFilled;
   }
 
-  auto* own_queue = (incoming.side == BUY_SIDE)
+  auto* own_queue = (incoming.side_ == BUY_SIDE)
                         ? static_cast<OrderQueueInterface*>(&buy_orders_)
                         : static_cast<OrderQueueInterface*>(&sell_orders_);
   assert(own_queue->isValid());
@@ -88,7 +89,7 @@ ExecFlags OrderBook::cancelOrder(uint64_t order_id) {
 
     if (!buy_orders_.remove(order_id)) return ExecFlags::Rejected;
 
-    volumes_[{order.price_q4, BUY_SIDE}] -= order.volume;
+    volumes_[{order.price_q4_, BUY_SIDE}] -= order.volume_;
     return ExecFlags::Cancelled;
   }
 
@@ -97,7 +98,7 @@ ExecFlags OrderBook::cancelOrder(uint64_t order_id) {
 
     if (!sell_orders_.remove(order_id)) return ExecFlags::Rejected;
 
-    volumes_[{order.price_q4, SELL_SIDE}] -= order.volume;
+    volumes_[{order.price_q4_, SELL_SIDE}] -= order.volume_;
     return ExecFlags::Cancelled;
   }
 
@@ -115,8 +116,8 @@ ExecFlags OrderBook::modifyOrder(uint64_t order_id, uint32_t new_price_q4,
   auto flags = cancelOrder(order_id);
   if (hasFlag(flags, ExecFlags::Rejected)) return flags;
 
-  Order new_order(Order::unpack(order.id_ns).id, new_price_q4, new_volume,
-                  order.side == BUY_SIDE, order.client, sequencer);
+  Order new_order(Order::unpack(order.id_ns_).id, new_price_q4, new_volume,
+                  order.side_ == BUY_SIDE, order.client_, sequencer);
 
   return flags | newOrder(new_order);
 }

@@ -12,10 +12,13 @@ set(CMAKE_EXE_LINKER_FLAGS_COVERAGE "--coverage" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE "--coverage" CACHE STRING "" FORCE)
 
 set(WARNINGS -Wall -Wextra -Wpedantic)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+option(BUILD_TESTS "Build unit tests" ON)
+option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(GTest REQUIRED)
-
 find_program(GCOV_EXECUTABLE NAMES gcov-13 gcov REQUIRED)
 
 add_library(Core STATIC
@@ -48,10 +51,6 @@ target_compile_definitions(Core PUBLIC
   FLM_LOG_DIR="${CMAKE_SOURCE_DIR}/log"
 )
 
-# add_executable(FastLittleMarket ...)
-# target_link_libraries(FastLittleMarket PRIVATE Core)
-
-option(BUILD_TESTS "Build unit tests" ON)
 if(BUILD_TESTS)
   enable_testing()
 
@@ -91,18 +90,16 @@ if(BUILD_TESTS)
   target_compile_definitions(Core PRIVATE FLM_TESTING)
   target_compile_definitions(tests PRIVATE FLM_TESTING)
 
+  if(ENABLE_ASAN)
+    target_compile_options(tests PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+    target_link_options(tests PRIVATE -fsanitize=address)
+  endif()
+
   include(GoogleTest)
   gtest_discover_tests(tests
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     DISCOVERY_MODE PRE_TEST
   )
-
-  option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
-
-  if(ENABLE_ASAN)
-    target_compile_options(tests PRIVATE -fsanitize=address -fno-omit-frame-pointer)
-    target_link_options(tests PRIVATE -fsanitize=address)
-  endif()
 
   file(WRITE ${CMAKE_BINARY_DIR}/run_coverage.sh
     "#!/bin/sh

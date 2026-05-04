@@ -99,16 +99,16 @@ class Builder {
     // Reserve space for body_length_ field, backfilled during build()
     write(std::string_view("9="));
     body_len_dst_ = cp_;
-    std::memset(cp_, '0', k_body_len_width);
-    cp_ += k_body_len_width;
+    std::memset(cp_, '0', BODY_LEN_WIDTH);
+    cp_ += BODY_LEN_WIDTH;
     writeSOH();
 
     body_start_ = cp_;
   }
 
  private:
-  static constexpr size_t k_body_len_width = 6;
-  static constexpr size_t k_checksum_width = 7;  // "10=NNN\x01"
+  static constexpr size_t BODY_LEN_WIDTH = 6;
+  static constexpr size_t CHECKSUM_WIDTH = 7;  // "10=NNN\x01"
 
   const size_t max_message_size_;
   Buffer buf_;
@@ -120,7 +120,7 @@ class Builder {
 
   // TODO: replace throw
   void checkCapacity(size_t needed) const {
-    if (static_cast<size_t>(cp_ - message_) + needed + k_checksum_width >
+    if (static_cast<size_t>(cp_ - message_) + needed + CHECKSUM_WIDTH >
         max_message_size_) {
       throw std::length_error("Builder: message exceeds max_message_size");
     }
@@ -194,11 +194,11 @@ class Builder {
   void backfillBodyLength() {
     if (!body_len_dst_) return;
     // Back-fill into the reserved space, right-justified with leading zeros.
-    char tmp[k_body_len_width];
-    auto [ptr, ec] = std::to_chars(tmp, tmp + k_body_len_width, body_length_);
+    char tmp[BODY_LEN_WIDTH];
+    auto [ptr, ec] = std::to_chars(tmp, tmp + BODY_LEN_WIDTH, body_length_);
     const size_t len = ptr - tmp;
-    std::memset(body_len_dst_, '0', k_body_len_width - len);
-    std::memcpy(body_len_dst_ + k_body_len_width - len, tmp, len);
+    std::memset(body_len_dst_, '0', BODY_LEN_WIDTH - len);
+    std::memcpy(body_len_dst_ + BODY_LEN_WIDTH - len, tmp, len);
   }
 
   void writeChecksum() {
@@ -207,15 +207,15 @@ class Builder {
       sum += static_cast<unsigned char>(*p);
     sum %= 256;
 
-    char tmp[k_checksum_width] = {'1', '0', '=', '0', '0', '0', '\x01'};
+    char tmp[CHECKSUM_WIDTH] = {'1', '0', '=', '0', '0', '0', '\x01'};
     tmp[6] = '0' + sum % 10;
     sum /= 10;
     tmp[5] = '0' + sum % 10;
     sum /= 10;
     tmp[4] = '0' + sum % 10;
-    checkCapacity(k_checksum_width);
-    std::memcpy(cp_, tmp, k_checksum_width);
-    cp_ += k_checksum_width;
+    checkCapacity(CHECKSUM_WIDTH);
+    std::memcpy(cp_, tmp, CHECKSUM_WIDTH);
+    cp_ += CHECKSUM_WIDTH;
   }
 };
 

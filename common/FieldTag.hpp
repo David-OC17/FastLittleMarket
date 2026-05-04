@@ -250,29 +250,29 @@ enum class FieldTag : uint16_t {
 #define X(name, val) name,
   FIELDTAG_LIST(X)
 #undef X
-      _COUNT
+      COUNT
 };
 
-constexpr size_t FIELDTAG_COUNT = static_cast<size_t>(FieldTag::_COUNT);
+constexpr size_t FIELDTAG_COUNT = static_cast<size_t>(FieldTag::COUNT);
 
-constexpr std::array<std::string_view, FIELDTAG_COUNT> fieldtag_to_fix = {
+constexpr std::array<std::string_view, FIELDTAG_COUNT> FIELDTAG_TO_FIX = {
 #define X(name, val) val,
     FIELDTAG_LIST(X)
 #undef X
 };
 
-constexpr std::array<std::string_view, FIELDTAG_COUNT> fieldtag_to_name = {
+constexpr std::array<std::string_view, FIELDTAG_COUNT> FIELDTAG_TO_NAME = {
 #define X(name, val) #name,
     FIELDTAG_LIST(X)
 #undef X
 };
 
-static_assert(fieldtag_to_fix.size() == fieldtag_to_name.size());
+static_assert(FIELDTAG_TO_FIX.size() == FIELDTAG_TO_NAME.size());
 
 // FIX tag number string → FieldTag
 constexpr std::optional<FieldTag> stoft(std::string_view s) noexcept {
   for (size_t i = 0; i < FIELDTAG_COUNT; ++i) {
-    if (fieldtag_to_fix[i] == s) {
+    if (FIELDTAG_TO_FIX[i] == s) {
       return static_cast<FieldTag>(i);
     }
   }
@@ -280,18 +280,18 @@ constexpr std::optional<FieldTag> stoft(std::string_view s) noexcept {
 }
 
 constexpr std::string_view fton(FieldTag t) noexcept {
-  return fieldtag_to_name[static_cast<size_t>(t)];
+  return FIELDTAG_TO_NAME[static_cast<size_t>(t)];
 }
 
 constexpr std::string_view ftof(FieldTag t) noexcept {
-  return fieldtag_to_fix[static_cast<size_t>(t)];
+  return FIELDTAG_TO_FIX[static_cast<size_t>(t)];
 }
 
 namespace {
 
 constexpr uint64_t FIELDTAG_LIST_HASH = 1622422181734463442ULL;
 
-constexpr uint64_t compute_fieldtag_hash() {
+constexpr uint64_t computeFieldtagHash() {
   uint64_t h = 1469598103934665603ULL;
 
 #define X(name, val)   \
@@ -306,7 +306,7 @@ constexpr uint64_t compute_fieldtag_hash() {
   return h;
 }
 
-static_assert(compute_fieldtag_hash() == FIELDTAG_LIST_HASH,
+static_assert(computeFieldtagHash() == FIELDTAG_LIST_HASH,
               "FieldTag definition changed!");
 
 }  // namespace

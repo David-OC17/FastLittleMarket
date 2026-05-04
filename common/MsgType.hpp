@@ -118,18 +118,18 @@ enum class MsgType : uint16_t {
 #define X(name, val) name,
   MSGTYPE_LIST(X)
 #undef X
-      _COUNT
+      COUNT
 };
 
-constexpr size_t MSGTYPE_COUNT = static_cast<size_t>(MsgType::_COUNT);
+constexpr size_t MSGTYPE_COUNT = static_cast<size_t>(MsgType::COUNT);
 
-constexpr std::array<std::string_view, MSGTYPE_COUNT> msgtype_to_fix = {
+constexpr std::array<std::string_view, MSGTYPE_COUNT> MSGTYPE_TO_FIX = {
 #define X(name, val) val,
     MSGTYPE_LIST(X)
 #undef X
 };
 
-constexpr std::array<std::string_view, MSGTYPE_COUNT> msgtype_to_name = {
+constexpr std::array<std::string_view, MSGTYPE_COUNT> MSGTYPE_TO_NAME = {
 #define X(name, val) #name,
     MSGTYPE_LIST(X)
 #undef X
@@ -137,7 +137,7 @@ constexpr std::array<std::string_view, MSGTYPE_COUNT> msgtype_to_name = {
 
 constexpr std::optional<MsgType> stom(std::string_view s) noexcept {
   for (size_t i = 0; i < MSGTYPE_COUNT; ++i) {
-    if (msgtype_to_fix[i] == s) {
+    if (MSGTYPE_TO_FIX[i] == s) {
       return static_cast<MsgType>(i);
     }
   }
@@ -145,20 +145,20 @@ constexpr std::optional<MsgType> stom(std::string_view s) noexcept {
 }
 
 constexpr std::string_view mtos(MsgType t) noexcept {
-  return msgtype_to_name[static_cast<size_t>(t)];
+  return MSGTYPE_TO_NAME[static_cast<size_t>(t)];
 }
 
 constexpr std::string_view mtof(MsgType t) noexcept {
-  return msgtype_to_fix[static_cast<size_t>(t)];
+  return MSGTYPE_TO_FIX[static_cast<size_t>(t)];
 }
 
-static_assert(msgtype_to_fix.size() == msgtype_to_name.size());
+static_assert(MSGTYPE_TO_FIX.size() == MSGTYPE_TO_NAME.size());
 
 namespace {
 
 constexpr uint64_t MSGTYPE_LIST_HASH = 5468955649952501974ULL;
 
-constexpr uint64_t compute_msgtype_hash() {
+constexpr uint64_t computeMsgtypeHash() {
   uint64_t h = 1469598103934665603ULL;
 
 #define X(name, val)   \
@@ -173,7 +173,7 @@ constexpr uint64_t compute_msgtype_hash() {
   return h;
 }
 
-static_assert(compute_msgtype_hash() == MSGTYPE_LIST_HASH,
+static_assert(computeMsgtypeHash() == MSGTYPE_LIST_HASH,
               "MsgType definition changed!");
 
 }  // namespace

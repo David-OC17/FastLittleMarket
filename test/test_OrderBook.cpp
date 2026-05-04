@@ -22,8 +22,8 @@ TEST_F(OrderBookTest, AddAndTopOfBook) {
   auto top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
   EXPECT_TRUE(top.hasAsk());
-  EXPECT_EQ(top.bid->id_ns, order1.id_ns);
-  EXPECT_EQ(top.ask->id_ns, order2.id_ns);
+  EXPECT_EQ(top.bid->id_ns_, order1.id_ns_);
+  EXPECT_EQ(top.ask->id_ns_, order2.id_ns_);
 }
 
 TEST_F(OrderBookTest, CancelOrder) {
@@ -36,9 +36,9 @@ TEST_F(OrderBookTest, CancelOrder) {
   ob.newOrder(order1);
   ob.newOrder(order2);  // Expect no match with order1, as $100.00 < $101.00
 
-  const uint64_t order1_id_ns = order1.id_ns;
-  const uint64_t order2_id_ns = order2.id_ns;
-  const uint64_t order3_id_ns = order3.id_ns;
+  const uint64_t order1_id_ns = order1.id_ns_;
+  const uint64_t order2_id_ns = order2.id_ns_;
+  const uint64_t order3_id_ns = order3.id_ns_;
 
   EXPECT_EQ(ob.cancelOrder(order1_id_ns), flm::ExecFlags::Cancelled);
   auto top = ob.getTopOfBook();
@@ -53,7 +53,7 @@ TEST_F(OrderBookTest, CancelOrder) {
   top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
   EXPECT_FALSE(top.hasAsk());
-  EXPECT_EQ(top.bid->id_ns, order3_id_ns);
+  EXPECT_EQ(top.bid->id_ns_, order3_id_ns);
 }
 
 TEST_F(OrderBookTest, ModifyOrder) {
@@ -65,14 +65,14 @@ TEST_F(OrderBookTest, ModifyOrder) {
   flm::Order order2(2, 1010000, 5, flm::SELL_SIDE, "client2", sequencer_);
   ob.newOrder(order1);
   ob.newOrder(order2);
-  const uint64_t order1_id_ns = order1.id_ns;
+  const uint64_t order1_id_ns = order1.id_ns_;
 
   EXPECT_EQ(ob.modifyOrder(order1_id_ns, 990000, 7, sequencer_),
             flm::ExecFlags::Accepted | flm::ExecFlags::Cancelled);
   auto top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
-  EXPECT_EQ(top.bid->price_q4, 990000u);
-  EXPECT_EQ(top.bid->volume, 7u);
+  EXPECT_EQ(top.bid->price_q4_, 990000u);
+  EXPECT_EQ(top.bid->volume_, 7u);
 
   // ── Modify into a cross is rejected — engine does not match on modify ──────
   EXPECT_EQ(ob.modifyOrder(order1_id_ns, 1020000, 5, sequencer_),
@@ -80,7 +80,7 @@ TEST_F(OrderBookTest, ModifyOrder) {
   // Order should still be live at its last accepted price
   top = ob.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
-  EXPECT_EQ(top.bid->price_q4, 990000u);
+  EXPECT_EQ(top.bid->price_q4_, 990000u);
 
   // ── Modify a non-existent order is rejected ───────────────────────────────
   EXPECT_EQ(ob.modifyOrder(999, 1000000, 10, sequencer_),
@@ -94,31 +94,31 @@ TEST_F(OrderBookTest, ModifyOrder) {
   ob2.newOrder(order3);
   ob2.newOrder(order4);
   ob2.newOrder(order5);
-  const uint64_t order3_id_ns = order3.id_ns;
-  const uint64_t order4_id_ns = order4.id_ns;
+  const uint64_t order3_id_ns = order3.id_ns_;
+  const uint64_t order4_id_ns = order4.id_ns_;
 
   EXPECT_EQ(ob2.modifyOrder(order3_id_ns, 970000, 10, sequencer_),
             flm::ExecFlags::Accepted | flm::ExecFlags::Cancelled);
   top = ob2.getTopOfBook();
   EXPECT_TRUE(top.hasBid());
-  EXPECT_NE(top.bid->id_ns, order3_id_ns);  // order3 no longer best bid
-  EXPECT_EQ(top.ask->id_ns, order4_id_ns);  // ask unchanged
+  EXPECT_NE(top.bid->id_ns_, order3_id_ns);  // order3 no longer best bid
+  EXPECT_EQ(top.ask->id_ns_, order4_id_ns);  // ask unchanged
 
   // ── Modifying a cancelled order is rejected ───────────────────────────────
   flm::OrderBook ob3;
   flm::Order order6(20, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
   ob3.newOrder(order6);
-  const uint64_t order6_id_ns = order6.id_ns;
+  const uint64_t order6_id_ns = order6.id_ns_;
   ob3.cancelOrder(order6_id_ns);
   EXPECT_EQ(ob3.modifyOrder(order6_id_ns, 1010000, 5, sequencer_),
             flm::ExecFlags::Rejected);
 
-  // ── Zero volume modify is rejected ────────────────────────────────────────
+  // ── Zero volume_ modify is rejected ────────────────────────────────────────
   flm::OrderBook ob4;
   flm::Order order7(30, 1000000, 10, flm::BUY_SIDE, "client1", sequencer_);
   ob4.newOrder(order7);
   EXPECT_TRUE(
-      flm::hasFlag(ob4.modifyOrder(order7.id_ns, 1000000, 0, sequencer_),
+      flm::hasFlag(ob4.modifyOrder(order7.id_ns_, 1000000, 0, sequencer_),
                    flm::ExecFlags::Rejected));
 }
 
@@ -139,7 +139,7 @@ TEST_F(OrderBookTest, MatchOrders) {
   // ask fully consumed (vol 5 <= bid vol 10); bid partially filled, 5 remain
   EXPECT_TRUE(top.hasBid());
   EXPECT_FALSE(top.hasAsk());
-  EXPECT_EQ(top.bid->volume, 5u);
+  EXPECT_EQ(top.bid->volume_, 5u);
 }
 
 TEST_F(OrderBookTest, FullMatchClearsBothSides) {
@@ -167,8 +167,8 @@ TEST_F(OrderBookTest, AddAndGetOrder) {
   ob.newOrder(order1);
   ob.newOrder(order2);
 
-  const uint64_t order1_id_ns = order1.id_ns;
-  const uint64_t order2_id_ns = order2.id_ns;
+  const uint64_t order1_id_ns = order1.id_ns_;
+  const uint64_t order2_id_ns = order2.id_ns_;
 
   // getOrder takes the plain integer id
   auto retrieved_order1 = ob.getOrder(order1_id_ns);
@@ -176,7 +176,7 @@ TEST_F(OrderBookTest, AddAndGetOrder) {
 
   EXPECT_TRUE(retrieved_order1.has_value());
   EXPECT_TRUE(retrieved_order2.has_value());
-  // operator== compares id_ns only
+  // operator== compares id_ns_ only
   EXPECT_EQ(retrieved_order1.value(), order1);
   EXPECT_EQ(retrieved_order2.value(), order2);
 }

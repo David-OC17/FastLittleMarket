@@ -20,7 +20,7 @@ FieldMap* FieldMap::addGroup(FieldTag tag) {
   // reserve()
   FieldMap* fm;
   try {
-    fm = new (mem) FieldMap(buffer_, msgBytes_);
+    fm = new (mem) FieldMap(buffer_, msg_bytes_);
   } catch (const std::bad_alloc&) {
     return nullptr;
   }

@@ -15,26 +15,26 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
                        const GroupDefs& defs) {
   msg.reset();
 
-  char* const msgBytes = msg.msgBytes_;
-  char* end = msgBytes;    // one-past the last byte read into the buffer
-  char* cp = msgBytes;     // current scan position
-  char* start = msgBytes;  // start of the current token
+  char* const msg_bytes = msg.msg_bytes_;
+  char* end = msg_bytes;    // one-past the last byte read into the buffer
+  char* cp = msg_bytes;     // current scan position
+  char* start = msg_bytes;  // start of the current token
 
-  const std::vector<GroupDef>* msgGroups = nullptr;
+  const std::vector<GroupDef>* msg_groups = nullptr;
   std::vector<FieldMap*> stack;
   FieldMap* map = msg.map_;
 
   // Lazily extend the buffer by one character.
-  auto readOne = [&]() -> bool {
+  auto read_one = [&]() -> bool {
     if (!in.get(*end)) return false;
     ++end;
     return true;
   };
 
   // Ensure cp < end, reading if necessary.
-  auto ensureChar = [&]() -> bool {
+  auto ensure_char = [&]() -> bool {
     if (cp < end) return true;
-    return readOne();
+    return read_one();
   };
 
   // Read mandatory minimum (8=FIX.x.y\x01 9=nn\x01 ... 10=x\x01 = 37 bytes).
@@ -44,7 +44,7 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
   while (true) {
     // Scan to '='  →  tag number
     while (true) {
-      if (!ensureChar()) return;
+      if (!ensure_char()) return;
       if (*cp == '=') break;
       ++cp;
     }
@@ -60,12 +60,12 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
 
     // Scan to SOH  →  field value
     while (true) {
-      if (!ensureChar()) return;
+      if (!ensure_char()) return;
       if (*cp == '\x01') break;
       ++cp;
     }
 
-    const int offset = static_cast<int>(start - msgBytes);
+    const int offset = static_cast<int>(start - msg_bytes);
     const int length = static_cast<int>(cp - start);
 
     if (tag == FieldTag::CheckSum) {
@@ -77,41 +77,41 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
 
     if (tag == FieldTag::BodyLength) {
       // Body length excludes the trailing 10=NNN\x01 (7 bytes).
-      const int bodyLength = map->getInt(tag).value_or(0);
-      const int toRead = (bodyLength + 7) - static_cast<int>(end - cp);
-      if (toRead > 0) {
-        if (!in.read(end, toRead)) return;
-        end += toRead;
+      const int body_length = map->getInt(tag).value_or(0);
+      const int to_read = (body_length + 7) - static_cast<int>(end - cp);
+      if (to_read > 0) {
+        if (!in.read(end, to_read)) return;
+        end += to_read;
       }
     }
 
     if (tag == FieldTag::MsgType) {
-      const auto msgType = std::string_view(msgBytes + offset, length);
-      msgGroups = defs.defs(msgType);
+      const auto msg_type = std::string_view(msg_bytes + offset, length);
+      msg_groups = defs.defs(msg_type);
     }
 
     // Skip the SOH delimiter and advance start to next field.
     ++cp;
     start = cp;
 
-    if (msgGroups == nullptr) continue;
+    if (msg_groups == nullptr) continue;
 
-    for (const auto& grpDef : *msgGroups) {
-      if (grpDef.groupCountTag == tag) {
+    for (const auto& grp_def : *msg_groups) {
+      if (grp_def.group_count_tag_ == tag) {
         stack.push_back(map);
         map = map->addGroup(tag);
         break;
       }
 
-      if (grpDef.groupEndTag == tag) {
+      if (grp_def.group_end_tag_ == tag) {
         if (stack.empty()) break;
 
         FieldMap* parent = stack.back();
-        const Field* countField = parent->get(grpDef.groupCountTag);
-        if (countField == nullptr) break;
+        const Field* count_field = parent->get(grp_def.group_count_tag_);
+        if (count_field == nullptr) break;
 
-        const int expected = parent->getInt(*countField).value_or(0);
-        const int received = static_cast<int>(countField->groupCount());
+        const int expected = parent->getInt(*count_field).value_or(0);
+        const int received = static_cast<int>(count_field->groupCount());
 
         if (received >= expected) {
           // All groups accounted for — pop back to parent.
@@ -119,7 +119,7 @@ void FixMessage::parse(std::istream& in, FixMessage& msg,
           map = parent;
         } else {
           // More sibling groups expected — open a new one on the parent.
-          map = parent->addGroup(grpDef.groupCountTag);
+          map = parent->addGroup(grp_def.group_count_tag_);
         }
         break;
       }

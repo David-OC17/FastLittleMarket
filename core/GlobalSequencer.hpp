@@ -11,7 +11,7 @@
 
 namespace fast_little_market {
 
-inline uint64_t os_nano_time() noexcept {
+inline uint64_t osNanoTime() noexcept {
 #ifdef __linux__
   timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
@@ -26,15 +26,15 @@ inline uint64_t os_nano_time() noexcept {
 
 class GlobalSequencer {
  private:
-  uint64_t epoch_ns;
-  std::atomic<uint64_t> seq_counter{0};
+  uint64_t epoch_ns_;
+  std::atomic<uint64_t> seq_counter_{0};
 
  public:
-  GlobalSequencer() : epoch_ns(os_nano_time()) {}
+  GlobalSequencer() : epoch_ns_(osNanoTime()) {}
 
-  uint64_t next_timestamp_ns() noexcept {
-    uint64_t seq = seq_counter.fetch_add(1, std::memory_order_relaxed);
-    return epoch_ns + seq;
+  uint64_t nextTimestampNs() noexcept {
+    uint64_t seq = seq_counter_.fetch_add(1, std::memory_order_relaxed);
+    return epoch_ns_ + seq;
   }
 };
 

@@ -46,11 +46,11 @@ class Exchange {
 
   size_t getShard(const std::string& symbol) const;
   void newOrder(const std::string& symbol, Order order);
-  void cancelOrder(const std::string& symbol, uint64_t orderId);
+  void cancelOrder(const std::string& symbol, uint64_t order_id);
 
   /*
   TODO: allow for async read of orders, even within same shard, using 'seqlock'
-  type structure or itself
+  type_ structure or itself
 
   General structure/idea for 'seqlock' is:
 
@@ -83,7 +83,7 @@ class Exchange {
   Reference: https://youtu.be/8uAW5FQtcvE?si=lTHT9ta6A-PATWBH&t=2058
   */
   std::optional<Order> getOrder(const std::string& symbol,
-                                uint64_t orderId) const;
+                                uint64_t order_id) const;
 };
 
 }  // namespace fast_little_market

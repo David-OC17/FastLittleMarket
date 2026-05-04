@@ -18,8 +18,8 @@ namespace fast_little_market {
 namespace fix {
 
 struct GroupDef {
-  FieldTag groupCountTag;
-  FieldTag groupEndTag;
+  FieldTag group_count_tag_;
+  FieldTag group_end_tag_;
 };
 
 class GroupDefs {
@@ -42,17 +42,17 @@ class GroupDefs {
 
 class FixMessage final : public FieldAccessor {
  private:
-  const int maxMessageSize_;
+  const int max_message_size_;
   Buffer buf_;
-  char* msgBytes_;
+  char* msg_bytes_;
   FieldMap* map_;
 
   void reset() {
     buf_.reset();
     void* mapMem = buf_.allocate(sizeof(FieldMap));
-    msgBytes_ = static_cast<char*>(buf_.allocate(maxMessageSize_));
-    std::memset(msgBytes_, 0, maxMessageSize_);
-    map_ = new (mapMem) FieldMap(buf_, msgBytes_);
+    msg_bytes_ = static_cast<char*>(buf_.allocate(max_message_size_));
+    std::memset(msg_bytes_, 0, max_message_size_);
+    map_ = new (mapMem) FieldMap(buf_, msg_bytes_);
     FieldAccessor::reset(map_);
   }
 
@@ -63,11 +63,11 @@ class FixMessage final : public FieldAccessor {
   FixMessage() : FixMessage(2048) {}
 
   explicit FixMessage(int maxMessageSize)
-      : maxMessageSize_(maxMessageSize), buf_(maxMessageSize * 4) {
+      : max_message_size_(maxMessageSize), buf_(maxMessageSize * 4) {
     void* mapMem = buf_.allocate(sizeof(FieldMap));
-    msgBytes_ = static_cast<char*>(buf_.allocate(maxMessageSize));
-    std::memset(msgBytes_, 0, maxMessageSize);
-    map_ = new (mapMem) FieldMap(buf_, msgBytes_);
+    msg_bytes_ = static_cast<char*>(buf_.allocate(maxMessageSize));
+    std::memset(msg_bytes_, 0, maxMessageSize);
+    map_ = new (mapMem) FieldMap(buf_, msg_bytes_);
     FieldAccessor::reset(map_);
   }
   static void parse(std::istream& in, FixMessage& msg, const GroupDefs& defs);

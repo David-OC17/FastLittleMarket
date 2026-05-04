@@ -13,21 +13,21 @@ namespace fast_little_market {
 
 struct BuyOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
-    if (a.price_q4 == b.price_q4) {
-      return Order::unpack(a.id_ns).timestamp_ns >
-             Order::unpack(b.id_ns).timestamp_ns;  // FIFO by timestamp
+    if (a.price_q4_ == b.price_q4_) {
+      return Order::unpack(a.id_ns_).timestamp_ns >
+             Order::unpack(b.id_ns_).timestamp_ns;  // FIFO by timestamp
     }
-    return a.price_q4 > b.price_q4;
+    return a.price_q4_ > b.price_q4_;
   }
 };
 
 struct SellOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
-    if (a.price_q4 == b.price_q4) {
-      return Order::unpack(a.id_ns).timestamp_ns >
-             Order::unpack(b.id_ns).timestamp_ns;  // FIFO by timestamp
+    if (a.price_q4_ == b.price_q4_) {
+      return Order::unpack(a.id_ns_).timestamp_ns >
+             Order::unpack(b.id_ns_).timestamp_ns;  // FIFO by timestamp
     }
-    return a.price_q4 < b.price_q4;
+    return a.price_q4_ < b.price_q4_;
   }
 };
 
@@ -77,7 +77,7 @@ class PriorityQueueAdapter : public OrderQueueInterface {
     if (!order.isValid()) return false;
 
     auto it = price_sorted_.insert(order);
-    id_to_iter_[order.id_ns] = it;
+    id_to_iter_[order.id_ns_] = it;
     return true;
   }
 
@@ -92,7 +92,7 @@ class PriorityQueueAdapter : public OrderQueueInterface {
   bool pop() override {
     if (empty()) return false;
 
-    int id = price_sorted_.begin()->id_ns;
+    int id = price_sorted_.begin()->id_ns_;
     id_to_iter_.erase(id);
     price_sorted_.erase(price_sorted_.begin());
     return true;
@@ -129,22 +129,22 @@ struct TopOfBook {
 };
 
 enum class ExecFlags : uint8_t {
-  None            = 0,
-  Accepted        = uint8_t(1) << 0,
+  None = 0,
+  Accepted = uint8_t(1) << 0,
   PartiallyFilled = uint8_t(1) << 1,
-  FullyFilled     = uint8_t(1) << 2,
-  Cancelled       = uint8_t(1) << 3,
-  Rejected        = uint8_t(1) << 4
+  FullyFilled = uint8_t(1) << 2,
+  Cancelled = uint8_t(1) << 3,
+  Rejected = uint8_t(1) << 4
 };
 
 inline ExecFlags operator|(ExecFlags a, ExecFlags b) {
-  return static_cast<ExecFlags>(
-    static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+  return static_cast<ExecFlags>(static_cast<uint8_t>(a) |
+                                static_cast<uint8_t>(b));
 }
 
 inline ExecFlags operator&(ExecFlags a, ExecFlags b) {
-  return static_cast<ExecFlags>(
-    static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+  return static_cast<ExecFlags>(static_cast<uint8_t>(a) &
+                                static_cast<uint8_t>(b));
 }
 
 inline ExecFlags& operator|=(ExecFlags& a, ExecFlags b) {
@@ -158,10 +158,10 @@ inline bool hasFlag(ExecFlags flags, ExecFlags f) {
 
 inline bool isValid(ExecFlags f) {
   // Rejected is exclusive
-  if (hasFlag(f, ExecFlags::Rejected))
-    return f == ExecFlags::Rejected;
+  if (hasFlag(f, ExecFlags::Rejected)) return f == ExecFlags::Rejected;
   // Can't be both partially and fully filled
-  if (hasFlag(f, ExecFlags::PartiallyFilled) && hasFlag(f, ExecFlags::FullyFilled))
+  if (hasFlag(f, ExecFlags::PartiallyFilled) &&
+      hasFlag(f, ExecFlags::FullyFilled))
     return false;
   // Cancelled and Accepted together is suspect
   if (hasFlag(f, ExecFlags::Cancelled) && hasFlag(f, ExecFlags::Accepted))
