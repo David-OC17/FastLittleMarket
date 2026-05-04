@@ -12,9 +12,9 @@ namespace flm = fast_little_market;
 
 // Compute BodyLength (number of bytes from tag 9's SOH up to but not including
 // the CheckSum field delimiter) for a given set of body fields.
-static std::string bodyLen(std::initializer_list<std::string> bodyFields) {
+static std::string bodyLen(std::initializer_list<std::string> body_fields) {
   size_t n = 0;
-  for (const auto& f : bodyFields) n += f.size() + 1;  // +1 for SOH
+  for (const auto& f : body_fields) n += f.size() + 1;  // +1 for SOH
   return std::to_string(n);
 }
 
@@ -22,24 +22,24 @@ static std::string bodyLen(std::initializer_list<std::string> bodyFields) {
 //   header:  8=FIX.4.4 | 9=<len> | <body fields> | 10=000
 // CheckSum value is intentionally left as "000" — the parser does not
 // validate it, it just stops when it sees tag 10.
-static std::string buildMsg(std::string_view msgType,
+static std::string buildMsg(std::string_view msg_type,
                             std::initializer_list<std::string> body) {
   const std::string bl =
-      bodyLen({std::string("35=") + std::string(msgType),
+      bodyLen({std::string("35=") + std::string(msg_type),
                std::string("49=SENDER"), std::string("56=TARGET")});
 
   // Rebuild body length including all body fields properly.
-  std::vector<std::string> allBody = {std::string("35=") + std::string(msgType),
-                                      "49=SENDER", "56=TARGET"};
-  for (const auto& f : body) allBody.push_back(f);
+  std::vector<std::string> all_body = {
+      std::string("35=") + std::string(msg_type), "49=SENDER", "56=TARGET"};
+  for (const auto& f : body) all_body.push_back(f);
 
-  size_t bodyBytes = 0;
-  for (const auto& f : allBody) bodyBytes += f.size() + 1;
+  size_t body_bytes = 0;
+  for (const auto& f : all_body) body_bytes += f.size() + 1;
 
   std::string msg;
   msg += "8=FIX.4.4" SOH;
-  msg += "9=" + std::to_string(bodyBytes) + SOH;
-  for (const auto& f : allBody) msg += f + SOH;
+  msg += "9=" + std::to_string(body_bytes) + SOH;
+  for (const auto& f : all_body) msg += f + SOH;
   msg += "10=000" SOH;
   return msg;
 }

@@ -26,16 +26,16 @@ class GroupDefs {
   std::unordered_map<std::string, std::vector<GroupDef>> defs_;
 
  public:
-  void add(std::string_view msgType, GroupDef def) {
-    defs_[std::string(msgType)].push_back(def);
+  void add(std::string_view msg_type, GroupDef def) {
+    defs_[std::string(msg_type)].push_back(def);
   }
 
-  void add(std::string_view msgType, std::vector<GroupDef> defs) {
-    defs_[std::string(msgType)] = std::move(defs);
+  void add(std::string_view msg_type, std::vector<GroupDef> defs) {
+    defs_[std::string(msg_type)] = std::move(defs);
   }
 
-  const std::vector<GroupDef>* defs(std::string_view msgType) const {
-    auto itr = defs_.find(std::string(msgType));
+  const std::vector<GroupDef>* defs(std::string_view msg_type) const {
+    auto itr = defs_.find(std::string(msg_type));
     return itr == defs_.end() ? nullptr : &itr->second;
   }
 };
@@ -49,10 +49,10 @@ class FixMessage final : public FieldAccessor {
 
   void reset() {
     buf_.reset();
-    void* mapMem = buf_.allocate(sizeof(FieldMap));
+    void* map_mem = buf_.allocate(sizeof(FieldMap));
     msg_bytes_ = static_cast<char*>(buf_.allocate(max_message_size_));
     std::memset(msg_bytes_, 0, max_message_size_);
-    map_ = new (mapMem) FieldMap(buf_, msg_bytes_);
+    map_ = new (map_mem) FieldMap(buf_, msg_bytes_);
     FieldAccessor::reset(map_);
   }
 
@@ -62,12 +62,12 @@ class FixMessage final : public FieldAccessor {
  public:
   FixMessage() : FixMessage(2048) {}
 
-  explicit FixMessage(int maxMessageSize)
-      : max_message_size_(maxMessageSize), buf_(maxMessageSize * 4) {
-    void* mapMem = buf_.allocate(sizeof(FieldMap));
-    msg_bytes_ = static_cast<char*>(buf_.allocate(maxMessageSize));
-    std::memset(msg_bytes_, 0, maxMessageSize);
-    map_ = new (mapMem) FieldMap(buf_, msg_bytes_);
+  explicit FixMessage(int max_message_size)
+      : max_message_size_(max_message_size), buf_(max_message_size * 4) {
+    void* map_mem = buf_.allocate(sizeof(FieldMap));
+    msg_bytes_ = static_cast<char*>(buf_.allocate(max_message_size));
+    std::memset(msg_bytes_, 0, max_message_size);
+    map_ = new (map_mem) FieldMap(buf_, msg_bytes_);
     FieldAccessor::reset(map_);
   }
   static void parse(std::istream& in, FixMessage& msg, const GroupDefs& defs);

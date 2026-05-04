@@ -10,7 +10,7 @@ namespace fast_little_market {
 
 namespace fix {
 
-enum class AllocError { OutOfMemory, Underflow };
+enum class AllocError { OUT_OF_MEMORY, UNDERFLOW };
 
 class Buffer {
  private:

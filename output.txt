@@ -1,491 +1,97 @@
-Script started on 2026-05-03 17:37:54-06:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="192" LINES="36"]
+Script started on 2026-05-03 18:44:20-06:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="178" LINES="36"]
 Error while trying to load a compilation database:
 Could not auto-detect compilation database for file "core/Exchange.cpp"
 No compilation database found in /home/david/Documents/FastLittleMarket/core or any parent directory
 fixed-compilation-database: Error while opening fixed database: No such file or directory
 json-compilation-database: Error while opening JSON database: No such file or directory
 Running without flags.
-21 warnings and 1 error generated.
+1 warning and 1 error generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Exchange.cpp.
-34 warnings and 2 errors generated.
+1 warning and 2 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/ExchangeLogger.cpp.
-46 warnings and 3 errors generated.
+1 warning and 3 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/FieldMap.cpp.
-67 warnings and 3 errors generated.
+2 warnings and 3 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/OrderBook.cpp.
-85 warnings and 4 errors generated.
+2 warnings and 4 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Parser.cpp.
-106 warnings and 5 errors generated.
+3 warnings and 5 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/ThreadPool.cpp.
-108 warnings and 6 errors generated.
+3 warnings and 6 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Alloc.hpp.
-113 warnings and 7 errors generated.
+3 warnings and 7 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Builder.hpp.
-134 warnings and 8 errors generated.
+4 warnings and 8 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Exchange.hpp.
-147 warnings and 9 errors generated.
+4 warnings and 9 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/ExchangeLogger.hpp.
-160 warnings and 10 errors generated.
+4 warnings and 10 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/ExchangeLoggerMacros.hpp.
-160 warnings and 11 errors generated.
+4 warnings and 11 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Field.hpp.
-162 warnings and 12 errors generated.
+4 warnings and 12 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/FieldList.hpp.
-174 warnings and 13 errors generated.
+4 warnings and 13 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/FieldMap.hpp.
-177 warnings and 13 errors generated.
+4 warnings and 13 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/GlobalSequencer.hpp.
-198 warnings and 13 errors generated.
+5 warnings and 13 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/OrderBook.hpp.
-211 warnings and 13 errors generated.
+6 warnings and 13 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Order.hpp.
-229 warnings and 14 errors generated.
+6 warnings and 14 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/Parser.hpp.
-250 warnings and 15 errors generated.
+7 warnings and 15 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/core/ThreadPool.hpp.
-250 warnings and 16 errors generated.
+7 warnings and 16 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_Alloc.cpp.
-256 warnings and 17 errors generated.
+7 warnings and 17 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_Builder.cpp.
-256 warnings and 18 errors generated.
+7 warnings and 18 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_Exchange.cpp.
-257 warnings and 19 errors generated.
+7 warnings and 19 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_ExchangeLogger.cpp.
-259 warnings and 20 errors generated.
+7 warnings and 20 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_FieldList.cpp.
-261 warnings and 21 errors generated.
+7 warnings and 21 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_FieldMap.cpp.
-265 warnings and 22 errors generated.
+7 warnings and 22 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp.
-265 warnings and 23 errors generated.
+7 warnings and 23 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_GlobalSequencer.cpp.
-265 warnings and 24 errors generated.
+7 warnings and 24 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_OrderBook.cpp.
-265 warnings and 25 errors generated.
+7 warnings and 25 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_Order.cpp.
-277 warnings and 26 errors generated.
+7 warnings and 26 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp.
-281 warnings and 27 errors generated.
+7 warnings and 27 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_Parser.cpp.
-281 warnings and 28 errors generated.
+7 warnings and 28 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_PriorityQueueAdapter.cpp.
-281 warnings and 29 errors generated.
+7 warnings and 29 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/test/test_ThreadPool.cpp.
-281 warnings and 29 errors generated.
+7 warnings and 29 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/common/CommonTools.hpp.
-285 warnings and 29 errors generated.
+7 warnings and 29 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/common/FieldTag.hpp.
-289 warnings and 29 errors generated.
+7 warnings and 29 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/common/MsgType.hpp.
-289 warnings and 29 errors generated.
+7 warnings and 29 errors generated.
 Error while processing /home/david/Documents/FastLittleMarket/common/Symbols.hpp.
 Error while processing /home/david/Documents/FastLittleMarket/ .
 [0;1;31merror: [0m[1mno input files [clang-diagnostic-error][0m
 [0;1;31merror: [0m[1mno such file or directory: '/home/david/Documents/FastLittleMarket/ ' [clang-diagnostic-error][0m
 [0;1;31merror: [0m[1munable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error][0m
-[1m/home/david/Documents/FastLittleMarket/common/FieldTag.hpp:253:7: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant '_COUNT' [readability-identifier-naming][0m
-  253 |       _COUNT[0m
-      | [0;1;32m      ^~~~~~
-[0m      | [0;32m      COUNT
-[0m  254 | };[0m
-  255 | [0m
-  256 | constexpr size_t FIELDTAG_COUNT = static_cast<size_t>(FieldTag::_COUNT);[0m
-      | [0;1;32m                                                                ~~~~~~
-[0m      | [0;32m                                                                COUNT
-[0m[1m/home/david/Documents/FastLittleMarket/common/FieldTag.hpp:258:56: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'fieldtag_to_fix' [readability-identifier-naming][0m
-  258 | constexpr std::array<std::string_view, FIELDTAG_COUNT> fieldtag_to_fix = {[0m
-      | [0;1;32m                                                       ^~~~~~~~~~~~~~~
-[0m      | [0;32m                                                       FIELDTAG_TO_FIX
-[0m  259 | #define X(name, val) val,[0m
-  260 |     FIELDTAG_LIST(X)[0m
-  261 | #undef X[0m
-  262 | };[0m
-  263 | [0m
-  264 | constexpr std::array<std::string_view, FIELDTAG_COUNT> fieldtag_to_name = {[0m
-  265 | #define X(name, val) #name,[0m
-  266 |     FIELDTAG_LIST(X)[0m
-  267 | #undef X[0m
-  268 | };[0m
-  269 | [0m
-  270 | static_assert(fieldtag_to_fix.size() == fieldtag_to_name.size());[0m
-      | [0;1;32m              ~~~~~~~~~~~~~~~
-[0m      | [0;32m              FIELDTAG_TO_FIX
-[0m[1m/home/david/Documents/FastLittleMarket/common/FieldTag.hpp:264:56: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'fieldtag_to_name' [readability-identifier-naming][0m
-  264 | constexpr std::array<std::string_view, FIELDTAG_COUNT> fieldtag_to_name = {[0m
-      | [0;1;32m                                                       ^~~~~~~~~~~~~~~~
-[0m      | [0;32m                                                       FIELDTAG_TO_NAME
-[0m  265 | #define X(name, val) #name,[0m
-  266 |     FIELDTAG_LIST(X)[0m
-  267 | #undef X[0m
-  268 | };[0m
-  269 | [0m
-  270 | static_assert(fieldtag_to_fix.size() == fieldtag_to_name.size());[0m
-      | [0;1;32m                                        ~~~~~~~~~~~~~~~~
-[0m      | [0;32m                                        FIELDTAG_TO_NAME
-[0m[1m/home/david/Documents/FastLittleMarket/common/FieldTag.hpp:294:20: [0m[0;1;35mwarning: [0m[1minvalid case style for function 'compute_fieldtag_hash' [readability-identifier-naming][0m
-  294 | constexpr uint64_t compute_fieldtag_hash() {[0m
-      | [0;1;32m                   ^~~~~~~~~~~~~~~~~~~~~
-[0m      | [0;32m                   computeFieldtagHash
-[0m  295 |   uint64_t h = 1469598103934665603ULL;[0m
-  296 | [0m
-  297 | #define X(name, val)   \[0m
-  298 |   h = fnv1a(#name, h); \[0m
-  299 |   h = fnv1a(val, h);   \[0m
-  300 |   h *= 1099511628211ULL;[0m
-  301 | [0m
-  302 |   FIELDTAG_LIST(X)[0m
-  303 | [0m
-  304 | #undef X[0m
-  305 | [0m
-  306 |   return h;[0m
-  307 | }[0m
-  308 | [0m
-  309 | static_assert(compute_fieldtag_hash() == FIELDTAG_LIST_HASH,[0m
-      | [0;1;32m              ~~~~~~~~~~~~~~~~~~~~~
-[0m      | [0;32m              computeFieldtagHash
-[0m[1m/home/david/Documents/FastLittleMarket/common/MsgType.hpp:121:7: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant '_COUNT' [readability-identifier-naming][0m
-  121 |       _COUNT[0m
-      | [0;1;32m      ^~~~~~
-[0m      | [0;32m      COUNT
-[0m  122 | };[0m
-  123 | [0m
-  124 | constexpr size_t MSGTYPE_COUNT = static_cast<size_t>(MsgType::_COUNT);[0m
-      | [0;1;32m                                                              ~~~~~~
-[0m      | [0;32m                                                              COUNT
-[0m[1m/home/david/Documents/FastLittleMarket/common/MsgType.hpp:126:55: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'msgtype_to_fix' [readability-identifier-naming][0m
-  126 | constexpr std::array<std::string_view, MSGTYPE_COUNT> msgtype_to_fix = {[0m
-      | [0;1;32m                                                      ^~~~~~~~~~~~~~
-[0m      | [0;32m                                                      MSGTYPE_TO_FIX
-[0m  127 | #define X(name, val) val,[0m
-  128 |     MSGTYPE_LIST(X)[0m
-  129 | #undef X[0m
-  130 | };[0m
-  131 | [0m
-  132 | constexpr std::array<std::string_view, MSGTYPE_COUNT> msgtype_to_name = {[0m
-  133 | #define X(name, val) #name,[0m
-  134 |     MSGTYPE_LIST(X)[0m
-  135 | #undef X[0m
-  136 | };[0m
-  137 | [0m
-  138 | constexpr std::optional<MsgType> stom(std::string_view s) noexcept {[0m
-  139 |   for (size_t i = 0; i < MSGTYPE_COUNT; ++i) {[0m
-  140 |     if (msgtype_to_fix[i] == s) {[0m
-      | [0;1;32m        ~~~~~~~~~~~~~~
-[0m      | [0;32m        MSGTYPE_TO_FIX
-[0m[1m/home/david/Documents/FastLittleMarket/common/MsgType.hpp:132:55: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'msgtype_to_name' [readability-identifier-naming][0m
-  132 | constexpr std::array<std::string_view, MSGTYPE_COUNT> msgtype_to_name = {[0m
-      | [0;1;32m                                                      ^~~~~~~~~~~~~~~
-[0m      | [0;32m                                                      MSGTYPE_TO_NAME
-[0m[1m/home/david/Documents/FastLittleMarket/common/MsgType.hpp:161:20: [0m[0;1;35mwarning: [0m[1minvalid case style for function 'compute_msgtype_hash' [readability-identifier-naming][0m
-  161 | constexpr uint64_t compute_msgtype_hash() {[0m
-      | [0;1;32m                   ^~~~~~~~~~~~~~~~~~~~
-[0m      | [0;32m                   computeMsgtypeHash
-[0m  162 |   uint64_t h = 1469598103934665603ULL;[0m
-  163 | [0m
-  164 | #define X(name, val)   \[0m
-  165 |   h = fnv1a(#name, h); \[0m
-  166 |   h = fnv1a(val, h);   \[0m
-  167 |   h *= 1099511628211ULL;[0m
-  168 | [0m
-  169 |   MSGTYPE_LIST(X)[0m
-  170 | [0m
-  171 | #undef X[0m
-  172 | [0m
-  173 |   return h;[0m
-  174 | }[0m
-  175 | [0m
-  176 | static_assert(compute_msgtype_hash() == MSGTYPE_LIST_HASH,[0m
-      | [0;1;32m              ~~~~~~~~~~~~~~~~~~~~
-[0m      | [0;32m              computeMsgtypeHash
-[0m[1m/home/david/Documents/FastLittleMarket/core/Alloc.hpp:7:10: [0m[0;1;31merror: [0m[1m'FieldTag.hpp' file not found [clang-diagnostic-error][0m
+[1m/home/david/Documents/FastLittleMarket/core/Alloc.hpp:7:10: [0m[0;1;31merror: [0m[1m'FieldTag.hpp' file not found [clang-diagnostic-error][0m
     7 | #include "FieldTag.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/core/Alloc.hpp:13:25: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'out_of_memory' [readability-identifier-naming][0m
-   13 | enum class AllocError { out_of_memory, underflow };[0m
-      | [0;1;32m                        ^~~~~~~~~~~~~
-[0m      | [0;32m                        OUT_OF_MEMORY
-[0m[1m/home/david/Documents/FastLittleMarket/core/Alloc.hpp:13:40: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'underflow' [readability-identifier-naming][0m
-   13 | enum class AllocError { out_of_memory, underflow };[0m
-      | [0;1;32m                                       ^~~~~~~~~
-[0m      | [0;32m                                       UNDERFLOW
-[0m[1m/home/david/Documents/FastLittleMarket/core/Builder.hpp:17:35: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'k_begin_string' [readability-identifier-naming][0m
-   17 | static constexpr std::string_view k_begin_string = "8=FIX.5.0\x01";[0m
-      | [0;1;32m                                  ^~~~~~~~~~~~~~
-[0m      | [0;32m                                  K_BEGIN_STRING
-[0m[1m/home/david/Documents/FastLittleMarket/core/Builder.hpp:110:27: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'k_body_len_width' [readability-identifier-naming][0m
-  102 |     std::memset(cp_, '0', k_body_len_width);[0m
-      | [0;1;32m                          ~~~~~~~~~~~~~~~~
-[0m      | [0;32m                          K_BODY_LEN_WIDTH
-[0m  103 |     cp_ += k_body_len_width;[0m
-      | [0;1;32m           ~~~~~~~~~~~~~~~~
-[0m      | [0;32m           K_BODY_LEN_WIDTH
-[0m  104 |     writeSOH();[0m
-  105 | [0m
-  106 |     body_start_ = cp_;[0m
-  107 |   }[0m
-  108 | [0m
-  109 |  private:[0m
-  110 |   static constexpr size_t k_body_len_width = 6;[0m
-      | [0;1;32m                          ^~~~~~~~~~~~~~~~
-[0m      | [0;32m                          K_BODY_LEN_WIDTH
-[0m[1m/home/david/Documents/FastLittleMarket/core/Builder.hpp:111:27: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'k_checksum_width' [readability-identifier-naming][0m
-  111 |   static constexpr size_t k_checksum_width = 7;  // "10=NNN\x01"[0m
-      | [0;1;32m                          ^~~~~~~~~~~~~~~~
-[0m      | [0;32m                          K_CHECKSUM_WIDTH
-[0m  112 | [0m
-  113 |   const size_t max_message_size_;[0m
-  114 |   Buffer buf_;[0m
-  115 |   char* message_;[0m
-  116 |   char* cp_;[0m
-  117 |   char* body_start_ = nullptr;[0m
-  118 |   char* body_len_dst_ = nullptr;[0m
-  119 |   size_t body_length_ = 0;[0m
-  120 | [0m
-  121 |   // TODO: replace throw[0m
-  122 |   void checkCapacity(size_t needed) const {[0m
-  123 |     if (static_cast<size_t>(cp_ - message_) + needed + k_checksum_width >[0m
-      | [0;1;32m                                                       ~~~~~~~~~~~~~~~~
-[0m      | [0;32m                                                       K_CHECKSUM_WIDTH
 [0m[1m/home/david/Documents/FastLittleMarket/core/ExchangeLogger.hpp:3:10: [0m[0;1;31merror: [0m[1m'quill/Backend.h' file not found [clang-diagnostic-error][0m
     3 | #include "quill/Backend.h"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/core/ExchangeLogger.hpp:22:25: [0m[0;1;35mwarning: [0m[1minvalid case style for method 'make_logger' [readability-identifier-naming][0m
-   22 |   static quill::Logger* make_logger(const char* name,[0m
-      | [0;1;32m                        ^~~~~~~~~~~
-[0m      | [0;32m                        makeLogger
 [0m[1m/home/david/Documents/FastLittleMarket/core/Field.hpp:5:10: [0m[0;1;31merror: [0m[1m'FieldTag.hpp' file not found [clang-diagnostic-error][0m
     5 | #include "FieldTag.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldList.hpp:28:19: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'savedGroups' [readability-identifier-naming][0m
-   28 |         FieldMap* savedGroups = list_[i].groups_;[0m
-      | [0;1;32m                  ^~~~~~~~~~~
-[0m      | [0;32m                  saved_groups
-[0m   29 |         FieldMap* savedTail = list_[i].tail_;[0m
-   30 |         list_[i] = fg;[0m
-   31 |         if (savedGroups && !fg.isGroup()) {[0m
-      | [0;1;32m            ~~~~~~~~~~~
-[0m      | [0;32m            saved_groups
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldList.hpp:29:19: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'savedTail' [readability-identifier-naming][0m
-   29 |         FieldMap* savedTail = list_[i].tail_;[0m
-      | [0;1;32m                  ^~~~~~~~~
-[0m      | [0;32m                  saved_tail
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:18:59: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'endExclusive' [readability-identifier-naming][0m
-   18 | static inline int parseInt(const char* start, const char* endExclusive) {[0m
-      | [0;1;32m                                                          ^~~~~~~~~~~~
-[0m      | [0;32m                                                          end_exclusive
-[0m   19 |   int value = 0;[0m
-   20 |   bool negate = false;[0m
-   21 |   if (*start == '-') {[0m
-   22 |     negate = true;[0m
-   23 |     start++;[0m
-   24 |   }[0m
-   25 |   while (start != endExclusive) {[0m
-      | [0;1;32m                  ~~~~~~~~~~~~
-[0m      | [0;32m                  end_exclusive
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:33:61: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'endExclusive' [readability-identifier-naming][0m
-   33 | static inline long parseLong(const char* start, const char* endExclusive) {[0m
-      | [0;1;32m                                                            ^~~~~~~~~~~~
-[0m      | [0;32m                                                            end_exclusive
-[0m   34 |   long value = 0;[0m
-   35 |   bool negate = false;[0m
-   36 |   if (*start == '-') {[0m
-   37 |     negate = true;[0m
-   38 |     start++;[0m
-   39 |   }[0m
-   40 |   while (start != endExclusive) {[0m
-      | [0;1;32m                  ~~~~~~~~~~~~
-[0m      | [0;32m                  end_exclusive
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:55:15: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'msgBytes_' [readability-identifier-naming][0m
-   55 |   const char* msgBytes_;[0m
-      | [0;1;32m              ^~~~~~~~~
-[0m      | [0;32m              msg_bytes_
-[0m   56 |   FieldMap* next_ = nullptr;  // linked list for group[0m
-   57 |   FieldList map_;[0m
-   58 | [0m
-   59 |  public:[0m
-   60 |   FieldMap(Buffer& buffer, const char* msgBytes)[0m
-   61 |       : buffer_(buffer), msgBytes_(msgBytes), map_() {}[0m
-      | [0;1;32m                         ~~~~~~~~~
-[0m      | [0;32m                         msg_bytes_
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:60:40: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'msgBytes' [readability-identifier-naming][0m
-   60 |   FieldMap(Buffer& buffer, const char* msgBytes)[0m
-      | [0;1;32m                                       ^~~~~~~~
-[0m      | [0;32m                                       msg_bytes
-[0m   61 |       : buffer_(buffer), msgBytes_(msgBytes), map_() {}[0m
-      | [0;1;32m                                   ~~~~~~~~
-[0m      | [0;32m                                   msg_bytes
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:113:15: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'msgBytes_' [readability-identifier-naming][0m
-  113 |   const char* msgBytes_;[0m
-      | [0;1;32m              ^~~~~~~~~
-[0m      | [0;32m              msg_bytes_
-[0m  114 | [0m
-  115 |   FieldAccessor(const FieldMap* map) : map_(map), msgBytes_(map->msgBytes_) {}[0m
-      | [0;1;32m                                                  ~~~~~~~~~
-[0m      | [0;32m                                                  msg_bytes_
-[0m  116 | [0m
-  117 |   FieldAccessor() : map_(nullptr), msgBytes_(nullptr) {}[0m
-      | [0;1;32m                                   ~~~~~~~~~
-[0m      | [0;32m                                   msg_bytes_
-[0m  118 | [0m
-  119 |   void reset(const FieldMap* map) {[0m
-  120 |     map_ = map;[0m
-  121 |     msgBytes_ = map->msgBytes_;[0m
-      | [0;1;32m    ~~~~~~~~~
-[0m      | [0;32m    msg_bytes_
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:147:45: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'groupTag' [readability-identifier-naming][0m
-  147 |   inline std::optional<int> getInt(FieldTag groupTag, size_t index,[0m
-      | [0;1;32m                                            ^~~~~~~~
-[0m      | [0;32m                                            group_tag
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:159:61: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'groupTag' [readability-identifier-naming][0m
-  159 |   inline std::optional<std::string_view> getString(FieldTag groupTag,[0m
-      | [0;1;32m                                                            ^~~~~~~~
-[0m      | [0;32m                                                            group_tag
-[0m[1m/home/david/Documents/FastLittleMarket/core/FieldMap.hpp:171:57: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'groupTag' [readability-identifier-naming][0m
-  171 |   inline std::optional<FieldAccessor> getGroup(FieldTag groupTag,[0m
-      | [0;1;32m                                                        ^~~~~~~~
-[0m      | [0;32m                                                        group_tag
-[0m[1m/home/david/Documents/FastLittleMarket/core/GlobalSequencer.hpp:14:17: [0m[0;1;35mwarning: [0m[1minvalid case style for function 'os_nano_time' [readability-identifier-naming][0m
-   14 | inline uint64_t os_nano_time() noexcept {[0m
-      | [0;1;32m                ^~~~~~~~~~~~
-[0m      | [0;32m                osNanoTime
-[0m[1m/home/david/Documents/FastLittleMarket/core/GlobalSequencer.hpp:30:25: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'seq_counter' [readability-identifier-naming][0m
-   30 |   std::atomic<uint64_t> seq_counter{0};[0m
-      | [0;1;32m                        ^~~~~~~~~~~
-[0m      | [0;32m                        seq_counter_
-[0m   31 | [0m
-   32 |  public:[0m
-   33 |   GlobalSequencer() : epoch_ns_(os_nano_time()) {}[0m
-   34 | [0m
-   35 |   uint64_t next_timestamp_ns() noexcept {[0m
-   36 |     uint64_t seq = seq_counter.fetch_add(1, std::memory_order_relaxed);[0m
-      | [0;1;32m                   ~~~~~~~~~~~
-[0m      | [0;32m                   seq_counter_
-[0m[1m/home/david/Documents/FastLittleMarket/core/GlobalSequencer.hpp:35:12: [0m[0;1;35mwarning: [0m[1minvalid case style for method 'next_timestamp_ns' [readability-identifier-naming][0m
-   35 |   uint64_t next_timestamp_ns() noexcept {[0m
-      | [0;1;32m           ^~~~~~~~~~~~~~~~~
-[0m      | [0;32m           nextTimestampNs
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:22:12: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'id' [readability-identifier-naming][0m
-   22 |   uint32_t id;[0m
-      | [0;1;32m           ^~
-[0m      | [0;32m           id_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:23:12: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'timestamp_ns' [readability-identifier-naming][0m
-   23 |   uint32_t timestamp_ns;[0m
-      | [0;1;32m           ^~~~~~~~~~~~
-[0m      | [0;32m           timestamp_ns_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:27:12: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'id_ns' [readability-identifier-naming][0m
-   27 |   uint64_t id_ns;     // Packed: ID << 32 | Timestamp[0m
-      | [0;1;32m           ^~~~~
-[0m      | [0;32m           id_ns_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:28:12: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'price_q4' [readability-identifier-naming][0m
-   28 |   uint32_t price_q4;  // Price × 10000[0m
-      | [0;1;32m           ^~~~~~~~
-[0m      | [0;32m           price_q4_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:29:12: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'volume' [readability-identifier-naming][0m
-   29 |   uint32_t volume;[0m
-      | [0;1;32m           ^~~~~~
-[0m      | [0;32m           volume_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:30:11: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'side' [readability-identifier-naming][0m
-   30 |   uint8_t side : 1;  // Buy=1/Sell=0[0m
-      | [0;1;32m          ^~~~
-[0m      | [0;32m          side_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:31:11: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'type' [readability-identifier-naming][0m
-   31 |   uint8_t type : 2;  // Market=0/Limit=1[0m
-      | [0;1;32m          ^~~~
-[0m      | [0;32m          type_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:32:11: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'tim' [readability-identifier-naming][0m
-   32 |   uint8_t tim : 2;   // Day=0/GTC=1[0m
-      | [0;1;32m          ^~~
-[0m      | [0;32m          tim_
-[0m[1m/home/david/Documents/FastLittleMarket/core/Order.hpp:33:8: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'client' [readability-identifier-naming][0m
-   33 |   char client[8];    // "JPMORG\0"[0m
-      | [0;1;32m       ^~~~~~
-[0m      | [0;32m       client_
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:123:24: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'bid' [readability-identifier-naming][0m
-  123 |   std::optional<Order> bid;[0m
-      | [0;1;32m                       ^~~
-[0m      | [0;32m                       bid_
-[0m  124 |   std::optional<Order> ask;[0m
-  125 | [0m
-  126 |   bool hasBid() const { return bid.has_value(); }[0m
-      | [0;1;32m                               ~~~
-[0m      | [0;32m                               bid_
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:124:24: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'ask' [readability-identifier-naming][0m
-  124 |   std::optional<Order> ask;[0m
-      | [0;1;32m                       ^~~
-[0m      | [0;32m                       ask_
-[0m  125 | [0m
-  126 |   bool hasBid() const { return bid.has_value(); }[0m
-  127 |   bool hasAsk() const { return ask.has_value(); }[0m
-      | [0;1;32m                               ~~~
-[0m      | [0;32m                               ask_
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:132:3: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'None' [readability-identifier-naming][0m
-  132 |   None            = 0,[0m
-      | [0;1;32m  ^~~~
-[0m      | [0;32m  NONE
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:133:3: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'Accepted' [readability-identifier-naming][0m
-  133 |   Accepted        = uint8_t(1) << 0,[0m
-      | [0;1;32m  ^~~~~~~~
-[0m      | [0;32m  ACCEPTED
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:134:3: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'PartiallyFilled' [readability-identifier-naming][0m
-  134 |   PartiallyFilled = uint8_t(1) << 1,[0m
-      | [0;1;32m  ^~~~~~~~~~~~~~~
-[0m      | [0;32m  PARTIALLY_FILLED
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:135:3: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'FullyFilled' [readability-identifier-naming][0m
-  135 |   FullyFilled     = uint8_t(1) << 2,[0m
-      | [0;1;32m  ^~~~~~~~~~~
-[0m      | [0;32m  FULLY_FILLED
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:136:3: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'Cancelled' [readability-identifier-naming][0m
-  136 |   Cancelled       = uint8_t(1) << 3,[0m
-      | [0;1;32m  ^~~~~~~~~
-[0m      | [0;32m  CANCELLED
-[0m[1m/home/david/Documents/FastLittleMarket/core/OrderBook.hpp:137:3: [0m[0;1;35mwarning: [0m[1minvalid case style for enum constant 'Rejected' [readability-identifier-naming][0m
-  137 |   Rejected        = uint8_t(1) << 4[0m
-      | [0;1;32m  ^~~~~~~~
-[0m      | [0;32m  REJECTED
-[0m[1m/home/david/Documents/FastLittleMarket/core/Parser.hpp:29:29: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'msgType' [readability-identifier-naming][0m
-   29 |   void add(std::string_view msgType, GroupDef def) {[0m
-      | [0;1;32m                            ^~~~~~~
-[0m      | [0;32m                            msg_type
-[0m[1m/home/david/Documents/FastLittleMarket/core/Parser.hpp:33:29: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'msgType' [readability-identifier-naming][0m
-   33 |   void add(std::string_view msgType, std::vector<GroupDef> defs) {[0m
-      | [0;1;32m                            ^~~~~~~
-[0m      | [0;32m                            msg_type
-[0m[1m/home/david/Documents/FastLittleMarket/core/Parser.hpp:37:54: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'msgType' [readability-identifier-naming][0m
-   37 |   const std::vector<GroupDef>* defs(std::string_view msgType) const {[0m
-      | [0;1;32m                                                     ^~~~~~~
-[0m      | [0;32m                                                     msg_type
-[0m[1m/home/david/Documents/FastLittleMarket/core/Parser.hpp:52:11: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'mapMem' [readability-identifier-naming][0m
-   52 |     void* mapMem = buf_.allocate(sizeof(FieldMap));[0m
-      | [0;1;32m          ^~~~~~
-[0m      | [0;32m          map_mem
-[0m   53 |     msg_bytes_ = static_cast<char*>(buf_.allocate(max_message_size_));[0m
-   54 |     std::memset(msg_bytes_, 0, max_message_size_);[0m
-   55 |     map_ = new (mapMem) FieldMap(buf_, msg_bytes_);[0m
-      | [0;1;32m                ~~~~~~
-[0m      | [0;32m                map_mem
-[0m[1m/home/david/Documents/FastLittleMarket/core/Parser.hpp:65:27: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'maxMessageSize' [readability-identifier-naming][0m
-   65 |   explicit FixMessage(int maxMessageSize)[0m
-      | [0;1;32m                          ^~~~~~~~~~~~~~
-[0m      | [0;32m                          max_message_size
-[0m   66 |       : max_message_size_(maxMessageSize), buf_(maxMessageSize * 4) {[0m
-      | [0;1;32m                          ~~~~~~~~~~~~~~        ~~~~~~~~~~~~~~
-[0m      | [0;32m                          max_message_size      max_message_size
-[0m   67 |     void* mapMem = buf_.allocate(sizeof(FieldMap));[0m
-   68 |     msg_bytes_ = static_cast<char*>(buf_.allocate(maxMessageSize));[0m
-      | [0;1;32m                                                  ~~~~~~~~~~~~~~
-[0m      | [0;32m                                                  max_message_size
-[0m   69 |     std::memset(msg_bytes_, 0, maxMessageSize);[0m
-      | [0;1;32m                               ~~~~~~~~~~~~~~
-[0m      | [0;32m                               max_message_size
-[0m[1m/home/david/Documents/FastLittleMarket/core/Parser.hpp:67:11: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'mapMem' [readability-identifier-naming][0m
-   67 |     void* mapMem = buf_.allocate(sizeof(FieldMap));[0m
-      | [0;1;32m          ^~~~~~
-[0m      | [0;32m          map_mem
-[0m   68 |     msg_bytes_ = static_cast<char*>(buf_.allocate(maxMessageSize));[0m
-   69 |     std::memset(msg_bytes_, 0, maxMessageSize);[0m
-   70 |     map_ = new (mapMem) FieldMap(buf_, msg_bytes_);[0m
-      | [0;1;32m                ~~~~~~
-[0m      | [0;32m                map_mem
 [0m[1m/home/david/Documents/FastLittleMarket/core/ThreadPool.hpp:11:10: [0m[0;1;31merror: [0m[1m'concurrentqueue.h' file not found [clang-diagnostic-error][0m
    11 | #include "concurrentqueue.h"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~~~~~~
@@ -495,150 +101,21 @@ Error while processing /home/david/Documents/FastLittleMarket/ .
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:3:10: [0m[0;1;31merror: [0m[1m'Builder.hpp' file not found [clang-diagnostic-error][0m
     3 | #include "Builder.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:129:15: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'csTag' [readability-identifier-naming][0m
-  129 |   std::string csTag =[0m
-      | [0;1;32m              ^~~~~
-[0m      | [0;32m              cs_tag
-[0m  130 |       std::string(flm::fix::ftof(flm::fix::FieldTag::CheckSum)) + "=";[0m
-  131 |   auto csPos = msg.rfind(csTag);[0m
-      | [0;1;32m                         ~~~~~
-[0m      | [0;32m                         cs_tag
-[0m  132 |   ASSERT_NE(csPos, std::string_view::npos);[0m
-  133 | [0m
-  134 |   // compute expected sum over everything before the checksum field[0m
-  135 |   unsigned int sum = 0;[0m
-  136 |   for (size_t i = 0; i < csPos; i++) sum += static_cast<unsigned char>(msg[i]);[0m
-  137 |   sum %= 256;[0m
-  138 | [0m
-  139 |   // extract actual checksum value from message (read until end or \x01)[0m
-  140 |   auto valueStart = csPos + csTag.size();[0m
-      | [0;1;32m                            ~~~~~
-[0m      | [0;32m                            cs_tag
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:131:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'csPos' [readability-identifier-naming][0m
-  131 |   auto csPos = msg.rfind(csTag);[0m
-      | [0;1;32m       ^~~~~
-[0m      | [0;32m       cs_pos
-[0m  132 |   ASSERT_NE(csPos, std::string_view::npos);[0m
-  133 | [0m
-  134 |   // compute expected sum over everything before the checksum field[0m
-  135 |   unsigned int sum = 0;[0m
-  136 |   for (size_t i = 0; i < csPos; i++) sum += static_cast<unsigned char>(msg[i]);[0m
-      | [0;1;32m                         ~~~~~
-[0m      | [0;32m                         cs_pos
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:140:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'valueStart' [readability-identifier-naming][0m
-  140 |   auto valueStart = csPos + csTag.size();[0m
-      | [0;1;32m       ^~~~~~~~~~
-[0m      | [0;32m       value_start
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:141:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'valueEnd' [readability-identifier-naming][0m
-  141 |   auto valueEnd = msg.find('\x01', valueStart);[0m
-      | [0;1;32m       ^~~~~~~~
-[0m      | [0;32m       value_end
-[0m  142 |   if (valueEnd == std::string_view::npos) valueEnd = msg.size();[0m
-      | [0;1;32m      ~~~~~~~~                            ~~~~~~~~
-[0m      | [0;32m      value_end                           value_end
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:202:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'srcMsg' [readability-identifier-naming][0m
-  202 |   auto srcMsg = build(src);[0m
-      | [0;1;32m       ^~~~~~
-[0m      | [0;32m       src_msg
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Builder.cpp:222:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'timeStr' [readability-identifier-naming][0m
-  222 |   auto timeStr = msg.substr(pos + 3, end - pos - 3);[0m
-      | [0;1;32m       ^~~~~~~
-[0m      | [0;32m       time_str
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_Exchange.cpp:5:10: [0m[0;1;31merror: [0m[1m'Exchange.hpp' file not found [clang-diagnostic-error][0m
     5 | #include "Exchange.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_ExchangeLogger.cpp:10:10: [0m[0;1;31merror: [0m[1m'ExchangeLoggerMacros.hpp' file not found [clang-diagnostic-error][0m
    10 | #include "ExchangeLoggerMacros.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_ExchangeLogger.cpp:58:15: [0m[0;1;35mwarning: [0m[1minvalid case style for method 'find_log_file' [readability-identifier-naming][0m
-   58 |   std::string find_log_file() { return flm::QUILL_LOG_FILE; }[0m
-      | [0;1;32m              ^~~~~~~~~~~~~
-[0m      | [0;32m              findLogFile
-[0m   59 | };[0m
-   60 | [0m
-   61 | TEST_F(ExchangeLoggerTest, LogInfo) {[0m
-   62 |   LOG_INFO("test_info_message_unique_42");[0m
-   63 | [0m
-   64 |   flm::global_logger->flush_log();[0m
-   65 |   dumbWait();[0m
-   66 |   std::string log = readLog(find_log_file());[0m
-      | [0;1;32m                            ~~~~~~~~~~~~~
-[0m      | [0;32m                            findLogFile
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_FieldList.cpp:3:10: [0m[0;1;31merror: [0m[1m'Field.hpp' file not found [clang-diagnostic-error][0m
     3 | #include "Field.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FieldList.cpp:156:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'hasClOrdID' [readability-identifier-naming][0m
-  156 |   bool hasClOrdID =[0m
-      | [0;1;32m       ^~~~~~~~~~
-[0m      | [0;32m       has_cl_ord_id
-[0m  157 |       std::find_if(span.begin(), span.end(), [](const flm::fix::Field& f) {[0m
-  158 |         return f.tag_ == flm::fix::FieldTag::ClOrdID;[0m
-  159 |       }) != span.end();[0m
-  160 |   bool hasOrderQty =[0m
-  161 |       std::find_if(span.begin(), span.end(), [](const flm::fix::Field& f) {[0m
-  162 |         return f.tag_ == flm::fix::FieldTag::OrderQty;[0m
-  163 |       }) != span.end();[0m
-  164 |   EXPECT_TRUE(hasClOrdID);[0m
-      | [0;1;32m              ~~~~~~~~~~
-[0m      | [0;32m              has_cl_ord_id
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FieldList.cpp:160:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'hasOrderQty' [readability-identifier-naming][0m
-  160 |   bool hasOrderQty =[0m
-      | [0;1;32m       ^~~~~~~~~~~
-[0m      | [0;32m       has_order_qty
-[0m  161 |       std::find_if(span.begin(), span.end(), [](const flm::fix::Field& f) {[0m
-  162 |         return f.tag_ == flm::fix::FieldTag::OrderQty;[0m
-  163 |       }) != span.end();[0m
-  164 |   EXPECT_TRUE(hasClOrdID);[0m
-  165 |   EXPECT_TRUE(hasOrderQty);[0m
-      | [0;1;32m              ~~~~~~~~~~~
-[0m      | [0;32m              has_order_qty
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_FieldMap.cpp:3:10: [0m[0;1;31merror: [0m[1m'FieldMap.hpp' file not found [clang-diagnostic-error][0m
     3 | #include "FieldMap.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FieldMap.cpp:182:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'hasClOrdID' [readability-identifier-naming][0m
-  182 |   bool hasClOrdID = std::find_if(fields.begin(), fields.end(),[0m
-      | [0;1;32m       ^~~~~~~~~~
-[0m      | [0;32m       has_cl_ord_id
-[0m  183 |     [](const flm::fix::Field& f) { return f.tag_ == flm::fix::FieldTag::ClOrdID; })[0m
-  184 |     != fields.end();[0m
-  185 | [0m
-  186 |   bool hasOrderQty = std::find_if(fields.begin(), fields.end(),[0m
-  187 |     [](const flm::fix::Field& f) { return f.tag_ == flm::fix::FieldTag::OrderQty; })[0m
-  188 |     != fields.end();[0m
-  189 | [0m
-  190 |   EXPECT_TRUE(hasClOrdID);[0m
-      | [0;1;32m              ~~~~~~~~~~
-[0m      | [0;32m              has_cl_ord_id
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FieldMap.cpp:186:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'hasOrderQty' [readability-identifier-naming][0m
-  186 |   bool hasOrderQty = std::find_if(fields.begin(), fields.end(),[0m
-      | [0;1;32m       ^~~~~~~~~~~
-[0m      | [0;32m       has_order_qty
-[0m  187 |     [](const flm::fix::Field& f) { return f.tag_ == flm::fix::FieldTag::OrderQty; })[0m
-  188 |     != fields.end();[0m
-  189 | [0m
-  190 |   EXPECT_TRUE(hasClOrdID);[0m
-  191 |   EXPECT_TRUE(hasOrderQty);[0m
-      | [0;1;32m              ~~~~~~~~~~~
-[0m      | [0;32m              has_order_qty
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp:5:10: [0m[0;1;31merror: [0m[1m'FixMsg.hpp' file not found [clang-diagnostic-error][0m
-    5 | #include "FixMsg.hpp"[0m
-      | [0;1;32m         ^~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp:10:21: [0m[0;1;35mwarning: [0m[1minvalid case style for member 't' [readability-identifier-naming][0m
-   10 |   flm::fix::MsgType t;[0m
-      | [0;1;32m                    ^
-[0m      | [0;32m                    t_
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp:11:8: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'c' [readability-identifier-naming][0m
-   11 |   char c;[0m
-      | [0;1;32m       ^
-[0m      | [0;32m       c_
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp:12:20: [0m[0;1;35mwarning: [0m[1minvalid case style for member 'name' [readability-identifier-naming][0m
-   12 |   std::string_view name;[0m
-      | [0;1;32m                   ^~~~
-[0m      | [0;32m                   name_
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp:16:16: [0m[0;1;35mwarning: [0m[1minvalid case style for constexpr variable 'cases' [readability-identifier-naming][0m
-   16 | constexpr Case cases[] = {[0m
-      | [0;1;32m               ^~~~~
-[0m      | [0;32m               CASES
+[0m[1m/home/david/Documents/FastLittleMarket/test/test_FixMsg.cpp:5:10: [0m[0;1;31merror: [0m[1m'MsgType.hpp' file not found [clang-diagnostic-error][0m
+    5 | #include "MsgType.hpp"[0m
+      | [0;1;32m         ^~~~~~~~~~~~~
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_GlobalSequencer.cpp:8:10: [0m[0;1;31merror: [0m[1m'GlobalSequencer.hpp' file not found [clang-diagnostic-error][0m
     8 | #include "GlobalSequencer.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~~~~~~~~
@@ -651,86 +128,9 @@ Error while processing /home/david/Documents/FastLittleMarket/ .
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser.cpp:5:10: [0m[0;1;31merror: [0m[1m'Parser.hpp' file not found [clang-diagnostic-error][0m
     5 | #include "Parser.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser.cpp:15:63: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'bodyFields' [readability-identifier-naming][0m
-   15 | static std::string bodyLen(std::initializer_list<std::string> bodyFields) {[0m
-      | [0;1;32m                                                              ^~~~~~~~~~
-[0m      | [0;32m                                                              body_fields
-[0m   16 |   size_t n = 0;[0m
-   17 |   for (const auto& f : bodyFields) n += f.size() + 1;  // +1 for SOH[0m
-      | [0;1;32m                       ~~~~~~~~~~
-[0m      | [0;32m                       body_fields
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser.cpp:25:46: [0m[0;1;35mwarning: [0m[1minvalid case style for parameter 'msgType' [readability-identifier-naming][0m
-   25 | static std::string buildMsg(std::string_view msgType,[0m
-      | [0;1;32m                                             ^~~~~~~
-[0m      | [0;32m                                             msg_type
-[0m   26 |                             std::initializer_list<std::string> body) {[0m
-   27 |   const std::string bl =[0m
-   28 |       bodyLen({std::string("35=") + std::string(msgType),[0m
-      | [0;1;32m                                                ~~~~~~~
-[0m      | [0;32m                                                msg_type
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser.cpp:32:28: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'allBody' [readability-identifier-naming][0m
-   32 |   std::vector<std::string> allBody = {std::string("35=") + std::string(msgType),[0m
-      | [0;1;32m                           ^~~~~~~
-[0m      | [0;32m                           all_body
-[0m   33 |                                       "49=SENDER", "56=TARGET"};[0m
-   34 |   for (const auto& f : body) allBody.push_back(f);[0m
-      | [0;1;32m                             ~~~~~~~
-[0m      | [0;32m                             all_body
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser.cpp:36:10: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'bodyBytes' [readability-identifier-naming][0m
-   36 |   size_t bodyBytes = 0;[0m
-      | [0;1;32m         ^~~~~~~~~
-[0m      | [0;32m         body_bytes
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:6:10: [0m[0;1;31merror: [0m[1m'Builder.hpp' file not found [clang-diagnostic-error][0m
     6 | #include "Builder.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:16:19: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'SAMPLE_NEW_ORDER_SINGLE' [readability-identifier-naming][0m
-   16 | const std::string SAMPLE_NEW_ORDER_SINGLE =[0m
-      | [0;1;32m                  ^~~~~~~~~~~~~~~~~~~~~~~
-[0m      | [0;32m                  sample_new_order_single
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:20:19: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'SAMPLE_CANCEL_REPLACE' [readability-identifier-naming][0m
-   20 | const std::string SAMPLE_CANCEL_REPLACE =[0m
-      | [0;1;32m                  ^~~~~~~~~~~~~~~~~~~~~
-[0m      | [0;32m                  sample_cancel_replace
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:25:19: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'SAMPLE_LOGON' [readability-identifier-naming][0m
-   25 | const std::string SAMPLE_LOGON =[0m
-      | [0;1;32m                  ^~~~~~~~~~~~
-[0m      | [0;32m                  sample_logon
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:28:19: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'SAMPLE_LOGOUT' [readability-identifier-naming][0m
-   28 | const std::string SAMPLE_LOGOUT =[0m
-      | [0;1;32m                  ^~~~~~~~~~~~~
-[0m      | [0;32m                  sample_logout
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:31:19: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'SAMPLE_LIMIT_ORDER' [readability-identifier-naming][0m
-   31 | const std::string SAMPLE_LIMIT_ORDER =[0m
-      | [0;1;32m                  ^~~~~~~~~~~~~~~~~~
-[0m      | [0;32m                  sample_limit_order
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:36:18: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'decodeReg' [readability-identifier-naming][0m
-   36 | const std::regex decodeReg("\\^A");[0m
-      | [0;1;32m                 ^~~~~~~~~
-[0m      | [0;32m                 decode_reg
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:37:18: [0m[0;1;35mwarning: [0m[1minvalid case style for constant 'encodeReg' [readability-identifier-naming][0m
-   37 | const std::regex encodeReg("\\\x01");[0m
-      | [0;1;32m                 ^~~~~~~~~
-[0m      | [0;32m                 encode_reg
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:170:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'clOrdID' [readability-identifier-naming][0m
-  170 |   auto clOrdID = msg1.getString(flm::fix::FieldTag::ClOrdID);[0m
-      | [0;1;32m       ^~~~~~~
-[0m      | [0;32m       cl_ord_id
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:180:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'clOrdID2' [readability-identifier-naming][0m
-  180 |   auto clOrdID2 = msg2.getString(flm::fix::FieldTag::ClOrdID);[0m
-      | [0;1;32m       ^~~~~~~~
-[0m      | [0;32m       cl_ord_i_d2
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:225:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'clOrdID' [readability-identifier-naming][0m
-  225 |   auto clOrdID = msg1.getString(flm::fix::FieldTag::ClOrdID);[0m
-      | [0;1;32m       ^~~~~~~
-[0m      | [0;32m       cl_ord_id
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:256:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'msgType' [readability-identifier-naming][0m
-  256 |   auto msgType = msg.getString(flm::fix::FieldTag::MsgType);[0m
-      | [0;1;32m       ^~~~~~~
-[0m      | [0;32m       msg_type
-[0m[1m/home/david/Documents/FastLittleMarket/test/test_Parser_Builder.cpp:277:8: [0m[0;1;35mwarning: [0m[1minvalid case style for local variable 'clOrdID' [readability-identifier-naming][0m
-  277 |   auto clOrdID = msg.getString(flm::fix::FieldTag::ClOrdID);[0m
-      | [0;1;32m       ^~~~~~~
-[0m      | [0;32m       cl_ord_id
 [0m[1m/home/david/Documents/FastLittleMarket/test/test_PriorityQueueAdapter.cpp:3:10: [0m[0;1;31merror: [0m[1m'OrderBook.hpp' file not found [clang-diagnostic-error][0m
     3 | #include "OrderBook.hpp"[0m
       | [0;1;32m         ^~~~~~~~~~~~~~~
@@ -741,4 +141,4 @@ Error while processing /home/david/Documents/FastLittleMarket/ .
 Found compiler error(s).
 zsh:2: command not found: --
 
-Script done on 2026-05-03 17:38:07-06:00 [COMMAND_EXIT_CODE="127"]
+Script done on 2026-05-03 18:44:33-06:00 [COMMAND_EXIT_CODE="127"]

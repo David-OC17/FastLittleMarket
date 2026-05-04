@@ -14,7 +14,7 @@
 namespace fast_little_market {
 namespace fix {
 
-static constexpr std::string_view k_begin_string = "8=FIX.5.0\x01";
+static constexpr std::string_view BEGIN_STRING = "8=FIX.5.0\x01";
 
 class Builder {
  public:
@@ -93,8 +93,8 @@ class Builder {
     body_len_dst_ = nullptr;
     body_length_ = 0;
 
-    // k_begin_string not counted in body_length_
-    write(k_begin_string);
+    // BEGIN_STRING not counted in body_length_
+    write(BEGIN_STRING);
 
     // Reserve space for body_length_ field, backfilled during build()
     write(std::string_view("9="));

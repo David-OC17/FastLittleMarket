@@ -23,13 +23,13 @@ bool OrderBook::priceCrosses(const Order& incoming,
 }
 
 ExecFlags OrderBook::newOrder(const Order& order) {
-  if (!order.isValid()) return ExecFlags::Rejected;
+  if (!order.isValid()) return ExecFlags::REJECTED;
 
-  auto flags = ExecFlags::None;
+  auto flags = ExecFlags::NONE;
   if (canCross(order)) {
     flags = matchOrder(order);
-    if (hasFlag(flags, ExecFlags::Rejected)) {
-      return ExecFlags::Rejected;
+    if (hasFlag(flags, ExecFlags::REJECTED)) {
+      return ExecFlags::REJECTED;
     }
   } else {
     auto* own_queue = (order.side_ == BUY_SIDE)
@@ -42,11 +42,11 @@ ExecFlags OrderBook::newOrder(const Order& order) {
     volumes_[std::make_pair(order.price_q4_, order.side_)] += order.volume_;
   }
 
-  return flags | ExecFlags::Accepted;
+  return flags | ExecFlags::ACCEPTED;
 }
 
 ExecFlags OrderBook::matchOrder(Order incoming) {
-  if (!incoming.isValid()) return ExecFlags::Rejected;
+  if (!incoming.isValid()) return ExecFlags::REJECTED;
 
   auto* opposite_queue = (incoming.side_ == BUY_SIDE)
                              ? static_cast<OrderQueueInterface*>(&sell_orders_)
@@ -71,7 +71,7 @@ ExecFlags OrderBook::matchOrder(Order incoming) {
   }
 
   if (incoming.volume_ <= 0) {
-    return ExecFlags::FullyFilled;
+    return ExecFlags::FULLY_FILLED;
   }
 
   auto* own_queue = (incoming.side_ == BUY_SIDE)
@@ -80,43 +80,43 @@ ExecFlags OrderBook::matchOrder(Order incoming) {
   assert(own_queue->isValid());
   own_queue->push(std::move(incoming));
 
-  return ExecFlags::PartiallyFilled;
+  return ExecFlags::PARTIALLY_FILLED;
 }
 
 ExecFlags OrderBook::cancelOrder(uint64_t order_id) {
   if (auto it = buy_orders_.find(order_id); it.has_value()) {
     auto order = it.value();
 
-    if (!buy_orders_.remove(order_id)) return ExecFlags::Rejected;
+    if (!buy_orders_.remove(order_id)) return ExecFlags::REJECTED;
 
     volumes_[{order.price_q4_, BUY_SIDE}] -= order.volume_;
-    return ExecFlags::Cancelled;
+    return ExecFlags::CANCELLED;
   }
 
   else if (auto it = sell_orders_.find(order_id); it.has_value()) {
     auto order = it.value();
 
-    if (!sell_orders_.remove(order_id)) return ExecFlags::Rejected;
+    if (!sell_orders_.remove(order_id)) return ExecFlags::REJECTED;
 
     volumes_[{order.price_q4_, SELL_SIDE}] -= order.volume_;
-    return ExecFlags::Cancelled;
+    return ExecFlags::CANCELLED;
   }
 
-  return ExecFlags::Rejected;
+  return ExecFlags::REJECTED;
 }
 
 ExecFlags OrderBook::modifyOrder(uint64_t order_id, uint32_t new_price_q4,
                                  uint32_t new_volume,
                                  GlobalSequencer& sequencer) {
   auto it = buy_orders_.find(order_id);
-  if (!it.has_value()) return ExecFlags::Rejected;
+  if (!it.has_value()) return ExecFlags::REJECTED;
 
   auto order = it.value();
 
   auto flags = cancelOrder(order_id);
-  if (hasFlag(flags, ExecFlags::Rejected)) return flags;
+  if (hasFlag(flags, ExecFlags::REJECTED)) return flags;
 
-  Order new_order(Order::unpack(order.id_ns_).id, new_price_q4, new_volume,
+  Order new_order(Order::unpack(order.id_ns_).id_, new_price_q4, new_volume,
                   order.side_ == BUY_SIDE, order.client_, sequencer);
 
   return flags | newOrder(new_order);

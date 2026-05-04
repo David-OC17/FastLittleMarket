@@ -14,8 +14,8 @@ namespace fast_little_market {
 struct BuyOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
     if (a.price_q4_ == b.price_q4_) {
-      return Order::unpack(a.id_ns_).timestamp_ns >
-             Order::unpack(b.id_ns_).timestamp_ns;  // FIFO by timestamp
+      return Order::unpack(a.id_ns_).timestamp_ns_ >
+             Order::unpack(b.id_ns_).timestamp_ns_;  // FIFO by timestamp
     }
     return a.price_q4_ > b.price_q4_;
   }
@@ -24,8 +24,8 @@ struct BuyOrderComparator {
 struct SellOrderComparator {
   bool operator()(const Order& a, const Order& b) const {
     if (a.price_q4_ == b.price_q4_) {
-      return Order::unpack(a.id_ns_).timestamp_ns >
-             Order::unpack(b.id_ns_).timestamp_ns;  // FIFO by timestamp
+      return Order::unpack(a.id_ns_).timestamp_ns_ >
+             Order::unpack(b.id_ns_).timestamp_ns_;  // FIFO by timestamp
     }
     return a.price_q4_ < b.price_q4_;
   }
@@ -120,21 +120,21 @@ using BuyOrderQueue = PriorityQueueAdapter<BuyOrderComparator>;
 using SellOrderQueue = PriorityQueueAdapter<SellOrderComparator>;
 
 struct TopOfBook {
-  std::optional<Order> bid;
-  std::optional<Order> ask;
+  std::optional<Order> bid_;
+  std::optional<Order> ask_;
 
-  bool hasBid() const { return bid.has_value(); }
-  bool hasAsk() const { return ask.has_value(); }
+  bool hasBid() const { return bid_.has_value(); }
+  bool hasAsk() const { return ask_.has_value(); }
   bool valid() const { return hasBid() && hasAsk(); }
 };
 
 enum class ExecFlags : uint8_t {
-  None = 0,
-  Accepted = uint8_t(1) << 0,
-  PartiallyFilled = uint8_t(1) << 1,
-  FullyFilled = uint8_t(1) << 2,
-  Cancelled = uint8_t(1) << 3,
-  Rejected = uint8_t(1) << 4
+  NONE = 0,
+  ACCEPTED = uint8_t(1) << 0,
+  PARTIALLY_FILLED = uint8_t(1) << 1,
+  FULLY_FILLED = uint8_t(1) << 2,
+  CANCELLED = uint8_t(1) << 3,
+  REJECTED = uint8_t(1) << 4
 };
 
 inline ExecFlags operator|(ExecFlags a, ExecFlags b) {
@@ -153,18 +153,18 @@ inline ExecFlags& operator|=(ExecFlags& a, ExecFlags b) {
 }
 
 inline bool hasFlag(ExecFlags flags, ExecFlags f) {
-  return (flags & f) != ExecFlags::None;
+  return (flags & f) != ExecFlags::NONE;
 }
 
 inline bool isValid(ExecFlags f) {
-  // Rejected is exclusive
-  if (hasFlag(f, ExecFlags::Rejected)) return f == ExecFlags::Rejected;
+  // REJECTED is exclusive
+  if (hasFlag(f, ExecFlags::REJECTED)) return f == ExecFlags::REJECTED;
   // Can't be both partially and fully filled
-  if (hasFlag(f, ExecFlags::PartiallyFilled) &&
-      hasFlag(f, ExecFlags::FullyFilled))
+  if (hasFlag(f, ExecFlags::PARTIALLY_FILLED) &&
+      hasFlag(f, ExecFlags::FULLY_FILLED))
     return false;
-  // Cancelled and Accepted together is suspect
-  if (hasFlag(f, ExecFlags::Cancelled) && hasFlag(f, ExecFlags::Accepted))
+  // Cancelled and ACCEPTED together is suspect
+  if (hasFlag(f, ExecFlags::CANCELLED) && hasFlag(f, ExecFlags::ACCEPTED))
     return false;
   return true;
 }

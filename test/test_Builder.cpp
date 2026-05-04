@@ -126,22 +126,22 @@ TEST(BuilderTest, ChecksumIsCorrect) {
   b.addField(flm::fix::FieldTag::ClOrdID, "A");
   auto msg = build(b);
 
-  std::string csTag =
+  std::string cs_tag =
       std::string(flm::fix::ftof(flm::fix::FieldTag::CheckSum)) + "=";
-  auto csPos = msg.rfind(csTag);
-  ASSERT_NE(csPos, std::string_view::npos);
+  auto cs_pos = msg.rfind(cs_tag);
+  ASSERT_NE(cs_pos, std::string_view::npos);
 
   // compute expected sum over everything before the checksum field
   unsigned int sum = 0;
-  for (size_t i = 0; i < csPos; i++) sum += static_cast<unsigned char>(msg[i]);
+  for (size_t i = 0; i < cs_pos; i++) sum += static_cast<unsigned char>(msg[i]);
   sum %= 256;
 
   // extract actual checksum value from message (read until end or \x01)
-  auto valueStart = csPos + csTag.size();
-  auto valueEnd = msg.find('\x01', valueStart);
-  if (valueEnd == std::string_view::npos) valueEnd = msg.size();
+  auto value_start = cs_pos + cs_tag.size();
+  auto value_end = msg.find('\x01', value_start);
+  if (value_end == std::string_view::npos) value_end = msg.size();
   int actual =
-      std::stoi(std::string(msg.substr(valueStart, valueEnd - valueStart)));
+      std::stoi(std::string(msg.substr(value_start, value_end - value_start)));
 
   EXPECT_EQ(actual, (int)sum);
 }
@@ -199,8 +199,8 @@ TEST(BuilderTest, AppendResetsSrc) {
   flm::fix::Builder src;
   src.addField(flm::fix::FieldTag::ClOrdID, "X");
   dst.append(src);
-  auto srcMsg = build(src);
-  EXPECT_FALSE(contains(srcMsg, "11=X"));
+  auto src_msg = build(src);
+  EXPECT_FALSE(contains(src_msg, "11=X"));
 }
 
 // ---------------------------------------------------------------------------
@@ -219,10 +219,10 @@ TEST(BuilderTest, AddTimeWritesExpectedFormat) {
   auto pos = msg.find("60=");
   ASSERT_NE(pos, std::string_view::npos);
   auto end = msg.find(SOH, pos + 3);
-  auto timeStr = msg.substr(pos + 3, end - pos - 3);
-  EXPECT_EQ(timeStr.size(), 21u);
-  EXPECT_EQ(timeStr[8], '-');
-  EXPECT_EQ(timeStr[11], ':');
-  EXPECT_EQ(timeStr[14], ':');
-  EXPECT_EQ(timeStr[17], '.');
+  auto time_str = msg.substr(pos + 3, end - pos - 3);
+  EXPECT_EQ(time_str.size(), 21u);
+  EXPECT_EQ(time_str[8], '-');
+  EXPECT_EQ(time_str[11], ':');
+  EXPECT_EQ(time_str[14], ':');
+  EXPECT_EQ(time_str[17], '.');
 }

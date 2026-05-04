@@ -2,18 +2,18 @@
 
 #include <bitset>
 
-#include "FixMsg.hpp"
+#include "MsgType.hpp"
 
 namespace flm = fast_little_market;
 
 struct Case {
-  flm::fix::MsgType t;
-  char c;
-  std::string_view name;
+  flm::fix::MsgType t_;
+  char c_;
+  std::string_view name_;
 };
 
-// NOTE: Manually verify the cases. Keep updated to used fix standard.
-constexpr Case cases[] = {
+// NOTE: Manually verify the CASES. Keep updated to used fix standard.
+constexpr Case CASES[] = {
     {flm::fix::MsgType::Heartbeat, '0', "Heartbeat"},
     {flm::fix::MsgType::NewOrderSingle, 'D', "NewOrderSingle"},
     {flm::fix::MsgType::QuoteCancel, 'Z', "QuoteCancel"},
@@ -21,19 +21,19 @@ constexpr Case cases[] = {
 };
 
 TEST(FixMsgTest, MsgTypeCharMapping) {
-  for (auto& c : cases) {
-    EXPECT_EQ(static_cast<char>(c.t), c.c);
+  for (auto& c : CASES) {
+    EXPECT_EQ(static_cast<char>(c.t_), c.c_);
   }
 }
 
 TEST(FixMsgTest, MsgTypeToString) {
-  for (auto& c : cases) {
-    EXPECT_EQ(flm::fix::mtos(c.t), c.name);
+  for (auto& c : CASES) {
+    EXPECT_EQ(flm::fix::mtos(c.t_), c.name_);
   }
 }
 
 TEST(FixMsgTest, StringToMsgType) {
-  for (auto& c : cases) {
-    EXPECT_EQ(flm::fix::stom(c.name), c.t);
+  for (auto& c : CASES) {
+    EXPECT_EQ(flm::fix::stom(c.name_), c.t_);
   }
 }

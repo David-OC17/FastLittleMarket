@@ -179,16 +179,18 @@ TEST(FieldMapTest, GetTagsReflectsSetFields) {
   auto fields = fm.getFields();
   EXPECT_EQ(fields.size(), 2u);
 
-  bool hasClOrdID = std::find_if(fields.begin(), fields.end(),
-    [](const flm::fix::Field& f) { return f.tag_ == flm::fix::FieldTag::ClOrdID; })
-    != fields.end();
+  bool has_clord_id =
+      std::find_if(fields.begin(), fields.end(), [](const flm::fix::Field& f) {
+        return f.tag_ == flm::fix::FieldTag::ClOrdID;
+      }) != fields.end();
 
-  bool hasOrderQty = std::find_if(fields.begin(), fields.end(),
-    [](const flm::fix::Field& f) { return f.tag_ == flm::fix::FieldTag::OrderQty; })
-    != fields.end();
+  bool has_order_qty =
+      std::find_if(fields.begin(), fields.end(), [](const flm::fix::Field& f) {
+        return f.tag_ == flm::fix::FieldTag::OrderQty;
+      }) != fields.end();
 
-  EXPECT_TRUE(hasClOrdID);
-  EXPECT_TRUE(hasOrderQty);
+  EXPECT_TRUE(has_clord_id);
+  EXPECT_TRUE(has_order_qty);
 }
 
 TEST(FieldMapTest, GetTagsDoesNotDuplicateOnOverwrite) {
@@ -297,7 +299,10 @@ TEST(FieldMapTest, AddGroupReturnsNullptrWhenBufferExhausted) {
   flm::fix::FieldMap fm(buf, "");
 
   // Exhaust remaining space
-  try { buf.allocate(buf.remaining()); } catch (...) {}
+  try {
+    buf.allocate(buf.remaining());
+  } catch (...) {
+  }
   flm::fix::FieldMap* grp = fm.addGroup(flm::fix::FieldTag::NoLegs);
   EXPECT_EQ(grp, nullptr);
 }

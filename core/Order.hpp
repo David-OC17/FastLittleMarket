@@ -19,8 +19,8 @@ static constexpr uint8_t GTC_TIF = 1;
 static constexpr uint8_t IOC_TIF = 2;
 
 struct IdTimestamp {
-  uint32_t id;
-  uint32_t timestamp_ns;
+  uint32_t id_;
+  uint32_t timestamp_ns_;
 };
 
 struct Order {         // 32 bytes
@@ -36,20 +36,20 @@ struct Order {         // 32 bytes
     return (uint64_t(id) << 32) | ts_ns;
   }
 
-  static inline IdTimestamp unpack(uint64_t id_ns_) {
-    return {static_cast<uint32_t>(id_ns_ >> 32),
-            static_cast<uint32_t>(id_ns_ & 0xFFFFFFFFULL)};
+  static inline IdTimestamp unpack(uint64_t id_ns) {
+    return {static_cast<uint32_t>(id_ns >> 32),
+            static_cast<uint32_t>(id_ns & 0xFFFFFFFFULL)};
   }
 
   Order() = default;
 
-  Order(int id, uint32_t price_q4_, uint32_t vol, bool is_buy,
-        std::string_view client_, GlobalSequencer& sequencer)
+  Order(int id, uint32_t price_q4, uint32_t vol, bool is_buy,
+        std::string_view client, GlobalSequencer& sequencer)
       : id_ns_(pack(id, sequencer.nextTimestampNs())),
-        price_q4_(price_q4_),
+        price_q4_(price_q4),
         volume_(vol),
         side_(static_cast<uint8_t>(is_buy)) {
-    std::strncpy(this->client_, client_.data(), 7);
+    std::strncpy(this->client_, client.data(), 7);
     this->client_[7] = '\0';
   }
 

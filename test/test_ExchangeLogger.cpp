@@ -15,7 +15,7 @@ namespace flm = fast_little_market;
 static void dumbWait(size_t iterations = 1'000'000) {
   volatile size_t sink = 0;
   for (size_t i = 0; i < iterations; ++i) {
-    sink = i;  // volatile prevents the compiler optimising the loop away
+    sink = i;  // volatile prevents the compiler optimizing the loop away
   }
   (void)sink;
 }
@@ -35,12 +35,6 @@ static std::string readLog(const std::string& path) {
   return content;
 }
 
-// static void dump_log(const std::string& log, const std::string& test_name) {
-//   std::cout << "\n=== [" << test_name << "] log contents ===\n"
-//             << (log.empty() ? "<EMPTY>" : log) << "\n=== end ===\n";
-//   std::cout.flush();
-// }
-
 static bool logContains(const std::string& log, const std::string& needle) {
   return log.find(needle) != std::string::npos;
 }
@@ -50,13 +44,12 @@ class ExchangeLoggerTest : public ::testing::Test {
   static void SetUpTestSuite() { ASSERT_NE(flm::global_logger, nullptr); }
   flm::GlobalSequencer sequencer_;  // lives for the duration of each test
 
-  flm::Order makeOrder(int id, uint32_t price_q4_, uint32_t vol,
-                       uint8_t side_) {
-    return flm::Order(id, price_q4_, vol, side_ == flm::BUY_SIDE, "JPMORG",
+  flm::Order makeOrder(int id, uint32_t price_q4, uint32_t vol, uint8_t side) {
+    return flm::Order(id, price_q4, vol, side == flm::BUY_SIDE, "JPMORG",
                       sequencer_);
   }
 
-  std::string find_log_file() { return flm::QUILL_LOG_FILE; }
+  std::string findLogFile() { return flm::QUILL_LOG_FILE; }
 };
 
 TEST_F(ExchangeLoggerTest, LogInfo) {
@@ -64,7 +57,7 @@ TEST_F(ExchangeLoggerTest, LogInfo) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
 
   EXPECT_TRUE(logContains(log, "test_info_message_unique_42"))
       << "INFO message not found in log";
@@ -76,7 +69,7 @@ TEST_F(ExchangeLoggerTest, LogWarning) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
 
   EXPECT_TRUE(logContains(log, "test_warning_message_unique_43"))
       << "WARNING message not found in log";
@@ -88,7 +81,7 @@ TEST_F(ExchangeLoggerTest, LogError) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
 
   EXPECT_TRUE(logContains(log, "test_error_message_unique_44"))
       << "ERROR message not found in log";
@@ -115,7 +108,7 @@ TEST_F(ExchangeLoggerTest, MultipleThreadsWriteToSameLog) {
   flm::global_logger->flush_log();
   dumbWait();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
 
   // Every thread's first and last entry must appear
   for (int t = 0; t < NUM_THREADS; ++t) {
@@ -147,7 +140,7 @@ TEST_F(ExchangeLoggerTest, MacroNewOrderSingle) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "NewOrderSingle"));
   EXPECT_TRUE(logContains(log, "id=1"));
   EXPECT_TRUE(logContains(log, "BUY"));
@@ -162,7 +155,7 @@ TEST_F(ExchangeLoggerTest, MacroCancelOrderRequest) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "CancelOrderRequest"));
   EXPECT_TRUE(logContains(log, "id=2"));
   EXPECT_TRUE(logContains(log, "SELL"));
@@ -176,7 +169,7 @@ TEST_F(ExchangeLoggerTest, MacroMatch) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "Match"));
   EXPECT_TRUE(logContains(log, "passive_id=3"));
   EXPECT_TRUE(logContains(log, "aggressive_id=4"));
@@ -190,7 +183,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderAccepted) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "OrderAccepted"));
   EXPECT_TRUE(logContains(log, "id=5"));
   EXPECT_TRUE(logContains(log, "vol=200"));
@@ -202,7 +195,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderRejected) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "OrderRejected"));
   EXPECT_TRUE(logContains(log, "id=6"));
   EXPECT_TRUE(logContains(log, "reason=InvalidPrice"));
@@ -215,7 +208,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderReplaced) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "OrderReplaced"));
   EXPECT_TRUE(logContains(log, "old_id=7"));
   EXPECT_TRUE(logContains(log, "new_id=8"));
@@ -231,7 +224,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderCanceled) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "OrderCanceled"));
   EXPECT_TRUE(logContains(log, "id=9"));
   EXPECT_TRUE(logContains(log, "SELL"));
@@ -244,7 +237,7 @@ TEST_F(ExchangeLoggerTest, MacroOrderExecuted) {
 
   flm::global_logger->flush_log();
   dumbWait();
-  std::string log = readLog(find_log_file());
+  std::string log = readLog(findLogFile());
   EXPECT_TRUE(logContains(log, "OrderExecuted"));
   EXPECT_TRUE(logContains(log, "id=10"));
   EXPECT_TRUE(logContains(log, "fill_vol=60"));

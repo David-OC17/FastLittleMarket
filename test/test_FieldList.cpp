@@ -153,16 +153,16 @@ TEST(FieldListTest, FieldsSpanReflectsStoredFields) {
   list.put(makeField(flm::fix::FieldTag::OrderQty, 2, 3));
   auto span = list.fields();
   EXPECT_EQ(span.size(), 2u);
-  bool hasClOrdID =
+  bool has_clord_id =
       std::find_if(span.begin(), span.end(), [](const flm::fix::Field& f) {
         return f.tag_ == flm::fix::FieldTag::ClOrdID;
       }) != span.end();
-  bool hasOrderQty =
+  bool has_order_qty =
       std::find_if(span.begin(), span.end(), [](const flm::fix::Field& f) {
         return f.tag_ == flm::fix::FieldTag::OrderQty;
       }) != span.end();
-  EXPECT_TRUE(hasClOrdID);
-  EXPECT_TRUE(hasOrderQty);
+  EXPECT_TRUE(has_clord_id);
+  EXPECT_TRUE(has_order_qty);
 }
 
 TEST(FieldListTest, FieldsSpanDoesNotIncludeUnusedSlots) {
