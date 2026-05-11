@@ -51,7 +51,41 @@ gcovr -r .. \
   --html --html-details -o ../coverage/coverage.html
 ```
 
-###
+### benchmarking
+
+```bash
+sudo cpupower frequency-set --governor performance
+```
+
+```bash
+rm -rf build
+
+cmake -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER=gcc-13 \
+  -DCMAKE_CXX_COMPILER=g++-13 \
+  -DBUILD_BENCHMARKS=ON \
+  -G Ninja
+cmake --build build --target benchmarks --parallel
+
+./build/benchmarks
+```
+
+One line statistics of the benchmark.
+
+```bash
+echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
+
+perf stat ./build/benchmarks
+```
+
+Create metadata for Hotspot to consume.
+
+```bash
+perf record -g --call-graph dwarf ./build/benchmarks
+```
+
+### clang-tidy
 
 ```bash
 script -q -c "clang-tidy --checks='-*,readability-identifier-naming' \

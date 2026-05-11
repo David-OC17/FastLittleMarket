@@ -125,3 +125,28 @@ if(BUILD_TESTS)
     COMMENT "Running tests and generating coverage report"
   )
 endif()
+
+option(BUILD_BENCHMARKS "Build benchmarks" OFF)
+
+if(BUILD_BENCHMARKS)
+  find_package(benchmark REQUIRED)
+
+  add_executable(benchmarks
+    benchmark/bench_Parser.cpp
+  )
+
+  target_compile_options(benchmarks PRIVATE ${WARNINGS} -O3)
+
+  target_link_libraries(benchmarks
+    Core
+    benchmark::benchmark
+    benchmark::benchmark_main
+  )
+
+  target_include_directories(benchmarks PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/common
+    ${CMAKE_CURRENT_SOURCE_DIR}/data
+    ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
+  )
+endif()

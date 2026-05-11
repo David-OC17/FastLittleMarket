@@ -5,6 +5,13 @@ coverage/
 *.gcda
 *.gcno
 
+perf.data
+perf.data.old
+perf-*.data
+perf-*.data.*
+perf-*.map
+perf-*.map.*
+
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,c++,cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,c++,cmake
 
