@@ -36,5 +36,3 @@ static void BM_Build(benchmark::State& state) {
   }
 }
 BENCHMARK(BM_Build);
-
-BENCHMARK_MAIN();

@@ -65,24 +65,16 @@ cmake -B build \
   -DCMAKE_C_COMPILER=gcc-13 \
   -DCMAKE_CXX_COMPILER=g++-13 \
   -DBUILD_BENCHMARKS=ON \
+  -DPROFILING=ON \
   -G Ninja
-cmake --build build --target benchmarks --parallel
 
-./build/benchmarks
+cmake --build build --parallel
 ```
 
-One line statistics of the benchmark.
+Create metadata of all builds for Hotspot to consume.
 
 ```bash
-echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
-
-perf stat ./build/benchmarks
-```
-
-Create metadata for Hotspot to consume.
-
-```bash
-perf record -g --call-graph dwarf ./build/benchmarks
+./scripts/perf_all.sh
 ```
 
 ### clang-tidy

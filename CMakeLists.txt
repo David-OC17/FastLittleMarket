@@ -17,9 +17,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_TESTS "Build unit tests" ON)
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
+# Enable when profiling with perf/Hotspot.
+# Use with: cmake ... -DBUILD_BENCHMARKS=ON -DPROFILING=ON
+option(PROFILING "Enable profiling flags (frame pointers + debug symbols)" OFF)
+
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(GTest REQUIRED)
 find_program(GCOV_EXECUTABLE NAMES gcov-13 gcov REQUIRED)
+
+# ---------------------------------------------------------------------------
+# Core library
+# ---------------------------------------------------------------------------
 
 add_library(Core STATIC
   core/Exchange.cpp
@@ -30,7 +38,12 @@ add_library(Core STATIC
   core/Parser.cpp
 )
 
-target_compile_options(Core PRIVATE ${WARNINGS})
+set(CORE_COMPILE_FLAGS ${WARNINGS})
+if(PROFILING)
+  list(APPEND CORE_COMPILE_FLAGS -fno-omit-frame-pointer -g)
+endif()
+
+target_compile_options(Core PRIVATE ${CORE_COMPILE_FLAGS})
 
 target_include_directories(Core PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/core
@@ -50,6 +63,10 @@ target_link_libraries(Core
 target_compile_definitions(Core PUBLIC
   FLM_LOG_DIR="${CMAKE_SOURCE_DIR}/log"
 )
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
 
 if(BUILD_TESTS)
   enable_testing()
@@ -126,27 +143,44 @@ if(BUILD_TESTS)
   )
 endif()
 
+# ---------------------------------------------------------------------------
+# Benchmarks
+# ---------------------------------------------------------------------------
+
 option(BUILD_BENCHMARKS "Build benchmarks" OFF)
 
 if(BUILD_BENCHMARKS)
   find_package(benchmark REQUIRED)
 
-  add_executable(benchmarks
-    benchmark/bench_Parser.cpp
-  )
+  file(GLOB BENCHMARK_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/benchmark/bench_*.cpp")
 
-  target_compile_options(benchmarks PRIVATE ${WARNINGS} -O3)
+  set(BENCH_COMPILE_FLAGS ${WARNINGS} -fno-lto)
+  if(PROFILING)
+    list(APPEND BENCH_COMPILE_FLAGS -O2 -g -fno-omit-frame-pointer)
+  else()
+    list(APPEND BENCH_COMPILE_FLAGS -O3)
+  endif()
 
-  target_link_libraries(benchmarks
-    Core
-    benchmark::benchmark
-    benchmark::benchmark_main
-  )
+  foreach(BENCH_SRC ${BENCHMARK_SOURCES})
+    # bench_Parser.cpp --> bench_Parser
+    get_filename_component(BENCH_NAME ${BENCH_SRC} NAME_WE)
 
-  target_include_directories(benchmarks PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/core
-    ${CMAKE_CURRENT_SOURCE_DIR}/common
-    ${CMAKE_CURRENT_SOURCE_DIR}/data
-    ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
-  )
+    add_executable(${BENCH_NAME} ${BENCH_SRC})
+
+    target_compile_options(${BENCH_NAME} PRIVATE ${BENCH_COMPILE_FLAGS})
+    target_link_options(${BENCH_NAME} PRIVATE -fno-lto)
+
+    target_link_libraries(${BENCH_NAME}
+      Core
+      benchmark::benchmark
+      benchmark::benchmark_main
+    )
+
+    target_include_directories(${BENCH_NAME} PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/core
+      ${CMAKE_CURRENT_SOURCE_DIR}/common
+      ${CMAKE_CURRENT_SOURCE_DIR}/data
+      ${CMAKE_CURRENT_SOURCE_DIR}/matching_engine
+    )
+  endforeach()
 endif()
